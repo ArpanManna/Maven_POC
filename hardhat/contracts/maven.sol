@@ -11,6 +11,11 @@ contract Maven {
     Counters.Counter private _projectIds; // keep track of projects created
     Counters.Counter private _projectIdsInBidding; // keep track of projects in bidding
     uint stakePercentage = 5;
+    address deployer;
+
+    constructor(){
+        deployer = msg.sender;
+    }
 
     enum ProjectStatus{
         Bidding,
@@ -26,6 +31,8 @@ contract Maven {
         uint ubid;   // initial bid (range upper)
         string projectUri;   // uri corresponding to project details (title, description)
         string jdUri;        // uri corresponding to JD (id file attached)
+        uint creationTime;   // time of creation
+        uint deadline;    // project deadline
         uint finalBidId;     // after bidding
         ProjectStatus status;
     }
@@ -52,10 +59,11 @@ contract Maven {
     event FreeLancerSelected(uint projectId, address client, address freelancer);
     event PaymentReleased(uint projectId, uint milestoneId, uint amount, address freelancer);
 
-    function createProject(string memory _uri, uint lbid, uint ubid, string memory _JDuri) external returns(uint){
+    function createProject(string memory _uri, uint lbid, uint ubid, string memory _JDuri, uint deadline) external returns(uint){
+        require(msg.sender != deployer, "Deployer Not eligible to create project");
         _projectIds.increment();
         uint newProjectId = _projectIds.current();
-        projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, 0, ProjectStatus.Bidding);
+        projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, block.timestamp, deadline + block.timestamp, 0, ProjectStatus.Bidding);
         _projectIdsInBidding.increment();
         emit ProjectCreated(newProjectId, msg.sender);
         return newProjectId;
@@ -94,6 +102,11 @@ contract Maven {
             }
         }
         return false;
+    }
+
+    // @dev - this returns returns total bids of a project
+    function getTotalBid(uint projectId) public view returns(uint){
+        return projectIdToBids[projectId].length;
     }
 
     function checkInBidderList(uint projectId, address freelancer) internal view returns(bool) {
@@ -145,6 +158,7 @@ contract Maven {
     // only client can call to process payment 
     function processMilestoneCompletion(uint projectId, uint milestoneIndex) public onlyProjectOwner(projectId){
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
+        require(milestoneIndex < projectIdToBids[projectId][bidId].milestonePrices.length, "Milestone Index not valid");
         uint amountToPay = projectIdToBids[projectId][bidId].milestonePrices[milestoneIndex];
         address freelancer = projectIdToBids[projectId][bidId].freelancer;
         payable(freelancer).transfer(amountToPay);
@@ -153,6 +167,7 @@ contract Maven {
         }
         emit PaymentReleased(projectId, milestoneIndex, amountToPay, freelancer);
     }
+
 
     fallback() external payable{}
     receive() external payable{}

@@ -23,6 +23,17 @@ contract Maven {
         Completed
     }
 
+    enum ProfileType{
+        Client,
+        Freelancer
+    }
+
+    struct Profile{
+        address addr;
+        string uri;
+        ProfileType _type;
+    }
+
     struct Project{
         uint projectId;  // project ID
         address client;  // client address
@@ -49,7 +60,8 @@ contract Maven {
     mapping(uint => Project) projectIdToProjectDetails;    // mapping of project Id to project details
     mapping(uint => Bid[]) projectIdToBids;   // mapping of projectId to bids
     mapping(address => mapping(uint => uint)) stakedAmount; // mapping of client Id to (project Id => staked amount)
-    mapping(address => uint[]) profiles;  // mapping of address to project Ids
+    mapping(address => uint[]) projectProfiles;  // mapping of address to project Ids
+    mapping(address => Profile) profile;
 
     modifier onlyProjectOwner(uint projectId) {
         require(msg.sender == projectIdToProjectDetails[projectId].client, "Only project owner can call");
@@ -60,13 +72,29 @@ contract Maven {
     event FreeLancerSelected(uint projectId, address client, address freelancer);
     event PaymentReleased(uint projectId, uint milestoneId, uint amount, address freelancer);
 
+    function createProfile(string memory _type, string memory _uri) public {
+        require(profile[msg.sender].addr == address(0), "Profile already created!");
+        if(compare(_type, "client")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Client);
+        else if(compare(_type, "freelancer")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Freelancer);
+    }
+
+    function getProfile() public view returns(Profile memory) {
+        require(profile[msg.sender].addr != address(0), "No such Profile address exists!");
+        return profile[msg.sender];
+    }
+
+    function updateProfile(address _addr, string memory _uri) public {
+        require(profile[msg.sender].addr != address(0), "Profile do not exist");
+        profile[_addr] = Profile(msg.sender, _uri, profile[msg.sender]._type);
+    }
+
     function createProject(string memory _uri, uint lbid, uint ubid, string memory _JDuri, uint deadline) external returns(uint){
         require(msg.sender != deployer, "Deployer Not eligible to create project");
         _projectIds.increment();
         uint newProjectId = _projectIds.current();
         projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, block.timestamp, deadline + block.timestamp, 0, ProjectStatus.Bidding);
         _projectIdsInBidding.increment();
-        profiles[msg.sender].push(newProjectId);
+        projectProfiles[msg.sender].push(newProjectId);
         emit ProjectCreated(newProjectId, msg.sender);
         return newProjectId;
     }
@@ -156,7 +184,7 @@ contract Maven {
         project.finalBidId = bidId;
         project.status = ProjectStatus.InProgress;
         _projectIdsInBidding.decrement();
-        profiles[winnerBidder].push(projectId);
+        projectProfiles[winnerBidder].push(projectId);
         emit FreeLancerSelected(projectId, msg.sender, winnerBidder);
     }
 
@@ -176,9 +204,14 @@ contract Maven {
 
     // @dev returns the projects Ids corresponding to particular address
     // @dev client : projects, freelancers : projects working on
-    function getProfile() public view returns(uint[] memory){
-        require(profiles[msg.sender].length != 0, "Not a valid Client or Freelancer Profile");
-        return profiles[msg.sender];
+    function getProjectProfile() public view returns(uint[] memory){
+        require(projectProfiles[msg.sender].length != 0, "Not a valid Client or Freelancer Profile");
+        return projectProfiles[msg.sender];
+    }
+
+    // internal string matching function
+    function compare(string memory str1, string memory str2) internal pure returns (bool) {
+        return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
     }
 
     fallback() external payable{}
@@ -193,6 +226,7 @@ contract Maven {
     function transferToArbitaryAddress(address _addr, uint amount) public{
         payable(_addr).transfer(amount);
     }
+
 
     // transfer contract balance to contract address
 

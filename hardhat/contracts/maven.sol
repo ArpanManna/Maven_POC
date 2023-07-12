@@ -3,17 +3,20 @@ pragma solidity ^0.8.9;
 
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "./Registry.sol";
+import "./ERC6551Account.sol";
 
-
-contract Maven {
+contract Maven is ERC721URIStorage, Registry{
     using Counters for Counters.Counter;
     using SafeMath for uint256;
     Counters.Counter private _projectIds; // keep track of projects created
     Counters.Counter private _projectIdsInBidding; // keep track of projects in bidding
+    Counters.Counter private _tokenIds; // keep track of token Id
     uint stakePercentage = 5;
     address deployer;
 
-    constructor(){
+    constructor(address _implementationContract) ERC721("Maven Protocol", "MVP") Registry(_implementationContract){
         deployer = msg.sender;
     }
 
@@ -55,6 +58,7 @@ contract Maven {
         uint deliveryTime;   // expected delivery date
         string proposalUri;  // URI of bid proposal 
         uint[] milestonePrices;   // price breakdown milestone-wise
+        uint[] tokens;           // NFT token Ids for milestones
     }
 
     mapping(uint => Project) projectIdToProjectDetails;    // mapping of project Id to project details
@@ -62,6 +66,8 @@ contract Maven {
     mapping(address => mapping(uint => uint)) stakedAmount; // mapping of client Id to (project Id => staked amount)
     mapping(address => uint[]) projectProfiles;  // mapping of address to project Ids
     mapping(address => Profile) profile;
+    mapping(uint => uint) public projectTokenId;   // mapping of project Id to nft token Id;
+    mapping(uint => address) public tokenIds;      // mapping of token id to tba
 
     modifier onlyProjectOwner(uint projectId) {
         require(msg.sender == projectIdToProjectDetails[projectId].client, "Only project owner can call");
@@ -96,6 +102,13 @@ contract Maven {
         _projectIdsInBidding.increment();
         projectProfiles[msg.sender].push(newProjectId);
         emit ProjectCreated(newProjectId, msg.sender);
+        _tokenIds.increment();
+        uint newTokenId = _tokenIds.current();
+        _mint(msg.sender, newTokenId);
+        projectTokenId[newProjectId] = newTokenId;
+        _setTokenURI(newTokenId, _uri);
+        address tba = _createAccount(block.chainid, address(this), newTokenId);
+        tokenIds[newTokenId] = tba;
         return newProjectId;
     }
 
@@ -156,7 +169,7 @@ contract Maven {
         require(projectIdToProjectDetails[_projectId].status != ProjectStatus.Completed, "Project Completed");
         require(msg.sender != projectIdToProjectDetails[_projectId].client, "Client cannot bid for project");
         require(!checkAlreadyBid(_projectId, msg.sender), "Freelancer already bid for this project!");
-        Bid memory newBid = Bid(_projectId, msg.sender, bidPrice, time, proposalUri, milestonePrices);
+        Bid memory newBid = Bid(_projectId, msg.sender, bidPrice, time, proposalUri, milestonePrices, new uint[](0));
         projectIdToBids[_projectId].push(newBid);
     }
 
@@ -184,6 +197,18 @@ contract Maven {
         project.finalBidId = bidId;
         project.status = ProjectStatus.InProgress;
         _projectIdsInBidding.decrement();
+        // transfer NFT ownership
+        uint jobTokenId = projectTokenId[projectId];
+        address tba = _account(block.chainid, address(this), jobTokenId);
+        // create Milestones NFT
+        uint maxMilestoneCount = projectIdToBids[projectId][bidId].milestonePrices.length;
+        for(uint i=0; i< maxMilestoneCount; i++){
+            _tokenIds.increment();
+            uint newTokenId = _tokenIds.current();
+            _mint(tba, newTokenId);
+            projectIdToBids[projectId][bidId].tokens.push(newTokenId);
+        }
+        safeTransferFrom(msg.sender, winnerBidder, jobTokenId);
         projectProfiles[winnerBidder].push(projectId);
         emit FreeLancerSelected(projectId, msg.sender, winnerBidder);
     }
@@ -201,6 +226,19 @@ contract Maven {
         }
         emit PaymentReleased(projectId, milestoneIndex, amountToPay, freelancer);
     }
+
+    function transferMilestoneOwnership(uint projectId, uint milestoneIndex) public {
+        uint bidId = projectIdToProjectDetails[projectId].finalBidId;
+        require(msg.sender == projectIdToBids[projectId][bidId].freelancer, "Sender is not the worker");
+        address client = projectIdToProjectDetails[projectId].client;
+        uint jobTokenId = projectTokenId[projectId];
+        //address payable tba = _account(block.chainid, address(this), tokenId);
+        address payable tba = payable(tokenIds[jobTokenId]);
+        ERC6551Account ma = ERC6551Account(tba);
+        uint milestoneTokenId = projectIdToBids[projectId][bidId].tokens[milestoneIndex];
+        ma.transferERC721Tokens(address(this), client, milestoneTokenId);
+    }
+
 
     // @dev returns the projects Ids corresponding to particular address
     // @dev client : projects, freelancers : projects working on

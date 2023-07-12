@@ -1,17 +1,17 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
-export default function Modal({title, description}) {
-  let [isOpen, setIsOpen] = useState(true)
+export default function Modal({ modalStatus, setModalStatus, user, milestoneId}) {
+  // let [isOpen, setIsOpen] = useState(true)
 
-  function closeModal() {
-    setIsOpen(false)
-  }
+  // function closeModal() {
+  //   setIsOpen(false)
+  // }
 
   return (
     <>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Transition appear show={modalStatus} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={() => setModalStatus(false)}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -40,11 +40,11 @@ export default function Modal({title, description}) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    {title}
+                    {user}
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      {description}
+                      {milestoneId}
                     </p>
                   </div>
 
@@ -52,7 +52,7 @@ export default function Modal({title, description}) {
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
+                      onClick={() => setModalStatus(false)}
                     >
                       Got it, thanks!
                     </button>

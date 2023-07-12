@@ -49,6 +49,7 @@ contract Maven {
     mapping(uint => Project) projectIdToProjectDetails;    // mapping of project Id to project details
     mapping(uint => Bid[]) projectIdToBids;   // mapping of projectId to bids
     mapping(address => mapping(uint => uint)) stakedAmount; // mapping of client Id to (project Id => staked amount)
+    mapping(address => uint[]) profiles;  // mapping of address to project Ids
 
     modifier onlyProjectOwner(uint projectId) {
         require(msg.sender == projectIdToProjectDetails[projectId].client, "Only project owner can call");
@@ -65,11 +66,13 @@ contract Maven {
         uint newProjectId = _projectIds.current();
         projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, block.timestamp, deadline + block.timestamp, 0, ProjectStatus.Bidding);
         _projectIdsInBidding.increment();
+        profiles[msg.sender].push(newProjectId);
         emit ProjectCreated(newProjectId, msg.sender);
         return newProjectId;
     }
 
-    function getAllProjects() public view returns(Project[] memory){
+    // @dev - returns all projects that are in bidding state
+    function getAllProjectsBidding() public view returns(Project[] memory){
         uint projectCount = _projectIdsInBidding.current();
         Project[] memory allProjects = new Project[](projectCount);
         uint curIndex = 0;
@@ -132,42 +135,51 @@ contract Maven {
 
     function updateBid(uint _projectId, uint bidId, uint _bidPrice, uint time, uint[] memory _milestonePrices) public {
         require(msg.sender == projectIdToBids[_projectId][bidId].freelancer, "Only Bid owner can update");
-        projectIdToBids[_projectId][bidId].bidPrice = _bidPrice;
-        projectIdToBids[_projectId][bidId].deliveryTime = time;
-        projectIdToBids[_projectId][bidId].milestonePrices = _milestonePrices;
+        require(projectIdToProjectDetails[_projectId].status == ProjectStatus.Bidding, "Project not in bidding state");
+        Bid storage _bid = projectIdToBids[_projectId][bidId];
+        _bid.bidPrice = _bidPrice;
+        _bid.deliveryTime = time;
+        _bid.milestonePrices = _milestonePrices;
     }
 
     function selectBid(uint projectId, address winnerBidder, uint bidId) external payable onlyProjectOwner(projectId){
         require(projectId <= _projectIds.current(), "Not a valid Project Id");
         require(checkInBidderList(projectId, winnerBidder), "This address is not a bidder");
-        require(projectIdToProjectDetails[projectId].status != ProjectStatus.InProgress, "Project Already started");
-        require(projectIdToProjectDetails[projectId].status != ProjectStatus.Completed, "Project Completed");
-        //require(msg.value >= projectIdToBids[projectId][bidId].bidPrice, "Should stake equal to bid amount + staked amount");
+        Project storage project = projectIdToProjectDetails[projectId];
+        require(project.status != ProjectStatus.InProgress, "Project Already started");
+        require(project.status != ProjectStatus.Completed, "Project Completed");
         uint bidPrice = projectIdToBids[projectId][bidId].bidPrice;
         uint staked = SafeMath.div(SafeMath.mul(bidPrice, stakePercentage), 100);
-        //uint staked = msg.value - projectIdToBids[projectId][bidId].bidPrice;
         require(msg.value >= bidPrice + staked, "Should stake equal to bid amount + staked amount");
         stakedAmount[msg.sender][projectId] = staked;
-        projectIdToProjectDetails[projectId].freelancer = winnerBidder;
-        projectIdToProjectDetails[projectId].finalBidId = bidId;
-        projectIdToProjectDetails[projectId].status = ProjectStatus.InProgress;
+        project.freelancer = winnerBidder;
+        project.finalBidId = bidId;
+        project.status = ProjectStatus.InProgress;
         _projectIdsInBidding.decrement();
+        profiles[winnerBidder].push(projectId);
         emit FreeLancerSelected(projectId, msg.sender, winnerBidder);
     }
 
     // only client can call to process payment 
     function processMilestoneCompletion(uint projectId, uint milestoneIndex) public onlyProjectOwner(projectId){
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
-        require(milestoneIndex < projectIdToBids[projectId][bidId].milestonePrices.length, "Milestone Index not valid");
-        uint amountToPay = projectIdToBids[projectId][bidId].milestonePrices[milestoneIndex];
-        address freelancer = projectIdToBids[projectId][bidId].freelancer;
+        Bid memory _bid = projectIdToBids[projectId][bidId];
+        require(milestoneIndex < _bid.milestonePrices.length, "Milestone Index not valid");
+        uint amountToPay = _bid.milestonePrices[milestoneIndex];
+        address freelancer = _bid.freelancer;
         payable(freelancer).transfer(amountToPay);
-        if(milestoneIndex == projectIdToBids[projectId][bidId].milestonePrices.length - 1) {
+        if(milestoneIndex == _bid.milestonePrices.length - 1) {
             projectIdToProjectDetails[projectId].status = ProjectStatus.Completed;
         }
         emit PaymentReleased(projectId, milestoneIndex, amountToPay, freelancer);
     }
 
+    // @dev returns the projects Ids corresponding to particular address
+    // @dev client : projects, freelancers : projects working on
+    function getProfile() public view returns(uint[] memory){
+        require(profiles[msg.sender].length != 0, "Not a valid Client or Freelancer Profile");
+        return profiles[msg.sender];
+    }
 
     fallback() external payable{}
     receive() external payable{}

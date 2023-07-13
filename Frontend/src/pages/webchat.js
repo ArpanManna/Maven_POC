@@ -1,4 +1,5 @@
 import Nav from '@/components/Nav'
+import PushChat from '@/components/PushChat';
 const PushAPI = require('@pushprotocol/restapi');
 
 import { fetchChatList } from '@/lib/pushProtocol'
@@ -8,23 +9,24 @@ import React, { useEffect } from 'react'
 const Chat = () => {
     const {address, provider} = useWeb3();
 
-    const fetchChat = async () => {
-        const res = await fetchChatList(address, provider.getSigner());
-        console.log(res)
+    // const fetchChat = async () => {
+    //     const res = await fetchChatList(address, provider.getSigner());
+    //     console.log(res)
     //     const user = await PushAPI.user.get({
     //         account: `eip155:${address}`,
     //         env: 'staging',
     //       });
     //     console.log(user)
-    }
+    // }
 
-    useEffect(() => {
-        if (address) fetchChat();
-    },[address])
+    // useEffect(() => {
+    //     if (address) fetchChat();
+    // },[address])
     return (
         <>
             <Nav />
-            <div class="m-4 shadow-lg rounded-lg">
+            {/* <PushChat /> */}
+            {/* <div class="m-4 shadow-lg rounded-lg">
                 
                 <div class="flex flex-row justify-between bg-white">
                     <div class="flex flex-col w-2/5 border-r-2 overflow-y-auto">
@@ -192,7 +194,7 @@ const Chat = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </>
     )
 }

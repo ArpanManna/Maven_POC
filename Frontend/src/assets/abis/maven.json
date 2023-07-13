@@ -1,624 +1,624 @@
 [
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "client",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "freelancer",
-        "type": "address"
-      }
-    ],
-    "name": "FreeLancerSelected",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "milestoneId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "freelancer",
-        "type": "address"
-      }
-    ],
-    "name": "PaymentReleased",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "client",
-        "type": "address"
-      }
-    ],
-    "name": "ProjectCreated",
-    "type": "event"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "fallback"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_projectId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "bidPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "proposalUri",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "milestonePrices",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "bid",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_type",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
-      }
-    ],
-    "name": "createProfile",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lbid",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "ubid",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "_JDuri",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "deadline",
-        "type": "uint256"
-      }
-    ],
-    "name": "createProject",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getAllProjectsBidding",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "projectId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "client",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "freelancer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lbid",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "ubid",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "projectUri",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "jdUri",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "creationTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deadline",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "finalBidId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum Maven.ProjectStatus",
-            "name": "status",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct Maven.Project[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getBalance",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "bidId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getBidDetails",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "projectId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "freelancer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "bidPrice",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deliveryTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "proposalUri",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "milestonePrices",
-            "type": "uint256[]"
-          }
-        ],
-        "internalType": "struct Maven.Bid",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getProfile",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "addr",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "uri",
-            "type": "string"
-          },
-          {
-            "internalType": "enum Maven.ProfileType",
-            "name": "_type",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct Maven.Profile",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getProjectDetails",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "projectId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "client",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "freelancer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lbid",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "ubid",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "projectUri",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "jdUri",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "creationTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deadline",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "finalBidId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum Maven.ProjectStatus",
-            "name": "status",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct Maven.Project",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_addr",
-        "type": "address"
-      }
-    ],
-    "name": "getProjectProfile",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getTotalBid",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "milestoneIndex",
-        "type": "uint256"
-      }
-    ],
-    "name": "processMilestoneCompletion",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "winnerBidder",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "bidId",
-        "type": "uint256"
-      }
-    ],
-    "name": "selectBid",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "projectId",
-        "type": "uint256"
-      }
-    ],
-    "name": "showAllBidsProject",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "projectId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "freelancer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "bidPrice",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deliveryTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "proposalUri",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "milestonePrices",
-            "type": "uint256[]"
-          }
-        ],
-        "internalType": "struct Maven.Bid[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_addr",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "transferToArbitaryAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_projectId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "bidId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bidPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_milestonePrices",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "updateBid",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_addr",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
-      }
-    ],
-    "name": "updateProfile",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
-  }
-]
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "client",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "freelancer",
+          "type": "address"
+        }
+      ],
+      "name": "FreeLancerSelected",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "milestoneId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "freelancer",
+          "type": "address"
+        }
+      ],
+      "name": "PaymentReleased",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "client",
+          "type": "address"
+        }
+      ],
+      "name": "ProjectCreated",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bidPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "time",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "proposalUri",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "milestonePrices",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "bid",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_type",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_uri",
+          "type": "string"
+        }
+      ],
+      "name": "createProfile",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_uri",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lbid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ubid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_JDuri",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        }
+      ],
+      "name": "createProject",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAllProjectsBidding",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "projectId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "client",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "freelancer",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lbid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "ubid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "projectUri",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "jdUri",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "creationTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "finalBidId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum Maven.ProjectStatus",
+              "name": "status",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct Maven.Project[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bidId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBidDetails",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "projectId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "freelancer",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "bidPrice",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deliveryTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "proposalUri",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "milestonePrices",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct Maven.Bid",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getProfile",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "addr",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "uri",
+              "type": "string"
+            },
+            {
+              "internalType": "enum Maven.ProfileType",
+              "name": "_type",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct Maven.Profile",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getProjectDetails",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "projectId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "client",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "freelancer",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lbid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "ubid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "projectUri",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "jdUri",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "creationTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "finalBidId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum Maven.ProjectStatus",
+              "name": "status",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct Maven.Project",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_addr",
+          "type": "address"
+        }
+      ],
+      "name": "getProjectProfile",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTotalBid",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "milestoneIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "processMilestoneCompletion",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "winnerBidder",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bidId",
+          "type": "uint256"
+        }
+      ],
+      "name": "selectBid",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "showAllBidsProject",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "projectId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "freelancer",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "bidPrice",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deliveryTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "proposalUri",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "milestonePrices",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct Maven.Bid[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_addr",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferToArbitaryAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bidId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_bidPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "time",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_milestonePrices",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "updateBid",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_addr",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_uri",
+          "type": "string"
+        }
+      ],
+      "name": "updateProfile",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ]

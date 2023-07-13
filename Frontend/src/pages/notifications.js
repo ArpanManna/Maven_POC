@@ -23,7 +23,7 @@ const Notifications = () => {
     <h2 className=' p-4 text-center font-bold text-2xl'>Notifications</h2>
     <hr />
 
-        {allNotifications.map(({notification}, index) => (
+        {allNotifications && allNotifications.map(({notification}, index) => (
             <div className='mx-4 my-6 p-4 border border-gray-300 rounded-md' key={index}>
                 <h2 className='text-lg font-semibold'>{notification.title}</h2>
                 <h2 className='text-md font-light'>{notification.body}</h2>

@@ -30,7 +30,7 @@ const WalletConnect = () => {
                                 leaveFrom="opacity-100 translate-y-0"
                                 leaveTo="opacity-0 translate-y-4"
                             >
-                                <Menu.Items className="absolute -right-20 mt-3 w-72 bg-white origin-top-right rounded-lg shadow-large sm:-right-14">
+                                <Menu.Items className="absolute -right-20 mt-3 w-72 bg-white origin-top-right rounded-lg shadow-large z-20 sm:-right-14">
                                     <Menu.Item>
                                         <Menu.Item>
                                             <div className="border-b border-dashed border-gray-200 px-6 py-5 ">

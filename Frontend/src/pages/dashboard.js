@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 const Dashboard = () => {
   const { address, chainId, provider } = useWeb3();
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [modalStatus, setModalStatus] = useState(false)
   const [user, setUser] = useState('');
   const [milestoneId, setMilestoneId] = useState('');
@@ -23,8 +24,10 @@ const Dashboard = () => {
   }, [chainId]);
 
   const getProjectByAddress = async () => {
+    setLoading(true);
     const data = await getProjectsByUser(chainId, provider, address);
-    setProjects(data)
+    setProjects(data);
+    setLoading(false);
   }
 
   const handleOpenModel = (user, id) => {
@@ -60,18 +63,20 @@ const Dashboard = () => {
   return (
     <>
       <Nav />
-      <div className='p-4 '>
+      {loading && <p className='text-center py-12'>Loading...</p>}
+      <div className='px-8 py-4 '>
         {/* <button className='border px-4 py-2 bg-green-300' onClick={handleSendNotification}>Send Notification</button> */}
         {
-          projects && projects.map(({ id, createdOn, owner, fileURI, status, metadata: { projectName, projectDescription }, deadline, finalBid, lowestBid, highestBid, }) => (
+          projects && projects.map(({ post: {id, createdOn, owner, fileURI, status, metadata: { projectName, projectDescription }, deadline, finalBid, lowestBid, highestBid}, bid: {freelancer, deliveryTime, bidPrice, milestones, proposal}}) => (
             <div key={id} className='p-8'>
                   <h2 className='text-xl font-bold text-center my-4'>{projectName}</h2>
               <div className='grid grid-cols-3 gap-4 '>
                 <div className='col-span-1 '>
-                  <div className='my-2'>
-                    <h2 className='text-md'>Owner: {owner}</h2>
-                    <h2 className='text-md my-1'>Published On: {moment.unix(createdOn).format("MM/DD/YYYY")}</h2>
-                    <h2 className='text-md '>Deadline: {moment.unix(deadline).format("MM/DD/YYYY")}</h2>
+                  <div className='my-2 border shadow-md p-20'>
+                    <h2 className='font-mono font-semibold'>Owner: {'0x...'}{owner.slice(owner.length - 6)}</h2>
+                    {freelancer && <h2 className='font-mono font-semibold'>Freelancer: {'0x...'}{freelancer.slice(freelancer.length - 6)}</h2>}
+                    <h2 className='font-mono font-semibold my-1'>Published On: {moment.unix(createdOn).format("MM/DD/YYYY")}</h2>
+                    <h2 className='font-mono font-semibold '>Deadline: {moment.unix(deadline).format("MM/DD/YYYY")}</h2>
                   </div>                  
                 </div>
                 <div className=' border col-span-2 p-2'>
@@ -97,7 +102,9 @@ const Dashboard = () => {
                 </div>
 
               </div>
-              <h2 className='text-md font-normal mt-12'>{projectDescription}</h2>
+              <h2 className='text-xl font-bold mt-8 mb-4'>Project Description</h2>
+              <hr />
+              <h2 className='text-md font-normal mt-4'>{projectDescription}</h2>
               <h2 className='text-md font-normal mt-12'>{fileURI}</h2>
 
             </div>

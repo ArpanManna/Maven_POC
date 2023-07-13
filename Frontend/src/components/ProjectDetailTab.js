@@ -2,7 +2,7 @@ import React from 'react'
 import PlaceBidForm from './PlaceBidForm'
 import { useWeb3 } from '@3rdweb/hooks'
 
-const ProjectDetailTab = ({id, projectDescription, projectOwner, skillsRequired, currency, priceFrom, priceTo}) => {
+const ProjectDetailTab = ({id, projectDescription, projectOwner, skillsRequired, priceFrom, priceTo}) => {
     const {address} = useWeb3()
     return (
         <div className='container text-black p-4 shadow-md rounded-md'>
@@ -10,7 +10,7 @@ const ProjectDetailTab = ({id, projectDescription, projectOwner, skillsRequired,
                 <div className='flex justify-between'>
                     <h2 className='text-xl mt-3 font-semibold font-mono'> Project Details </h2>
                     <div>
-                        <h2 className='text-sm'>{currency} {priceFrom} - {currency} {priceTo}</h2>
+                        <h2 className='text-sm'>{priceFrom} - {priceTo}</h2>
                         <h2 className='text-sm'>Bidding ends in 6 hours, 2 days</h2>
                     </div>
                 </div>
@@ -26,7 +26,7 @@ const ProjectDetailTab = ({id, projectDescription, projectOwner, skillsRequired,
 
             </div>
             {address !== projectOwner && 
-            <PlaceBidForm id={id}/> }
+            <PlaceBidForm id={id} projectOwner={projectOwner}/> }
         </div>
     )
 }

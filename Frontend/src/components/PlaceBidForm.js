@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-const PlaceBidForm = ({ id }) => {
+const PlaceBidForm = ({ id, projectOwner }) => {
   const [milestones, setMileStones] = useState([
     { title: '', price: '' },
   ]);
@@ -51,7 +51,7 @@ const PlaceBidForm = ({ id }) => {
     let milestoneArray = milestones.map(({ price, ...rest }) => price);
     const expectedTimeline = moment(deadline).unix()
     const proposalURI = await uploadFileToIPFS(JSON.stringify(proposal))
-    await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray)
+    await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner)
   }
 
   return (

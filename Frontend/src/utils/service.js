@@ -127,7 +127,7 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
 export const getProjectsByUser = async (chainId, provider, address) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
-        const projects = await mavenContract.getProjectProfile();
+        const projects = await mavenContract.getProjectProfile(address);
         const posts = []
 
         await async.eachLimit(projects, 100, async (projectId) => {
@@ -141,6 +141,28 @@ export const getProjectsByUser = async (chainId, provider, address) => {
             posts.push(data)
         });
         return (posts)
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const transferMilestone = async (chainId, provider, projectId, milestoneId, projectOwner) => {
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
+    try {
+        const data = await mavenContract.transferMilestoneOwnership(projectId, milestoneId);
+        await sendNotification(`Milestone Completed`, `Milestone ${milestoneId} has been completed!`, projectOwner);
+        return (data)
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const processPayment = async (chainId, provider, projectId, milestoneId, freelancer) => {
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
+    try {
+        const data = await mavenContract.processMilestoneCompletion(projectId, milestoneId);
+        await sendNotification(`Payment Credited`,  `You got the payment of milestone ${milestoneId}!`, freelancer);
+        return (data)
     } catch (err) {
         console.log(err)
     }

@@ -28,8 +28,8 @@ const ProjectCards = () => {
 
       {
         posts && posts.map(({ id, owner, createdOn, deadline, metadata: { projectName, projectDescription, priceFrom, priceTo, skillsRequired } }) => (
-          <Link key={id} href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired }) } }} as={`/project/${id}`} class="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
-            <h5 class="mb-1 text-xl font-bold tracking-tight">{projectName}</h5>
+          <Link key={id} href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired }) } }} as={`/project/${id}`} className="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+            <h5 className="mb-1 text-xl font-bold tracking-tight">{projectName}</h5>
             <div className='flex justify-between text-sm mb-4'>
               <div>
                 <h2 className='font-mono font-semibold my-1'>Published On: {moment.unix(createdOn).format("MM/DD/YYYY")}</h2>
@@ -37,7 +37,7 @@ const ProjectCards = () => {
               </div>
               <p>Budget: {priceFrom} - {priceTo}</p>
             </div>
-            <p class="font-normal text-gray-700">{projectDescription}</p>
+            <p className="font-normal text-gray-700">{projectDescription}</p>
             <div className='flex flex-wrap gap-3'>
               {skillsRequired && skillsRequired.map((skill) => (
                 <p key={skill} className='text-palatte4 my-4'>{skill}</p>

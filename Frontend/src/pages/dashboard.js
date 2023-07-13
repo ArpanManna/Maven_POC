@@ -1,7 +1,7 @@
 import Nav from '@/components/Nav'
 import Modal from '@/components/UI/Modal';
 import { OptInChannel, sendNotifications } from '@/lib/pushProtocol';
-import { getProjectsByUser } from '@/utils/service';
+import { getProjectsByUser, processPayment, transferMilestone } from '@/utils/service';
 import { useWeb3 } from '@3rdweb/hooks'
 import moment from 'moment';
 import React, { useEffect, useState } from 'react'
@@ -14,11 +14,6 @@ const Dashboard = () => {
   const [user, setUser] = useState('');
   const [milestoneId, setMilestoneId] = useState('');
 
-  const handleSendNotification = async () => {
-    // const subscribe = await OptInChannel(address, provider);
-    const res = sendNotifications(provider.getSigner(), "Push Protocol Testing", "Sending Message from account 1 to account 4. (Messgae 3)", "0x902c3bdF5c0d54fB0eC901AFF8293f14750c6d45")
-  }
-
   useEffect(() => {
     if (chainId) getProjectByAddress()
   }, [chainId]);
@@ -30,11 +25,25 @@ const Dashboard = () => {
     setLoading(false);
   }
 
-  const handleOpenModel = (user, id) => {
-    setModalStatus(true);
-    setUser(user)
-    setMilestoneId(id)
+  // const handleOpenModel = (user, id) => {
+  //   setModalStatus(true);
+  //   setUser(user)
+  //   setMilestoneId(id)
+  // }
+
+  const handleProcessPayment = async(projectId, milestoneId, owner) => {
+    const res = await processPayment(chainId, provider, projectId, milestoneId, owner);
   }
+
+  const handleTransferOwnership = async(projectId, milestoneId, freelancer) => {
+    const res = await transferMilestone(chainId, provider, projectId, milestoneId, freelancer);
+  }
+
+  const handleDispute = async(projectId, milestoneId) => {
+
+  }
+
+
 
   const Milestones = [
     {
@@ -60,12 +69,12 @@ const Dashboard = () => {
     }
   ]
 
+  console.log(projects)
   return (
     <>
       <Nav />
       {loading && <p className='text-center py-12'>Loading...</p>}
       <div className='px-8 py-4 '>
-        {/* <button className='border px-4 py-2 bg-green-300' onClick={handleSendNotification}>Send Notification</button> */}
         {
           projects && projects.map(({ post: {id, createdOn, owner, fileURI, status, metadata: { projectName, projectDescription }, deadline, finalBid, lowestBid, highestBid}, bid: {freelancer, deliveryTime, bidPrice, milestones, proposal}}) => (
             <div key={id} className='p-8'>
@@ -83,7 +92,7 @@ const Dashboard = () => {
                   <h2 className='my-2 font-semibold text-lg text-center'>Minestones</h2>
 
                   <hr />
-                  {Milestones.map(({ title, milestoneAmount, NFTId, milOwner, status }) => (
+                  {/* {Milestones.map(({ title, milestoneAmount, NFTId, milOwner, status }) => (
                     <div key={NFTId} className='flex justify-between gap-4 p-3 border shadow-md rounded-md'>
                       <h2 className='text-md font-mono py-2'>{title}</h2>
                       <h2 className='text-md font-mono py-2'>{NFTId}</h2>
@@ -98,6 +107,30 @@ const Dashboard = () => {
                       <button onClick={() => handleOpenModel(owner, NFTId)} className='text-md font-mono bg-blue-200 px-4 py-2'>Raise Dispute</button>
                     </div>
 
+                  ))} */}
+                  {/* <div className='flex justify-between gap-4 p-3 border shadow-md rounded-md'>
+                    <h2 className='text-md font-mono py-2'>Milestone</h2>
+                    <h2 className='text-md font-mono py-2'>NFTId</h2>
+                    <h2 className='text-md font-mono py-2'>Owner</h2>
+                    <h2 className='text-md font-mono py-2'>Milestone Amount</h2>
+                    <h2 className='text-md font-mono py-2'>status</h2>
+                  </div> */}
+                  {milestones && milestones.map((milestone, index) => (
+                    <div key={index} className='flex justify-between gap-4 p-3 border shadow-md rounded-md'>
+                    <h2 className='text-md font-mono py-2'>{"title"}</h2>
+                    <h2 className='text-md font-mono py-2'>{"NFTId"}</h2>
+                    <h2 className='text-md font-mono py-2'>{"milOwner"}</h2>
+                    <h2 className='text-md font-mono py-2'>{milestone.toNumber()}</h2>
+                    <h2 className='text-md font-mono py-2'>{status}</h2>
+                    <h2 className='text-md font-mono py-2'>{" "}</h2>
+                    <h2 className='text-md font-mono py-2'>{" "}</h2>
+                    {
+                      address === owner ?
+                        <button onClick={() => handleProcessPayment(id, index, freelancer)} className='text-md font-mono bg-blue-200 px-4 py-2'>Process Payment</button> :
+                        <button onClick={() => handleTransferOwnership(id, index, owner)} className='text-md font-mono bg-blue-200 px-4 py-2'>Transfer Ownership</button>
+                    }
+                    <button onClick={() => handleOpenModel(owner, index)} className='text-md font-mono bg-blue-200 px-4 py-2'>Raise Dispute</button>
+                  </div>
                   ))}
                 </div>
 

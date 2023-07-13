@@ -21,7 +21,7 @@ export function Tabs({ children }) {
       <div className="flex gap-2 justify-start border-b">
         {children.map((item, i) => {
           return (
-            <>
+            <div key={i}>
               {tabValidator(item) && (
                 <Tab
                   key={`tab-{i}`}
@@ -32,7 +32,7 @@ export function Tabs({ children }) {
                   {item.props.children}
                 </Tab>
               )}
-            </>
+            </div>
           );
         })}
       </div>

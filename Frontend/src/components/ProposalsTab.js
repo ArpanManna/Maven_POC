@@ -2,12 +2,16 @@ import { useIsMounted } from '@/lib/hooks/us-is-mounted'
 import { getJobProposalsByID, selectBid } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
 import React, { useEffect, useState } from 'react'
+import Spinner from './UI/Spinner'
 
 const ProposalsTab = ({ id, proposals, projectOwner }) => {
+  const [loading, setLoading] = useState(false);
   const {address, chainId, provider} = useWeb3();
 
     const handleBidSelection = async (bidId, bidOwner, bidPrice) => {
-      const res = await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice)
+      setLoading(true);
+      const res = await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice);
+      setLoading(false);
     }
 
   return (
@@ -15,7 +19,7 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
       <>
         {
           proposals.map(({ proposalId, bidPrice, owner, estimatedTimeline, milestones, proposal }, index) => (
-            <div key={index} class="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+            <div key={index} className="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
               <div className='grid grid-cols-4 gap-2'>
                 <div className='flex justify-center py-6 rounded-full'>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
@@ -40,12 +44,12 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
                 </div>
 
               </div>
-              <h5 class="my-4  tracking-tight">{proposal}</h5>
+              <h5 className="my-4  tracking-tight">{proposal}</h5>
               <div className='flex justify-between text-sm mb-4'>
                 {/* <p>Budget: {budget}</p> */}
                 {/* <p>Deadline: {deadline}</p> */}
               </div>
-              {/* <p class="font-normal text-gray-700">{"description"}</p> */}
+              {/* <p className="font-normal text-gray-700">{"description"}</p> */}
               {/* <div className='flex flex-wrap gap-3'>
                {skillsRequired.map((skill) => (
               <p key={skill} className='text-palatte4 my-4'>{skill}</p>
@@ -57,8 +61,9 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
                 {
                   address === projectOwner && 
                 <>
+                {loading ? <Spinner /> : 
                 <button className='border px-4 py-3 rounded-md bg-blue-500 text-white' onClick={() => handleBidSelection(index, owner, bidPrice * 1.05)}>Select Bid</button>
-                <p className='text-sm'> Total amount to pay: {bidPrice * 1.05}</p>
+                 } <p className='text-sm'> Total amount to pay: {bidPrice * 1.05}</p>
                 </>
                 }</div>
             </div>

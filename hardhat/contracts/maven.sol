@@ -218,6 +218,7 @@ contract Maven is ERC721URIStorage, Registry{
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         Bid memory _bid = projectIdToBids[projectId][bidId];
         require(milestoneIndex < _bid.milestonePrices.length, "Milestone Index not valid");
+        require(ownerOf(projectIdToBids[projectId][bidId].tokens[milestoneIndex]) == msg.sender, "Milestone ownership not transfered");
         uint amountToPay = _bid.milestonePrices[milestoneIndex];
         address freelancer = _bid.freelancer;
         payable(freelancer).transfer(amountToPay);

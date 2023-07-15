@@ -3,10 +3,10 @@ import { placeBid } from '@/utils/service';
 import { useWeb3 } from '@3rdweb/hooks';
 import moment from 'moment';
 import React, { useCallback, useState } from 'react'
-import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Spinner from './UI/Spinner';
 import ToastMessage from './UI/Toast';
+import { DatePicker } from 'antd';
 
 const PlaceBidForm = ({ id, projectOwner }) => {
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       setLoading(true);
       let milestoneArray = milestones.map(({ price, ...rest }) => price);
       const expectedTimeline = moment(deadline).unix()
-      const proposalURI = await uploadFileToIPFS(JSON.stringify(proposal))
+      const proposalURI = await uploadFileToIPFS(JSON.stringify({proposal, milestones}))
       try{
         await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner)
       } catch {
@@ -70,6 +70,9 @@ const PlaceBidForm = ({ id, projectOwner }) => {
     ToastMessage({ type, title, body });
   }, []);
 
+  const handleDeadlineChange = (date, dateString) => {
+    setDeadline(date);
+  };
 
   return (
     <div className='container border-t-2'>
@@ -77,7 +80,8 @@ const PlaceBidForm = ({ id, projectOwner }) => {
         <h2 className='text-lg py-2 border-b font-mono font-semibold'> Place a bid on this project</h2>
         <p className='text-sm my-6 font-medium'> You will be able to edit your bid until the project is awarded to someone.</p>
         <input id="bidPrice" name="bidPrice" value={bidPrice} onChange={handleFormChange} type="text" required="" placeholder="Your bid price" className="block px-5 py-3 text-mono text-gray-800 font-bold placeholder-gray-400 placeholder:font-bold transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-100 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
-        <Calendar onChange={setDeadline} showWeekNumbers className="my-6" value={deadline} />
+        <h2 className='text-lg pt-6 pb-2 font-mono font-semibold'>Expected Deadline</h2>
+        <DatePicker onChange={handleDeadlineChange} className='border-gray-600'/>
         <h2 className='text-lg pt-6 pb-2 font-mono font-semibold'>Describe your proposal (minimum 100 characters)</h2>
         <div className="relative">
           <textarea id="proposal" name="proposal" value={proposal} onChange={handleFormChange} className="w-full bg-gray-100 mt-1 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white h-32 text-base outline-none text-gray-800 py-1 px-3 resize-none leading-6 transition-colors focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 duration-200 ease-in-out" />

@@ -19,7 +19,7 @@ const ProjectDetailTab = ({id, projectDescription, projectOwner, skillsRequired,
                 </p>
                 <h2 className='text-lg font-semibold'> Skills:</h2>
                 <div className='flex flex-wrap gap-4'>
-                    {skillsRequired.map((skill) => (
+                    {skillsRequired && skillsRequired.map((skill) => (
                     <p key={skill} className='font-semibold my-4 border-2 rounded-lg px-3 py-1'>{skill}</p>
                     ))}
                 </div>

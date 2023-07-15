@@ -1,5 +1,5 @@
 import { useIsMounted } from '@/lib/hooks/us-is-mounted';
-import { getAllJobPosts } from '@/utils/service';
+import { getAllJobPosts, getTotalBids } from '@/utils/service';
 import { useWeb3 } from '@3rdweb/hooks';
 import moment from 'moment';
 import Link from 'next/link'
@@ -22,12 +22,19 @@ const ProjectCards = () => {
     setLoading(false);
   }
 
+  // const fetchTotalBids = async(projectId) => {
+  //   const res = await getTotalBids(chainId, provider, projectId);
+  //   console.log(res)
+  //   return res.toNumber();
+  // }
+  console.log(posts)
+
   return (
     <>
       {loading && <p className='text-center py-12'>Loading...</p>}
 
       {
-        posts && posts.map(({ id, owner, createdOn, deadline, metadata: { projectName, projectDescription, priceFrom, priceTo, skillsRequired } }) => (
+        posts && posts.map(({ id, owner, createdOn, deadline, bidCount, metadata: { projectName, projectDescription, priceFrom, priceTo, skillsRequired } }) => (
           <Link key={id} href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired }) } }} as={`/project/${id}`} className="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
             <h5 className="mb-1 text-xl font-bold tracking-tight">{projectName}</h5>
             <div className='flex justify-between text-sm mb-4'>
@@ -44,7 +51,7 @@ const ProjectCards = () => {
               ))}
             </div>
             <div className='flex justify-between font-bold text-sm'>
-              <p>20 Bids</p>
+              <p>{bidCount} Bids</p>
               <p>2 Minutes ago</p>
             </div>
           </Link>

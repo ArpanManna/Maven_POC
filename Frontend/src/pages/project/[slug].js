@@ -1,10 +1,10 @@
 import Nav from '@/components/Nav'
 import ProjectDetailTab from '@/components/ProjectDetailTab'
 import ProposalsTab from '@/components/ProposalsTab'
-import { Tab, Tabs } from '@/components/Tabs'
 import { useIsMounted } from '@/lib/hooks/us-is-mounted'
 import { getJobProposalsByID } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
+import { Tabs } from 'antd'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
@@ -14,9 +14,22 @@ const ProjectDetail = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
   const data = router.query;
-  // if (!data.post) router.push('/browse')
   const jobDetail = JSON.parse(data.post)
   const {id, projectName, projectDescription, owner, skillsRequired, currency, priceFrom, priceTo} = jobDetail;
+
+  const items = [
+    {
+      key: '1',
+      label: `Details`,
+      children: <ProjectDetailTab id ={id} projectOwner={owner} projectName={projectName} projectDescription={projectDescription} skillsRequired={skillsRequired} currency={currency} priceFrom={priceFrom} priceTo={priceTo} />,
+    },
+    {
+      key: '2',
+      label: `Proposals`,
+      children: <ProposalsTab id={id} proposals={proposals} projectOwner={owner}/>,
+    }
+  ];
+
 
   useEffect(() => {
     if (chainId && isMounted) getAllProposals();
@@ -45,13 +58,15 @@ const ProjectDetail = () => {
           </div>
 
         </div>
-
+{/* 
         <Tabs>
           <Tab component={<ProjectDetailTab id ={id} projectOwner={owner} projectName={projectName} projectDescription={projectDescription} skillsRequired={skillsRequired} currency={currency} priceFrom={priceFrom} priceTo={priceTo} />} active>Details</Tab>
           <Tab component={<ProposalsTab id={id} proposals={proposals} projectOwner={owner}/>}>
             Proposals
           </Tab>
-        </Tabs>
+        </Tabs> */}
+      <Tabs defaultActiveKey="1" items={items} />
+
       </div>
     </div>
   )

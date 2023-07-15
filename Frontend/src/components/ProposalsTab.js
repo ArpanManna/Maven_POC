@@ -3,16 +3,17 @@ import { getJobProposalsByID, selectBid } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
 import React, { useEffect, useState } from 'react'
 import Spinner from './UI/Spinner'
+import moment from 'moment'
 
 const ProposalsTab = ({ id, proposals, projectOwner }) => {
   const [loading, setLoading] = useState(false);
-  const {address, chainId, provider} = useWeb3();
+  const { address, chainId, provider } = useWeb3();
 
-    const handleBidSelection = async (bidId, bidOwner, bidPrice) => {
-      setLoading(true);
-      const res = await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice);
-      setLoading(false);
-    }
+  const handleBidSelection = async (bidId, bidOwner, bidPrice) => {
+    setLoading(true);
+    const res = await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice);
+    setLoading(false);
+  }
 
   return (
     <div className='container text-black p-4'>
@@ -29,22 +30,24 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
 
                 <div className='col-span-3 text-left'>
                   <div className='flex flex-wrap gap-4'>
-                     <h2 className='font-bold text-2xl'>
-                    Tek Raj Joshi
-                  </h2>
-                  <h2 className='font-medium text-2xl'>
-                    {owner.slice(0, 6)}
-                    {'...'}
-                    {owner.slice(owner.length - 6)}
-                  </h2>
+                    {/* <h2 className='font-bold text-2xl'>
+                      Tek Raj Joshi
+                    </h2> */}
+                    <h2 className='font-medium text-2xl'>
+                      {owner.slice(0, 6)}
+                      {'...'}
+                      {owner.slice(owner.length - 6)}
+                    </h2>
                   </div>
-                 
-                  <h2 className='font-medium text-2xl'>$ {bidPrice}</h2>
-                  <h2 className='font-medium text-xl'>{estimatedTimeline}</h2>
+
+                  <h2 className='text-md'>Bid Price: {bidPrice} wei</h2>
+                  <h2 className='text-md'>Deadline: {moment.unix(estimatedTimeline).format("MM/DD/YYYY")}</h2>
+                  <h5 className="text-md">Milestones: {proposal.milestones.length}</h5>
+
                 </div>
 
               </div>
-              <h5 className="my-4  tracking-tight">{proposal}</h5>
+              <h5 className="my-4  tracking-tight">{proposal.proposal}</h5>
               <div className='flex justify-between text-sm mb-4'>
                 {/* <p>Budget: {budget}</p> */}
                 {/* <p>Deadline: {deadline}</p> */}
@@ -59,12 +62,12 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
                 {/* <p>{totalBids} Bids</p> */}
                 <p>2 Minutes ago</p>
                 {
-                  address === projectOwner && 
-                <>
-                {loading ? <Spinner /> : 
-                <button className='border px-4 py-3 rounded-md bg-blue-500 text-white' onClick={() => handleBidSelection(index, owner, bidPrice * 1.05)}>Select Bid</button>
-                 } <p className='text-sm'> Total amount to pay: {bidPrice * 1.05}</p>
-                </>
+                  address === projectOwner &&
+                  <>
+                    {loading ? <Spinner /> :
+                      <button className='border px-4 py-3 rounded-md bg-blue-500 text-white' onClick={() => handleBidSelection(index, owner, bidPrice * 1.05)}>Select Bid</button>
+                    } <p className='text-sm'> Total amount to pay: {bidPrice * 1.05}</p>
+                  </>
                 }</div>
             </div>
           ))

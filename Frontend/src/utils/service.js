@@ -38,14 +38,15 @@ export const getAllJobPosts = async (chainId, provider) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getAllProjectsBidding();
-        console.log(data)
         let posts = []
 
         await async.eachLimit(data, 100, async (_data) => {
             let post = ({ id: _data[0].toString(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toString(), highestBid: _data[4].toString(), createdOn: _data[7].toString(), deadline: _data[8].toString(), finalBid: _data[9].toString(), status: _data[10] })
             const metadataRes = await getIPFSResponse(_data[5])
             const JDRes = await getIPFSResponse(_data[6])
-            post = ({ ...post, metadata: metadataRes, fileURI: JDRes })
+            const bidCount = await getTotalBids(chainId, provider, _data[0].toString());
+            console.log(bidCount);
+            post = ({ ...post, metadata: metadataRes, fileURI: JDRes, bidCount })
             posts.push(post)
         });
         return posts;
@@ -99,10 +100,10 @@ const getProjectById = async (chainId, provider, projectId) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getProjectDetails(projectId.toNumber());
-        let post = ({ id: data[0].toString(), owner: data[1], freelancer: data[2], lowestBid: data[3].toString(), highestBid: data[4].toString(), createdOn: data[7].toString(), deadline: data[8].toString(), finalBid: data[9].toString(), status: data[10] })
+        let post = ({ id: data[0].toString(), metadataURI: data[5], owner: data[1], freelancer: data[2], lowestBid: data[3].toString(), highestBid: data[4].toString(), createdOn: data[7].toString(), deadline: data[8].toString(), finalBid: data[9].toString(), status: data[10] })
         const metadataRes = await getIPFSResponse(data[5])
         const JDRes = await getIPFSResponse(data[6])
-        post = ({ ...post, metadata: metadataRes, fileURI: JDRes })
+        post = ({ ...post, metadata: metadataRes, file: JDRes })
         return post
     } catch (err) {
         console.log(err)
@@ -113,14 +114,16 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getBidDetails(projectId.toNumber(), bidId);
-        console.log(data)
-        let bid = ({ projectId: data[0].toString(), freelancer: data[1], bidPrice: data[2].toString(), deliveryTime: data[3].toString(), milestones: data[5] })
-        const proposal = await getIPFSResponse(data[4])
-        bid = ({ ...bid, proposal })
-        return bid
+        let bid = ({ projectId: data[0].toString(), freelancer: data[1], bidPrice: data[2].toString(), deliveryTime: data[3].toString()})
+        let proposal = await getIPFSResponse(data[4])
+        console.log(data[6])
+        data[6].forEach((tokenId, index) => {
+            proposal.milestones[index].tokenId = tokenId.toNumber() ;
+        })
+        bid = ({ ...bid, proposal});
+        return bid;
     } catch (err) {
         return  {}
-        console.log(err)
     }
 };
 
@@ -134,9 +137,7 @@ export const getProjectsByUser = async (chainId, provider, address) => {
             let data = {}
             const post = await getProjectById(chainId, provider, projectId);
             data.post = post;
-            console.log(post)
             const bidDetail = await getBidByBidId(chainId, provider, projectId, post.finalBid)
-            console.log(bidDetail)
             data.bid = bidDetail
             posts.push(data)
         });
@@ -163,6 +164,16 @@ export const processPayment = async (chainId, provider, projectId, milestoneId, 
         const data = await mavenContract.processMilestoneCompletion(projectId, milestoneId);
         await sendNotification(`Payment Credited`,  `You got the payment of milestone ${milestoneId}!`, freelancer);
         return (data)
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const getTotalBids = async (chainId, provider, projectId) => {
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
+    try {
+        const data = await mavenContract.getTotalBid(projectId);
+        return data.toNumber();
     } catch (err) {
         console.log(err)
     }

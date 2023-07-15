@@ -1,3 +1,4 @@
+import { ContextProvider } from '@/context';
 import { socketConnection } from '@/lib/Notify';
 import '@/styles/globals.css'
 import { ThirdwebWeb3Provider, useWeb3 } from "@3rdweb/hooks";
@@ -13,11 +14,12 @@ export default function App({ Component, pageProps }) {
   };
 
   return (
-    <ThirdwebWeb3Provider 
-    supportedChainIds={supportedChainIds}
-    connectors={connectors}
-  >
-          <ToastContainer
+    <ThirdwebWeb3Provider
+      supportedChainIds={supportedChainIds}
+      connectors={connectors}
+    >
+      <ContextProvider>
+      <ToastContainer
         position="top-center"
         autoClose={8000}
         hideProgressBar={false}
@@ -28,5 +30,6 @@ export default function App({ Component, pageProps }) {
         pauseOnHover
       />
       <Component {...pageProps} />
+      </ContextProvider>
     </ThirdwebWeb3Provider>)
 }

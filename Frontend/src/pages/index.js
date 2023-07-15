@@ -1,15 +1,11 @@
 import Image from 'next/image'
-// import { Inter } from 'next/font/google'
 import Nav from '@/components/Nav'
 import { sendNotification, socketConnection } from '@/lib/Notify'
 import { useWeb3 } from '@3rdweb/hooks'
 import { useCallback, useEffect, useState } from 'react'
-import { NotificationItem } from '@pushprotocol/uiweb'
 import { ToastContainer, toast } from "react-toastify";
 import ToastMessage from "@/components/UI/Toast";
 import { EVENTS, createSocketConnection } from '@pushprotocol/socket'
-
-// const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const { address } = useWeb3();

@@ -31,6 +31,8 @@ export const displayIcon = (type) => {
     }
 };
 
+const explorerUrl = "https://mumbai.polygonscan.com/tx/";
+
 const ToastMessage = ({ type, title, body }) =>
     toast[type](
         <div>
@@ -44,5 +46,22 @@ const ToastMessage = ({ type, title, body }) =>
     );
 
 ToastMessage.dismiss = toast.dismiss;
+
+
+export const TransactionToastMessage = ({ type, title, txHash }) =>
+    toast[type](
+        
+        <div className="p-2">
+            <h2 className="font-xs w-full">
+                Transaction {title} !!
+            </h2>
+            {txHash &&
+                <a href={`${explorerUrl}${txHash}`}
+                    target="__blank" className="underline hover:text-blue-600 mb-2 xs:mt-0 xs:tracking-widest">View on polyscan</a>
+            }
+        </div>
+    );
+
+TransactionToastMessage.dismiss = toast.dismiss;
 
 export default ToastMessage;

@@ -5,9 +5,21 @@ import axios from 'axios';
 import async from 'async';
 import { sendNotification } from "@/lib/Notify";
 
+const rpc = "https://polygon-mumbai.g.alchemy.com/v2/-a6_POS01b0lSBGeNnfc25nTbElQneFq";
+
 const initializeContract = (ContractAddress, ABI, auth) => {
     return new Contract(ContractAddress, ABI, auth)
 }
+
+const getTransactionStatus = async(txHash) => {
+    const provider = new ethers.providers.JsonRpcProvider(rpc);
+    try{
+        const txReceipt = await provider.waitForTransaction(txHash);
+        return txReceipt.status;
+    } catch {
+        return 0;
+    }
+};
 
 const getIPFSResponse = async (uri) => {
     let config = {
@@ -24,11 +36,14 @@ const getIPFSResponse = async (uri) => {
     }
 }
 
-export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, priceTO, fileURI, deadline) => {
+export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, priceTO, fileURI, deadline, txNotify) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
-        const data = await mavenContract.createProject(metaDataURI, priceFrom, priceTO, fileURI, deadline)
-        return (data)
+        const tx = await mavenContract.createProject(metaDataURI, priceFrom, priceTO, fileURI, deadline)
+        txNotify("success", "Sent", tx.hash);
+        const txStatus = await getTransactionStatus(tx.hash);
+        if (txStatus === 1) txNotify("success", "Successful", tx.hash);
+        else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
     }
@@ -45,7 +60,6 @@ export const getAllJobPosts = async (chainId, provider) => {
             const metadataRes = await getIPFSResponse(_data[5])
             const JDRes = await getIPFSResponse(_data[6])
             const bidCount = await getTotalBids(chainId, provider, _data[0].toString());
-            console.log(bidCount);
             post = ({ ...post, metadata: metadataRes, fileURI: JDRes, bidCount })
             posts.push(post)
         });

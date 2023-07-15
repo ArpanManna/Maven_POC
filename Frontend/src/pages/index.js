@@ -1,9 +1,6 @@
-import Image from 'next/image'
 import Nav from '@/components/Nav'
-import { sendNotification, socketConnection } from '@/lib/Notify'
 import { useWeb3 } from '@3rdweb/hooks'
 import { useCallback, useEffect, useState } from 'react'
-import { ToastContainer, toast } from "react-toastify";
 import ToastMessage from "@/components/UI/Toast";
 import { EVENTS, createSocketConnection } from '@pushprotocol/socket'
 
@@ -23,20 +20,16 @@ export default function Home() {
       pushSDKSocket?.on(EVENTS.DISCONNECT, (err) => setDisconnected(true));
       pushSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) => console.log(message))
       pushSDKSocket?.on(EVENTS.USER_FEEDS, (notification) => {
-        notify("success", notification.payload.notification.title, notification.payload.notification.body)
-        console.log(notification)
+        simpleNotify("success", notification.payload.notification.title, notification.payload.notification.body)
       })
       pushSDKSocket?.on(EVENTS.USER_SPAM_FEEDS, (spam) => console.log(spam))
     }
   }, [address, disconnected])
 
-  const notify = useCallback((type, title, body) => {
+  const simpleNotify = useCallback((type, title, body) => {
     ToastMessage({ type, title, body });
   }, []);
 
-  // useEffect(() => {
-  //   sendNotification("Hii", "Kuch Bhi Nahi", "0xa67E9B68c41b0f26184D64C26e0b2B81466E5994");
-  // },[])
   return (
     <>
       <Nav />

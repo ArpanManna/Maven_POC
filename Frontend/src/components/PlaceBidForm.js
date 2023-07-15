@@ -6,7 +6,7 @@ import React, { useCallback, useState } from 'react'
 import 'react-calendar/dist/Calendar.css';
 import Spinner from './UI/Spinner';
 import ToastMessage from './UI/Toast';
-import { DatePicker } from 'antd';
+import { DatePicker, Input } from 'antd';
 
 const PlaceBidForm = ({ id, projectOwner }) => {
   const [loading, setLoading] = useState(false);
@@ -79,12 +79,13 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       <div className='p-4'>
         <h2 className='text-lg py-2 border-b font-mono font-semibold'> Place a bid on this project</h2>
         <p className='text-sm my-6 font-medium'> You will be able to edit your bid until the project is awarded to someone.</p>
-        <input id="bidPrice" name="bidPrice" value={bidPrice} onChange={handleFormChange} type="text" required="" placeholder="Your bid price" className="block px-5 py-3 text-mono text-gray-800 font-bold placeholder-gray-400 placeholder:font-bold transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-100 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
+        {/* <input id="bidPrice" name="bidPrice" value={bidPrice} onChange={handleFormChange} type="text" required="" placeholder="Your bid price" className="block px-5 py-3 text-mono text-gray-800 font-bold placeholder-gray-400 placeholder:font-bold transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-100 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" /> */}
+        <Input id="bidPrice" name="bidPrice" value={bidPrice} onChange={handleFormChange}  required="" placeholder="Your bid price" />
         <h2 className='text-lg pt-6 pb-2 font-mono font-semibold'>Expected Deadline</h2>
         <DatePicker onChange={handleDeadlineChange} className='border-gray-600'/>
         <h2 className='text-lg pt-6 pb-2 font-mono font-semibold'>Describe your proposal (minimum 100 characters)</h2>
         <div className="relative">
-          <textarea id="proposal" name="proposal" value={proposal} onChange={handleFormChange} className="w-full bg-gray-100 mt-1 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white h-32 text-base outline-none text-gray-800 py-1 px-3 resize-none leading-6 transition-colors focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 duration-200 ease-in-out" />
+          <textarea id="proposal" maxLength={400} name="proposal" value={proposal} onChange={handleFormChange} className="w-full bg-gray-100 mt-1 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white h-32 text-base outline-none text-gray-800 py-1 px-3 resize-none leading-6 transition-colors focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 duration-200 ease-in-out" />
         </div>
         <h2 className='text-lg pt-3 font-mono font-semibold'>Milestones</h2>
         {milestones.map((milestone, index) => {

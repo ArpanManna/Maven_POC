@@ -35,6 +35,8 @@ contract Maven is ERC721URIStorage, Registry{
         address addr;
         string uri;
         ProfileType _type;
+        uint tokenId;
+        address tba;
     }
 
     struct Project{
@@ -75,23 +77,42 @@ contract Maven is ERC721URIStorage, Registry{
     }
 
     event ProjectCreated(uint projectId, address client);
+    event BidCreated(uint projectId, uint bidId, address bidder);
     event FreeLancerSelected(uint projectId, address client, address freelancer);
     event PaymentReleased(uint projectId, uint milestoneId, uint amount, address freelancer);
 
     function createProfile(string memory _type, string memory _uri) public {
         require(profile[msg.sender].addr == address(0), "Profile already created!");
-        if(compare(_type, "client")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Client);
-        else if(compare(_type, "freelancer")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Freelancer);
+        (uint newTokenId, address tba) = mintTokenAndTba(msg.sender, _uri);
+        if(compare(_type, "client")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Client, newTokenId, tba);
+        else if(compare(_type, "freelancer")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Freelancer, newTokenId, tba);
     }
 
-    function getProfile() public view returns(Profile memory) {
-        require(profile[msg.sender].addr != address(0), "No such Profile address exists!");
-        return profile[msg.sender];
+    function getProfile(address _addr) public view returns(Profile memory) {
+        require(profile[_addr].addr != address(0), "No such Profile address exists!");
+        return profile[_addr];
     }
 
+    // @dev - this function mints a new NFT id and Token Bound address
+    function mintTokenAndTba(address _to, string memory _uri) internal returns(uint, address){
+        _tokenIds.increment();
+        uint newTokenId = _tokenIds.current();
+        _mint(_to, newTokenId);
+        _setTokenURI(newTokenId, _uri);
+        address tba = _createAccount(block.chainid, address(this), newTokenId);
+        return (newTokenId, tba);
+    }
+
+    function mintToken(address _to, string memory _uri) internal returns(uint){
+        _tokenIds.increment();
+        uint newTokenId = _tokenIds.current();
+        _mint(_to, newTokenId);
+        _setTokenURI(newTokenId, _uri);
+        return (newTokenId);
+    }
     function updateProfile(address _addr, string memory _uri) public {
         require(profile[msg.sender].addr != address(0), "Profile do not exist");
-        profile[_addr] = Profile(msg.sender, _uri, profile[msg.sender]._type);
+        profile[_addr] = Profile(msg.sender, _uri, profile[msg.sender]._type, profile[msg.sender].tokenId, profile[msg.sender].tba);
     }
 
     function createProject(string memory _uri, uint lbid, uint ubid, string memory _JDuri, uint deadline) external returns(uint){
@@ -102,12 +123,8 @@ contract Maven is ERC721URIStorage, Registry{
         _projectIdsInBidding.increment();
         projectProfiles[msg.sender].push(newProjectId);
         emit ProjectCreated(newProjectId, msg.sender);
-        _tokenIds.increment();
-        uint newTokenId = _tokenIds.current();
-        _mint(msg.sender, newTokenId);
+        (uint newTokenId, address tba) = mintTokenAndTba(msg.sender, _uri);
         projectTokenId[newProjectId] = newTokenId;
-        _setTokenURI(newTokenId, _uri);
-        address tba = _createAccount(block.chainid, address(this), newTokenId);
         tokenIds[newTokenId] = tba;
         return newProjectId;
     }
@@ -171,6 +188,7 @@ contract Maven is ERC721URIStorage, Registry{
         require(!checkAlreadyBid(_projectId, msg.sender), "Freelancer already bid for this project!");
         Bid memory newBid = Bid(_projectId, msg.sender, bidPrice, time, proposalUri, milestonePrices, new uint[](0));
         projectIdToBids[_projectId].push(newBid);
+        emit BidCreated(_projectId, projectIdToBids[_projectId].length-1, msg.sender);
     }
 
 
@@ -203,9 +221,7 @@ contract Maven is ERC721URIStorage, Registry{
         // create Milestones NFT
         uint maxMilestoneCount = projectIdToBids[projectId][bidId].milestonePrices.length;
         for(uint i=0; i< maxMilestoneCount; i++){
-            _tokenIds.increment();
-            uint newTokenId = _tokenIds.current();
-            _mint(tba, newTokenId);
+            uint newTokenId = mintToken(tba, "");
             projectIdToBids[projectId][bidId].tokens.push(newTokenId);
         }
         safeTransferFrom(msg.sender, winnerBidder, jobTokenId);
@@ -243,9 +259,9 @@ contract Maven is ERC721URIStorage, Registry{
 
     // @dev returns the projects Ids corresponding to particular address
     // @dev client : projects, freelancers : projects working on
-    function getProjectProfile() public view returns(uint[] memory){
-        require(projectProfiles[msg.sender].length != 0, "Not a valid Client or Freelancer Profile");
-        return projectProfiles[msg.sender];
+    function getProjectProfile(address _addr) public view returns(uint[] memory){
+        require(projectProfiles[_addr].length != 0, "Not a valid Client or Freelancer Profile");
+        return projectProfiles[_addr];
     }
 
     // internal string matching function

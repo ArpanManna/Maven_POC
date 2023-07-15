@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/interfaces/IERC1271.sol";
-import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "../node_modules/@openzeppelin/contracts/interfaces/IERC1271.sol";
+import "../node_modules/@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
+import "../node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./MinimalReceiver.sol";
 import "./IAccount.sol";
 import "./MinimalProxyStore.sol";
@@ -119,7 +119,7 @@ contract ERC6551Account is IERC165, IERC1271, IAccount, MinimalReceiver {
 
 
     function isAuthorized(address caller) external view returns (bool) {
-        (uint256 chainId, address tokenCollection, uint256 tokenId) = context();
+        (, address tokenCollection, uint256 tokenId) = context();
         address _owner = IERC721(tokenCollection).ownerOf(tokenId);
         if (caller == _owner) return true;
         address _executor = executor[_owner];

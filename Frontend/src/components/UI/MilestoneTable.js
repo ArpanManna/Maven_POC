@@ -1,22 +1,33 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { Space, Table } from 'antd';
 import { useWeb3 } from '@3rdweb/hooks';
 import { processPayment, transferMilestone } from '@/utils/service';
+import { TransactionToastMessage } from './Toast';
+import Spinner from './Spinner';
 
 const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, projectId}) => {
+  const [loading, setLoading] = useState(false);
   const {address, chainId, provider} = useWeb3();
 
   const handleProcessPayment = async (milestoneId) => {
-    await processPayment(chainId, provider, projectId, milestoneId, owner);
+    setLoading(true);
+    await processPayment(chainId, provider, projectId, milestoneId, freelancer, txNotify);
+    setLoading(false);
   }
 
   const handleTransferOwnership = async (milestoneId) => {
-    await transferMilestone(chainId, provider, projectId, milestoneId, freelancer);
+    setLoading(true);
+    await transferMilestone(chainId, provider, projectId, milestoneId, owner, txNotify);
+    setLoading(false);
   }
 
   const handleDispute = async (milestoneId) => {
 
   }
+
+  const txNotify = useCallback((type, title, txHash) => {
+    TransactionToastMessage({ type, title, txHash });
+  }, []);
 
   const data = [];
   for (let i = 0; i < milestones.length; i++) {
@@ -67,6 +78,9 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
   ];
 
   return (
+    <>
+          {loading && <Spinner />}
+
   <Table
     columns={columns}
     dataSource={data}
@@ -74,5 +88,6 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
       y: 240,
     }}
   />
+  </>
 )};
 export default MilestoneTable;

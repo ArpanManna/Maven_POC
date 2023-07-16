@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 const PushAPI = require('@pushprotocol/restapi');
 
 export const sendNotification = async (title, body, recipients) => {
+    console.log(title, body, recipients)
 const privateKey = "8fbaf6a89d80f1c6f774277e417cad7242d42dc3397baeda96a8be635b82adb3"
 const channel = "eip155:5:0x92D147e6f10730d38F8dC737F742501AE84472bD"
 

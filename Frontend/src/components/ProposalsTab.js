@@ -1,9 +1,10 @@
 import { useIsMounted } from '@/lib/hooks/us-is-mounted'
 import { getJobProposalsByID, selectBid } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Spinner from './UI/Spinner'
 import moment from 'moment'
+import { TransactionToastMessage } from './UI/Toast'
 
 const ProposalsTab = ({ id, proposals, projectOwner }) => {
   const [loading, setLoading] = useState(false);
@@ -11,9 +12,13 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
 
   const handleBidSelection = async (bidId, bidOwner, bidPrice) => {
     setLoading(true);
-    const res = await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice);
+    await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice, txNotify);
     setLoading(false);
   }
+
+  const txNotify = useCallback((type, title, txHash) => {
+    TransactionToastMessage({ type, title, txHash });
+  }, []);
 
   return (
     <div className='container text-black p-4'>

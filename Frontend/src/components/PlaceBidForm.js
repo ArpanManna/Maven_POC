@@ -5,7 +5,7 @@ import moment from 'moment';
 import React, { useCallback, useState } from 'react'
 import 'react-calendar/dist/Calendar.css';
 import Spinner from './UI/Spinner';
-import ToastMessage from './UI/Toast';
+import ToastMessage, { TransactionToastMessage } from './UI/Toast';
 import { DatePicker, Input } from 'antd';
 
 const PlaceBidForm = ({ id, projectOwner }) => {
@@ -55,19 +55,14 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       setLoading(true);
       let milestoneArray = milestones.map(({ price, ...rest }) => price);
       const expectedTimeline = moment(deadline).unix()
-      const proposalURI = await uploadFileToIPFS(JSON.stringify({proposal, milestones}))
-      try{
-        await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner)
-      } catch {
-        notify("error", "Failed!", "Transaction Failed!");
-  
-      }
+      const proposalURI = await uploadFileToIPFS(JSON.stringify({ proposal, milestones }))
+      await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify)
       setLoading(false);
     }
   }
 
-  const notify = useCallback((type, title, body) => {
-    ToastMessage({ type, title, body });
+  const txNotify = useCallback((type, title, txHash) => {
+    TransactionToastMessage({ type, title, txHash });
   }, []);
 
   const handleDeadlineChange = (date, dateString) => {
@@ -79,10 +74,9 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       <div className='p-4'>
         <h2 className='text-lg py-2 border-b font-mono font-semibold'> Place a bid on this project</h2>
         <p className='text-sm my-6 font-medium'> You will be able to edit your bid until the project is awarded to someone.</p>
-        {/* <input id="bidPrice" name="bidPrice" value={bidPrice} onChange={handleFormChange} type="text" required="" placeholder="Your bid price" className="block px-5 py-3 text-mono text-gray-800 font-bold placeholder-gray-400 placeholder:font-bold transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-100 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" /> */}
-        <Input id="bidPrice" name="bidPrice" value={bidPrice} onChange={handleFormChange}  required="" placeholder="Your bid price" />
+        <Input id="bidPrice" name="bidPrice" value={bidPrice} onChange={handleFormChange} required="" placeholder="Your bid price" />
         <h2 className='text-lg pt-6 pb-2 font-mono font-semibold'>Expected Deadline</h2>
-        <DatePicker onChange={handleDeadlineChange} className='border-gray-600'/>
+        <DatePicker onChange={handleDeadlineChange} className='border-gray-600' />
         <h2 className='text-lg pt-6 pb-2 font-mono font-semibold'>Describe your proposal (minimum 100 characters)</h2>
         <div className="relative">
           <textarea id="proposal" maxLength={400} name="proposal" value={proposal} onChange={handleFormChange} className="w-full bg-gray-100 mt-1 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white h-32 text-base outline-none text-gray-800 py-1 px-3 resize-none leading-6 transition-colors focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 duration-200 ease-in-out" />
@@ -115,7 +109,7 @@ const PlaceBidForm = ({ id, projectOwner }) => {
         {loading ? <Spinner /> :
           <button type="button" onClick={handleFormSubmit} className="text-white bg-gradient-to-r mt-2 from-blue-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4">Place Bid</button>
         }
-        </div>
+      </div>
     </div>
   )
 }

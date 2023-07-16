@@ -41,6 +41,7 @@ const Accordion = () => {
             {
                 projects && projects.map(({ bid, post }) => (
                     <Collapse className='my-4'
+                    key={post.id}
                         collapsible="header"
                         defaultActiveKey={['1']}
                         items={[

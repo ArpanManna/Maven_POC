@@ -4,6 +4,12 @@ import { useWeb3 } from '@3rdweb/hooks';
 import moment from 'moment';
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import avatar1 from "../assets/imgs/avatar1.svg"
+import avatar2 from "../assets/imgs/avatar2.svg"
+import avatar3 from "../assets/imgs/avatar3.svg"
+import avatar4 from "../assets/imgs/avatar4.svg"
+import Image from 'next/image';
+
 
 const ProjectCards = () => {
   const [posts, setPosts] = useState([]);
@@ -27,36 +33,42 @@ const ProjectCards = () => {
   //   console.log(res)
   //   return res.toNumber();
   // }
-  console.log(posts)
-
+  if (loading) return (<p className='text-center py-12'>Loading...</p>)
+  if (posts.length === 0) return (<div className='text-center my-8'>
+  <p className='font-mono font-lg'>No projects to show!</p>
+</div>)
   return (
     <>
-      {loading && <p className='text-center py-12'>Loading...</p>}
-
-      {
-        posts && posts.map(({ id, owner, createdOn, deadline, bidCount, metadata: { projectName, projectDescription, priceFrom, priceTo, skillsRequired } }) => (
-          <Link key={id} href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired }) } }} as={`/project/${id}`} className="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
-            <h5 className="mb-1 text-xl font-bold tracking-tight">{projectName}</h5>
-            <div className='flex justify-between text-sm mb-4'>
-              <div>
-                <h2 className='font-mono font-semibold my-1'>Published On: {moment.unix(createdOn).format("MM/DD/YYYY")}</h2>
-                <h2 className='font-mono font-semibold '>Deadline: {moment.unix(deadline).format("MM/DD/YYYY")}</h2>
+      <div className="container mx-auto px-12 py-2 grid grid-cols-2 gap-6 items-center">
+        {
+          posts && posts.map(({ id, owner, createdOn, deadline, bidCount, metadata: { projectName, projectDescription, priceFrom, priceTo, skillsRequired } }) => (
+            <div key={id} className="border bg-palatte5 shadow-sm rounded-lg p-8 items-center text-center h-xl w-xl">
+              <div className='grid grid-cols-6 gap-2'>
+                <Image src={avatar1} alt="avatar" className='col-span-1' height={55} width={55} />
+                <div className='text-start col-span-5 '>
+                  <h1 className="title-font sm:text-lg text-xl font-medium text-gray-900">{projectName && (projectName.length > 60 ? projectName.slice(0, 60) : projectName)}</h1>
+                  <p>0x...{owner.slice(owner.length - 6)}</p>
+                  <div className='flex justify-between'>
+                   <h2 className='font-mono font-semibold my-1'>Published On: {moment.unix(createdOn).format("MM/DD/YYYY")}</h2>
+                   <h2 className='font-mono font-semibold '>Deadline: {moment.unix(deadline).format("MM/DD/YYYY")}</h2>
+                 </div>
+                  <p className="my-4 leading-relaxed">{projectDescription && (projectDescription.length > 160 ? projectDescription.slice(0, 160) : projectDescription)}...</p>
+                  <div className='flex flex-wrap gap-3'>
+                 {skillsRequired && skillsRequired.map((skill) => (
+                  <button key={skill} className='text-palatte4 border text-xs rounded-xl border-gray-700 px-3 py-1'>{skill}</button>
+                ))}
               </div>
-              <p>Budget: {priceFrom} - {priceTo}</p>
+                </div>
+              </div>
+              <div className='flex justify-between mt-4'>
+                  <p className='text-lg mt-1'>{bidCount} Bids</p>
+                 <p className='font-mono mt-2'>Budget: {priceFrom} wei - {priceTo} wei</p>
+                   <Link href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired }) } }} as={`/project/${id}`} className='bg-palatte1 text-white cursor-pointer px-4 rounded-2xl py-2'>More Info</Link>
+              </div>
             </div>
-            <p className="font-normal text-gray-700">{projectDescription}</p>
-            <div className='flex flex-wrap gap-3'>
-              {skillsRequired && skillsRequired.map((skill) => (
-                <p key={skill} className='text-palatte4 my-4'>{skill}</p>
-              ))}
-            </div>
-            <div className='flex justify-between font-bold text-sm'>
-              <p>{bidCount} Bids</p>
-              <p>2 Minutes ago</p>
-            </div>
-          </Link>
-        ))
-      }
+          ))
+        }
+      </div>
     </>
   )
 }

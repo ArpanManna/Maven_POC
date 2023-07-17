@@ -4,9 +4,12 @@ import { useWeb3 } from '@3rdweb/hooks';
 import { processPayment, transferMilestone } from '@/utils/service';
 import { TransactionToastMessage } from './Toast';
 import Spinner from './Spinner';
+import Modal from './Modal';
 
 const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, projectId}) => {
   const [loading, setLoading] = useState(false);
+  const [modalStatus, setModalStatus] = useState(false);
+  const [disputeData, setdisputeData] = useState({projectId: '', milestoneId: ''});
   const {address, chainId, provider} = useWeb3();
 
   const handleProcessPayment = async (milestoneId) => {
@@ -21,8 +24,9 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
     setLoading(false);
   }
 
-  const handleDispute = async (milestoneId) => {
-
+  const handleDispute = async (projectId, milestoneId) => {
+    setdisputeData({projectId, milestoneId});
+    setModalStatus(true);
   }
 
   const txNotify = useCallback((type, title, txHash) => {
@@ -79,8 +83,7 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
 
   return (
     <>
-          {loading && <Spinner />}
-
+  {loading && <Spinner />}
   <Table
     columns={columns}
     dataSource={data}
@@ -88,6 +91,7 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
       y: 240,
     }}
   />
+  {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} disputeData={disputeData}/>}
   </>
 )};
 export default MilestoneTable;

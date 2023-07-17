@@ -1,12 +1,17 @@
+import { requestRandomWords } from '@/utils/service';
+import { useWeb3 } from '@3rdweb/hooks';
 import { Dialog, Transition } from '@headlessui/react'
+import { Input } from 'antd'
 import { Fragment, useState } from 'react'
 
-export default function Modal({ modalStatus, setModalStatus, user, milestoneId}) {
-  // let [isOpen, setIsOpen] = useState(true)
+export default function Modal({ modalStatus, setModalStatus, disputeData }) {
+  const [reason, setReason] = useState('');
+  const {address, provider, chainId} = useWeb3();
 
-  // function closeModal() {
-  //   setIsOpen(false)
-  // }
+  const handleDispute = async () => {
+    await requestRandomWords(chainId, provider, disputeData);
+
+  }
 
   return (
     <>
@@ -40,21 +45,27 @@ export default function Modal({ modalStatus, setModalStatus, user, milestoneId})
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    {user}
+                    Mention the dispute reason.
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      {milestoneId}
-                    </p>
+                    <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Dispute Reason." className='mt-2 p-2' />
+
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-4 flex justify-center flex-wrap gap-8">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-palatte4 px-4 py-2 text-sm font-medium text-white hover:bg-palatte2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={handleDispute}
+                    >
+                      Submit
+                    </button>
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={() => setModalStatus(false)}
                     >
-                      Got it, thanks!
+                      Cancel
                     </button>
                   </div>
                 </Dialog.Panel>

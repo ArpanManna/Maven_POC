@@ -14,6 +14,7 @@ const ProjectDetail = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
   const data = router.query;
+  
   const jobDetail = JSON.parse(data.post)
   const {id, projectName, projectDescription, owner, skillsRequired, currency, priceFrom, priceTo} = jobDetail;
 

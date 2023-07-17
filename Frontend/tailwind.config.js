@@ -24,6 +24,7 @@ module.exports = {
       white: colors.white,
       gray: colors.gray,
       cyan: colors.cyan,
+      purple: colors.purple,
       palatte1: "#44318D",  //blue
       palatte2: "#E98074",  //light
       palatte3: "#2A1B3D",  //dark

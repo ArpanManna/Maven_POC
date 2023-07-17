@@ -38,7 +38,6 @@ const constructMessage = (message, type) => {
 
 const decryptPGPKey = async (account, signer) => {
     const res = await getUser(account);
-    console.log(res)
     const { encryptedPrivateKey } = res;
     const pgpPrivateKey = await PushAPI.chat.decryptPGPKey({
         encryptedPGPPrivateKey: encryptedPrivateKey,

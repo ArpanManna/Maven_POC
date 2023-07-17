@@ -1,6 +1,7 @@
 import { Contract, ethers } from "ethers";
 import addresses from "../constants/Contracts.json"
 import mavenABI from "../assets/abis/maven.json"
+import disputeResolutionABI from "../assets/abis/disputeResolution.json"
 import axios from 'axios';
 import async from 'async';
 import { sendNotification } from "@/lib/Notify";
@@ -139,7 +140,6 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
         const data = await mavenContract.getBidDetails(projectId.toNumber(), bidId);
         let bid = ({ projectId: data[0].toString(), freelancer: data[1], bidPrice: data[2].toString(), deliveryTime: data[3].toString()})
         let proposal = await getIPFSResponse(data[4])
-        console.log(data[6])
         data[6].forEach((tokenId, index) => {
             proposal.milestones[index].tokenId = tokenId.toNumber() ;
         })
@@ -209,5 +209,31 @@ export const getTotalBids = async (chainId, provider, projectId) => {
         return data.toNumber();
     } catch (err) {
         console.log(err)
+    }
+}
+
+
+export const requestRandomWords = async (chainId, provider, disputeData) => {
+    const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
+    try {
+        await disputeResolutionContract.requestRandomWords();
+        const signature = await disputeResolutionContract.lastRequestId();
+        // console.log(signature.toNumber())
+        const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
+        await disputeResolutionContract.initializeVoting(disputeData.projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        return 1;
+        // console.log(randomNumber.randomWords.toNumber());
+    } catch (err) {
+        return 0;
+        console.log(err)
+    }
+}
+
+export const voteForDisputeResolution = async (chainId, provider, disputeData) => {
+    const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
+    try {
+        await disputeResolutionContract.vote(projectId, vote, randomNumber);
+    } catch (err) {
+        return 0;
     }
 }

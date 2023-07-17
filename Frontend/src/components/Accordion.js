@@ -8,9 +8,9 @@ import { useContextState } from '@/context';
 
 const Accordion = () => {
     const { address, chainId, provider } = useWeb3();
-    const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [{dashboardProjects}, dispatch] = useContextState();
+    const [projects, setProjects] = useState([]);
+    const [{ dashboardProjects }, dispatch] = useContextState();
 
     useEffect(() => {
         if (address) getProjectByAddress()
@@ -19,13 +19,15 @@ const Accordion = () => {
     const getProjectByAddress = async () => {
         setLoading(true);
         const data = await getProjectsByUser(chainId, provider, address);
-        setProjects(data);
-        dispatch({
-            type: 'DASHBOARD_UPDATE',
-            payload: {
-                dashboardProjects: data,
-            },
-        });
+        if (data) {
+            setProjects(data);
+            dispatch({
+                type: 'DASHBOARD_UPDATE',
+                payload: {
+                    dashboardProjects: data,
+                },
+            });
+        }
         setLoading(false);
     }
 
@@ -35,13 +37,16 @@ const Accordion = () => {
         2: "Completed"
     };
 
-    console.log(projects)
+    if (loading) return (<p className='text-center py-12'>Loading...</p>)
+    if (projects.length === 0) return (<div className='text-center my-8'>
+        <p className='font-mono font-lg'>No projects to show!</p>
+    </div>)
     return (
         <>
             {
                 projects && projects.map(({ bid, post }) => (
                     <Collapse className='my-4'
-                    key={post.id}
+                        key={post.id}
                         collapsible="header"
                         defaultActiveKey={['1']}
                         items={[
@@ -71,9 +76,9 @@ const Accordion = () => {
                                         <h2>Deadline: {moment.unix(post.deadline).format("MM/DD/YYYY")}</h2>
                                     </div>
                                     <div className='col-span-3'>
-                                        { post.status === 1 ? 
-                                        <MilestoneTable milestones={bid.proposal.milestones } postStatusIdToLabel={postStatusIdToLabel} owner={post.owner} freelancer={bid.freelancer} projectId={post.id}/>
-: <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
+                                        {post.status === 1 ?
+                                            <MilestoneTable milestones={bid.proposal.milestones} postStatusIdToLabel={postStatusIdToLabel} owner={post.owner} freelancer={bid.freelancer} projectId={post.id} />
+                                            : <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
                                         }
                                     </div>
                                 </div>,

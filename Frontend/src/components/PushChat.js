@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Chat, ITheme } from "@pushprotocol/uiweb";
-import { ethers } from "ethers";
-import { useWeb3 } from "@3rdweb/hooks";
+import { Chat } from "@pushprotocol/uiweb";
 
-export default function PushChat() {
+export default function MyChat({ _signer, clientAddress }) {
+  // Request method to authorize user
+
+  const [account, setAccount] = useState("");
   const [supportAddress, setSupportAddress] = useState("");
-
-  const {address, provider} = useWeb3();
+  const [signer, setSigner] = useState(null);
 
   function handleInputChange(event) {
     const { name, value } = event.target;
@@ -14,29 +14,38 @@ export default function PushChat() {
   }
 
   async function getAccount() {
-    const signer = provider.getSigner();
+    if (!_signer) return;
+    // const web3Modal = new Web3Modal();
+    // const connection = await web3Modal.connect();
+    // const provider = new ethers.providers.Web3Provider(connection);
+    const signer = _signer;
     let account = await signer.getAddress();
     setAccount(account);
+    setSigner(_signer);
   }
 
   useEffect(() => {
+    setSupportAddress(clientAddress);
+  }, [clientAddress]);
+
+  useEffect(() => {
     getAccount();
-  }, []);
+  }, [_signer]);
 
   const theme = {
-    bgColorPrimary: "gray",
-    bgColorSecondary: "purple",
-    textColorPrimary: "white",
-    textColorSecondary: "green",
-    btnColorPrimary: "red",
+    bgColorPrimary: "white",
+    bgColorSecondary: "#5856d6",
+    textColorPrimary: "#5856d6",
+    textColorSecondary: "white",
+    btnColorPrimary: "#5856d6",
     btnColorSecondary: "purple",
     border: "1px solid black",
     borderRadius: "40px",
-    moduleColor: "pink",
+    moduleColor: "white",
   };
   return (
     <>
-      From : {address}
+      {/* From : {account} */}
       <input
         type="text"
         name="supportAddress"
@@ -44,10 +53,9 @@ export default function PushChat() {
         onChange={handleInputChange}
       />
       <Chat
-        account={address}
+        account={account}
         supportAddress={supportAddress}
-        apiKey={"tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm"}
-        // apiKey='tAWEnggQ9Z.UaDBNjrvlJZx3giBTIQDcT8bKQo1O1518uF1Tea7rPwfzXv2ouV5rX9ViwgJUrXm'
+        signer={signer}
         env="staging"
         theme={theme}
       />

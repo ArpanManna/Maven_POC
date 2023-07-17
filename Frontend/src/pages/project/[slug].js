@@ -7,6 +7,7 @@ import { useWeb3 } from '@3rdweb/hooks'
 import { Tabs } from 'antd'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import MyChat from '@/components/PushChat';
 
 const ProjectDetail = () => {
   const [proposals, setProposals] = useState([]);
@@ -69,6 +70,7 @@ const ProjectDetail = () => {
       <Tabs defaultActiveKey="1" items={items} />
 
       </div>
+      <MyChat _signer={provider?.getSigner()} clientAddress={owner}/>
     </div>
   )
 }

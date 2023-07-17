@@ -1,18 +1,10 @@
 {
     "1": {
-        "maven": "0xb4e880ABB602C0901dB604C54c8fa39Eb1E247a9",
-        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
+        "maven": "0x00302bA53d7B063287914EE262924F2745EA700b",
+        "disputeResolution": "0x5A62F5cEaf1cBc2FE07BdCd698561A92eE0404ca"
     },
     "80001": {
-        "maven": "0xb4e880ABB602C0901dB604C54c8fa39Eb1E247a9",
-        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
-    },
-    "11155111": {
-        "maven": "0xb4e880ABB602C0901dB604C54c8fa39Eb1E247a9",
-        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
-    },
-    "5": {
-        "maven": "0xb4e880ABB602C0901dB604C54c8fa39Eb1E247a9",
-        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
+        "maven": "0x00302bA53d7B063287914EE262924F2745EA700b",
+        "disputeResolution": "0x5A62F5cEaf1cBc2FE07BdCd698561A92eE0404ca"
     }
 }

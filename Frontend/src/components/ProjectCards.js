@@ -34,7 +34,7 @@ const ProjectCards = () => {
   //   return res.toNumber();
   // }
   if (loading) return (<p className='text-center py-12'>Loading...</p>)
-  if (posts.length === 0) return (<div className='text-center my-8'>
+  if (posts && posts.length === 0) return (<div className='text-center my-8'>
   <p className='font-mono font-lg'>No projects to show!</p>
 </div>)
   return (
@@ -63,7 +63,7 @@ const ProjectCards = () => {
               <div className='flex justify-between mt-4'>
                   <p className='text-lg mt-1'>{bidCount} Bids</p>
                  <p className='font-mono mt-2'>Budget: {priceFrom} wei - {priceTo} wei</p>
-                   <Link href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired }) } }} as={`/project/${id}`} className='bg-palatte1 text-white cursor-pointer px-4 rounded-2xl py-2'>More Info</Link>
+                   <Link href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired }) } }} as={`/project/${id}`} className='bg-gradient-to-r from-palatte4 to-palatte1 hover:bg-gradient-to-br text-white hover:text-white cursor-pointer px-4 rounded-2xl py-2'>More Info</Link>
               </div>
             </div>
           ))

@@ -59,16 +59,16 @@ const MilestoneDispute = () => {
                     <div className=''>
                         <h2 className='font-bold py-4 text-center font-mono'>DISPUTED MILESTONE DETAILS</h2>
                         <hr />
-                        <div className='flex justify-around py-12 px-4'>
+                        <div className='flex justify-around py-12 px-4 font-mono'>
                             <div>
-                                <h2 className='my-1 font-serif'>Project Id: {projectId}</h2>
+                                <h2 className='my-1'>Project Id: {projectId}</h2>
 
-                                <h2 className='my-1 font-serif'>Current Owner: 0x..dsjd3 (Freelancer)</h2>
-                                <h2 className='my-1 font-serif'>Dispute Reason: Improper project requirements</h2>
+                                <h2 className='my-1'>Current Owner: 0x..dsjd3 (Freelancer)</h2>
+                                <h2 className='my-1'>Dispute Reason: Improper project requirements</h2>
                             </div>
                             <div>
-                                <h2 className='my-1 font-serif'>Client: 0x..9023k</h2>
-                                <h2 className='my-1 font-serif'>Freelancer: 0x..dsjd3</h2>
+                                <h2 className='my-1'>Client: 0x..9023k</h2>
+                                <h2 className='my-1'>Freelancer: 0x..dsjd3</h2>
                             </div>
                         </div>
                         <div className='p-4'>

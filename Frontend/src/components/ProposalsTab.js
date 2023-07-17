@@ -60,7 +60,7 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
                      <p className='text-sm'> Total amount to pay: {bidPrice * 1.05}</p>
 
                     {loading ? <Spinner /> :
-                      <button className='border px-2 py-1.5 -mt-1 rounded-md bg-blue-500 text-white' onClick={() => handleBidSelection(index, owner, bidPrice * 1.05)}>Select Bid</button>
+                      <button className='border px-4 py-2 -mt-1 rounded-md bg-gradient-to-r from-palatte4 to-palatte1 hover:bg-gradient-to-br text-white' onClick={() => handleBidSelection(index, owner, bidPrice * 1.05)}>Select Bid</button>
                     }
                   </>
                 }</div>

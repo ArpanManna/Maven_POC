@@ -56,8 +56,8 @@ export const getAllJobPosts = async (chainId, provider) => {
         const data = await mavenContract.getAllProjectsBidding();
         let posts = []
 
-        await async.eachLimit(data, 100, async (_data) => {
-            let post = ({ id: _data[0].toString(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toString(), highestBid: _data[4].toString(), createdOn: _data[7].toString(), deadline: _data[8].toString(), finalBid: _data[9].toString(), status: _data[10] })
+        await async.eachLimit(data, 10, async (_data) => {
+            let post = ({ id: _data.projectId.toNumber(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toString(), highestBid: _data[4].toString(), createdOn: _data[7].toString(), deadline: _data[8].toString(), finalBid: _data[9].toString(), status: _data[10] })
             const metadataRes = await getIPFSResponse(_data[5])
             const JDRes = await getIPFSResponse(_data[6])
             const bidCount = await getTotalBids(chainId, provider, _data[0].toString());
@@ -220,8 +220,8 @@ export const requestRandomWords = async (chainId, provider, disputeData) => {
         const signature = await disputeResolutionContract.lastRequestId();
         // console.log(signature.toNumber())
         const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
-        await disputeResolutionContract.initializeVoting(disputeData.projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
-        return 1;
+        const res = await disputeResolutionContract.initializeVoting(disputeData.projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        console.log(res);
         // console.log(randomNumber.randomWords.toNumber());
     } catch (err) {
         return 0;

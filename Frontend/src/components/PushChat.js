@@ -46,12 +46,12 @@ export default function MyChat({ _signer, clientAddress }) {
   return (
     <>
       {/* From : {account} */}
-      <input
+      {/* <input
         type="text"
         name="supportAddress"
         value={supportAddress}
         onChange={handleInputChange}
-      />
+      /> */}
       <Chat
         account={account}
         supportAddress={supportAddress}

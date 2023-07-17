@@ -229,7 +229,8 @@ export const requestRandomWords = async (chainId, provider, disputeData) => {
     }
 }
 
-export const voteForDisputeResolution = async (chainId, provider, disputeData) => {
+export const voteForDisputeResolution = async (chainId, provider, projectId, vote, randomNumber) => {
+    console.log(chainId, "provider", projectId, vote, randomNumber)
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     try {
         await disputeResolutionContract.vote(projectId, vote, randomNumber);

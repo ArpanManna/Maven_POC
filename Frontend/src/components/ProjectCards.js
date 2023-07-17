@@ -39,10 +39,10 @@ const ProjectCards = () => {
 </div>)
   return (
     <>
-      <div className="container mx-auto px-12 py-2 grid grid-cols-2 gap-6 items-center">
+      <div className="container mx-auto px-12 py-2 grid grid-cols-2 gap-6 z-0 items-center">
         {
           posts && posts.map(({ id, owner, createdOn, deadline, bidCount, metadata: { projectName, projectDescription, priceFrom, priceTo, skillsRequired } }) => (
-            <div key={id} className="border bg-palatte5 shadow-sm rounded-lg p-8 items-center text-center h-xl w-xl">
+            <div key={id} className="border bg-blue-100 shadow-sm rounded-lg p-8 items-center text-center h-xl w-xl z-0">
               <div className='grid grid-cols-6 gap-2'>
                 <Image src={avatar1} alt="avatar" className='col-span-1' height={55} width={55} />
                 <div className='text-start col-span-5 '>

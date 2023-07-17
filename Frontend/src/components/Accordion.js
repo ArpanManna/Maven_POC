@@ -81,6 +81,8 @@ const Accordion = () => {
                                             : <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
                                         }
                                     </div>
+                        {console.log(post.id)}
+
                                 </div>,
                             },
                         ]}

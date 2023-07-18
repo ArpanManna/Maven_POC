@@ -284,6 +284,4 @@ contract Maven is ERC721URIStorage, Registry{
     }
 
 
-    // transfer contract balance to contract address
-
 }

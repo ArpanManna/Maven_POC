@@ -1,4 +1,3 @@
-import { useIsMounted } from '@/lib/hooks/us-is-mounted'
 import { getJobProposalsByID, selectBid } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
 import React, { useCallback, useEffect, useState } from 'react'

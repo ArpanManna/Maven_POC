@@ -104,30 +104,3 @@ export const OptInChannel = async (address, provider) => {
         env: 'staging'
       })
 }
-
-export const sendNotifications = async (signer, title, body, recipients) => {
-    try {
-        const response = await PushAPI.payloads.sendNotification({
-            signer,
-            type: 3,
-            identityType: 2,
-            notification: {
-                title,
-                body,
-            },
-            payload: {
-                title,
-                body,
-                cta: '',
-                img: '',
-            },
-            recipients,
-            channel: channelAddress,
-            env: 'staging',
-        });
-        return response;
-    } catch (err) {
-        console.log(err);
-    }
-}
-

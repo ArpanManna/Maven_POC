@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import TagsInput from 'react-tagsinput'
 import 'react-tagsinput/react-tagsinput.css'
-import 'react-calendar/dist/Calendar.css';
 import moment from 'moment/moment';
 import { uploadFileToIPFS } from '@/lib/IPFSClient';
 import { createJobPost } from '@/utils/service';
@@ -52,7 +51,7 @@ const ProjectForm = () => {
                 fileURI = await uploadFileToIPFS(file);
             }
             try {
-                res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
+                const res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
                 if (res) getProjectsByUser(chainId, provider, address)
                 router.push("/dashboard")
                 setTags([]);

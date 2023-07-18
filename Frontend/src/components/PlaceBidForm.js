@@ -3,9 +3,8 @@ import { placeBid } from '@/utils/service';
 import { useWeb3 } from '@3rdweb/hooks';
 import moment from 'moment';
 import React, { useCallback, useState } from 'react'
-import 'react-calendar/dist/Calendar.css';
 import Spinner from './UI/Spinner';
-import ToastMessage, { TransactionToastMessage } from './UI/Toast';
+import { TransactionToastMessage } from './UI/Toast';
 import { DatePicker, Input } from 'antd';
 
 const PlaceBidForm = ({ id, projectOwner }) => {

@@ -3,13 +3,10 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import WalletConnect from './UI/WalletConnect'
-import { useWeb3 } from '@3rdweb/hooks'
-import { useCallback, useEffect, useState } from 'react'
-import { EVENTS, createSocketConnection } from '@pushprotocol/socket'
 import NotificationDrawer from './UI/NotificationDrawer';
 import avatar from "../assets/imgs/avatar2.svg"
 import Image from 'next/image'
-import { ToastMessage } from './UI/Toast'
+import { useWeb3 } from '@3rdweb/hooks'
 
 const navigation = [
   // { name: 'Maven', href: '/', current: true },
@@ -23,31 +20,8 @@ function classNames(...classes) {
 }
 
 export default function Nav() {
-  const { address } = useWeb3();
-  const [disconnected, setDisconnected] = useState(true);
-
-  useEffect(() => {
-    if (address && disconnected) {
-      setDisconnected(false)
-      const pushSDKSocket = createSocketConnection({
-        user: `eip155:5:${address}`, // CAIP-10 format
-        env: 'staging',
-        socketOptions: { autoConnect: true }
-      });
-      pushSDKSocket?.on(EVENTS.CONNECT, () => { console.log('connected') })
-      pushSDKSocket?.on(EVENTS.DISCONNECT, (err) => setDisconnected(true));
-      pushSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) => console.log(message))
-      pushSDKSocket?.on(EVENTS.USER_FEEDS, (notification) => {
-        simpleNotify("success", notification.payload.notification.title, notification.payload.notification.body)
-      })
-      pushSDKSocket?.on(EVENTS.USER_SPAM_FEEDS, (spam) => console.log(spam))
-    }
-  }, [address, disconnected])
-
-  const simpleNotify = useCallback((type, title, body) => {
-    ToastMessage({ type, title, body });
-  }, []);
-
+  const {address} = useWeb3();
+  
   return (
     <Disclosure as="nav" className="bg-palatte1">
       {({ open }) => (

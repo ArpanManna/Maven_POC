@@ -213,18 +213,20 @@ export const getTotalBids = async (chainId, provider, projectId) => {
 }
 
 
-export const requestRandomWords = async (chainId, provider, disputeData) => {
+export const requestRandomWords = async (chainId, provider, projectId) => {
+    console.log(projectId)
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     try {
         await disputeResolutionContract.requestRandomWords();
         const signature = await disputeResolutionContract.lastRequestId();
-        // console.log(signature.toNumber())
+        console.log(signature)
         const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
-        const res = await disputeResolutionContract.initializeVoting(disputeData.projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
-        console.log(res);
+        const res = await disputeResolutionContract.initializeVoting(projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        console.log("----------------");
+        console.log("----------------", res);
+
         // console.log(randomNumber.randomWords.toNumber());
     } catch (err) {
-        return 0;
         console.log(err)
     }
 }
@@ -235,6 +237,16 @@ export const voteForDisputeResolution = async (chainId, provider, projectId, vot
     try {
         await disputeResolutionContract.vote(projectId, vote, randomNumber);
     } catch (err) {
-        return 0;
+        console.log(err);
+    }
+}
+
+export const getVotingResult = async (chainId, provider, projectId) => {
+    const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider)
+    try {
+        const res = await disputeResolutionContract.getVotingResult(projectId);
+        return res.toNumber();
+    } catch (err) {
+        console.log(err);
     }
 }

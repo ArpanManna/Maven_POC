@@ -4,15 +4,16 @@ import avatar4 from '../../assets/imgs/avatar2.svg'
 import Image from 'next/image'
 import { Input } from 'antd'
 import { useRouter } from 'next/router'
-import { voteForDisputeResolution } from '@/utils/service'
+import { getVotingResult, voteForDisputeResolution } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
 
 const MilestoneDispute = () => {
-    const {provider, chainId} = useWeb3();
+    const { provider, chainId } = useWeb3();
     const router = useRouter();
-    const {projectId} = router.query;
-    
+    const { projectId } = router.query;
+
     const [random, setRandom] = useState();
+    const [result, setResult] = useState();
 
     const voters = [
         "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
@@ -27,7 +28,7 @@ const MilestoneDispute = () => {
 
     const handleVote = async (e) => {
         if (random && chainId) {
-            await voteForDisputeResolution(chainId, provider, projectId, random, e.target.value);
+            await voteForDisputeResolution(chainId, provider, projectId, e.target.value, random);
         }
     }
 
@@ -35,10 +36,14 @@ const MilestoneDispute = () => {
         const { value: inputValue } = e.target;
         const reg = /^-?\d*(\.\d*)?$/;
         if (reg.test(inputValue) || inputValue === '' || inputValue === '-') {
-          setRandom(inputValue);
+            setRandom(inputValue);
         }
-      };
+    };
 
+    const handleVotingResult = async () => {
+        const res = await getVotingResult(chainId, provider, projectId);
+        setResult(res);
+    }
     return (
         <div>
             <Nav />
@@ -59,7 +64,7 @@ const MilestoneDispute = () => {
                     <div className=''>
                         <h2 className='font-bold py-4 text-center font-mono'>DISPUTED MILESTONE DETAILS</h2>
                         <hr />
-                        <div className='flex justify-around py-12 px-4 font-mono'>
+                        <div className='flex justify-around p-8 font-mono'>
                             <div>
                                 <h2 className='my-1'>Project Id: {projectId}</h2>
 
@@ -70,9 +75,6 @@ const MilestoneDispute = () => {
                                 <h2 className='my-1'>Client: 0x..9023k</h2>
                                 <h2 className='my-1'>Freelancer: 0x..dsjd3</h2>
                             </div>
-                        </div>
-                        <div className='p-4'>
-
                         </div>
                         <hr />
                         <div className='grid grid-cols-2 gap-8 my-8'>
@@ -86,6 +88,11 @@ const MilestoneDispute = () => {
                                 <button className='px-4  py-1 bg-palatte4 rounded-md' value={2} onClick={(e) => handleVote(e)}>Client</button>
                             </div>
                         </div>
+                        <div className='flex px-8 flex-wrap gap-8 pb-2'>
+                            <button className='px-4  py-1 bg-palatte4 rounded-md' onClick={(e) => handleVotingResult(e)}>Get Voting Result</button>
+                            {result && <p className='font-mono font-semibold'>{result === 1 ? "Freelancer" : "Client"}</p>}
+                        </div>
+
                     </div>
                 </div>
             </div>

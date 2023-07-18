@@ -4,12 +4,12 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Input } from 'antd'
 import { Fragment, useState } from 'react'
 
-export default function Modal({ modalStatus, setModalStatus, disputeData }) {
+export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const [reason, setReason] = useState('');
   const {address, provider, chainId} = useWeb3();
 
   const handleDispute = async () => {
-    await requestRandomWords(chainId, provider, disputeData);
+    await requestRandomWords(chainId, provider, projectId);
 
   }
 

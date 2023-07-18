@@ -5,11 +5,14 @@ import { getProjectsByUser } from '@/utils/service';
 import moment from 'moment';
 import MilestoneTable from './UI/MilestoneTable';
 import { useContextState } from '@/context';
+import Modal from './UI/Modal';
 
 const Accordion = () => {
     const { address, chainId, provider } = useWeb3();
     const [loading, setLoading] = useState(false);
     const [projects, setProjects] = useState([]);
+    const [modalStatus, setModalStatus] = useState(false);
+
     const [{ dashboardProjects }, dispatch] = useContextState();
 
     useEffect(() => {
@@ -29,6 +32,11 @@ const Accordion = () => {
             });
         }
         setLoading(false);
+    }
+
+
+    const handleDispute = async () => {
+        setModalStatus(true);
     }
 
     const postStatusIdToLabel = {
@@ -71,24 +79,26 @@ const Accordion = () => {
                                         </div>
                                         <h2>Token Bound Address: 0x...78h</h2>
                                         {bid.freelancer && <h2>Freelancer: {'0x...'}
-                                            {bid.freelancer.slice(bid.freelancer.length - 6)}</h2>}
+                                        {bid.freelancer.slice(bid.freelancer.length - 6)}</h2>}
                                         <h2>Published On: {moment.unix(post.createdOn).format("MM/DD/YYYY")}</h2>
                                         <h2>Deadline: {moment.unix(post.deadline).format("MM/DD/YYYY")}</h2>
+                                        <button className='px-4 py-2 rounded-md text-white font-mono text-sm bg-palatte4' onClick={() => handleDispute()}>Dispute</button>
                                     </div>
+                                    {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={post.id} />}
+
                                     <div className='col-span-3'>
                                         {post.status === 1 ?
                                             <MilestoneTable milestones={bid.proposal.milestones} postStatusIdToLabel={postStatusIdToLabel} owner={post.owner} freelancer={bid.freelancer} projectId={post.id} />
                                             : <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
                                         }
                                     </div>
-                        {console.log(post.id)}
-
                                 </div>,
                             },
                         ]}
                     />
                 ))
             }
+
         </>
     )
 };

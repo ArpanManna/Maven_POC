@@ -8,8 +8,6 @@ import Modal from './Modal';
 
 const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, projectId}) => {
   const [loading, setLoading] = useState(false);
-  const [modalStatus, setModalStatus] = useState(false);
-  const [disputeData, setdisputeData] = useState({projectId: '', milestoneId: ''});
   const {address, chainId, provider} = useWeb3();
 
   const handleProcessPayment = async (milestoneId) => {
@@ -22,11 +20,6 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
     setLoading(true);
     await transferMilestone(chainId, provider, projectId, milestoneId, owner, txNotify);
     setLoading(false);
-  }
-
-  const handleDispute = async (projectId, milestoneId) => {
-    setdisputeData({projectId, milestoneId});
-    setModalStatus(true);
   }
 
   const txNotify = useCallback((type, title, txHash) => {
@@ -75,8 +68,7 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
           <button className='px-4 py-2 rounded-md text-white font-mono text-sm bg-blue-400' onClick={() => handleProcessPayment(record.key)}>Release Payment</button> :
           <button className='px-4 py-2 rounded-md text-white font-mono text-sm bg-blue-400' onClick={() => handleTransferOwnership(record.key)}>Request Payment</button>
         }
-          <button className='px-4 py-2 rounded-md text-white font-mono text-sm bg-palatte4' onClick={() => handleDispute(record.key)}>Dispute</button>
-        </Space>
+      </Space>
       ),
     },
   ];
@@ -91,7 +83,6 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
       y: 240,
     }}
   />
-  {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} disputeData={disputeData}/>}
   </>
 )};
 export default MilestoneTable;

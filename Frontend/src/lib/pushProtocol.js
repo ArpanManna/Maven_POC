@@ -1,6 +1,8 @@
 const PushAPI = require('@pushprotocol/restapi');
 // import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 
+const channelAddress = "eip155:80001:0xF9F99B62C8D56a577A5C490daFaE40Af23F2bE69";
+
 const createAccount = async (signer, env = 'staging') => {
     const user = await PushAPI.user.create({ signer, env });
     return user;
@@ -83,7 +85,7 @@ const approveChats = async (senderAddress, signer, env = 'staging') => {
 
 export const fetchNotifications = async(address) => {
     return await PushAPI.user.getFeeds({
-    user: `eip155:5:${address}`, // user address in CAIP
+    user: `eip155:80001:${address}`, // user address in CAIP
     env: 'staging'
   });
 }
@@ -91,8 +93,8 @@ export const fetchNotifications = async(address) => {
 export const OptInChannel = async (address, provider) => {
     await PushAPI.channels.subscribe({
         signer: provider.getSigner(),
-        channelAddress: 'eip155:5:0x92D147e6f10730d38F8dC737F742501AE84472bD', // channel address in CAIP
-        userAddress: `eip155:5:${address}`, // user address in CAIP
+        channelAddress, // channel address in CAIP
+        userAddress: `eip155:80001:${address}`, // user address in CAIP
         onSuccess: () => {
          console.log('opt in success');
         },
@@ -120,7 +122,7 @@ export const sendNotifications = async (signer, title, body, recipients) => {
                 img: '',
             },
             recipients,
-            channel: 'eip155:5:0x92D147e6f10730d38F8dC737F742501AE84472bD',
+            channel: channelAddress,
             env: 'staging',
         });
         return response;

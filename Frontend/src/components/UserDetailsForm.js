@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useWeb3 } from "@3rdweb/hooks";
 import { uploadFileToIPFS } from "@/lib/IPFSClient";
-import { createUserProfile } from "../utils/service";
+import { createUserProfile, getUserDetails } from "../utils/service";
 import UserSkillDetails from "./UserSkillDetails";
 import { Avatar, Segmented, Space, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
@@ -9,6 +9,7 @@ import Spinner from "./UI/Spinner";
 import { TransactionToastMessage } from "./UI/Toast";
 import { OptInChannel } from "@/lib/pushProtocol";
 import { useRouter } from "next/router";
+import { useContextState } from "@/context";
 
 const UserDetailsForm = () => {
   const [user, setUser] = useState("freelancer");
@@ -23,6 +24,7 @@ const UserDetailsForm = () => {
   const [file, setFile] = useState();
   const [skills, setSkills] = useState([]);
   const router = useRouter();
+  const [{}, dispatch] = useContextState();
 
   const handleFileChange = async (e) => {
     if (e.target.files) {
@@ -54,6 +56,8 @@ const UserDetailsForm = () => {
     try {
       await createUserProfile(chainId, provider, user, profileURI, txNotify);
       await OptInChannel(address, provider);
+      await getUserDetails(chainId, provider, address, dispatch);
+       
       router.push('/browse');
     } catch (err) {
       console.log(err);

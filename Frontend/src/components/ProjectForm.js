@@ -9,6 +9,7 @@ import { useWeb3 } from '@3rdweb/hooks';
 import Spinner from './UI/Spinner';
 import ToastMessage, { TransactionToastMessage } from './UI/Toast';
 import { DatePicker, Input } from 'antd';
+import { useRouter } from 'next/router';
 
 const ProjectForm = () => {
     const [tags, setTags] = useState([]);
@@ -17,7 +18,8 @@ const ProjectForm = () => {
     const [deadline, setDeadline] = useState(new Date());
     const { projectName, projectDescription, priceFrom, priceTo } = form;
     const [file, setFile] = useState();
-    const { chainId, provider } = useWeb3();
+    const { address, chainId, provider } = useWeb3();
+    const router = useRouter()
 
     const handleFileChange = (e) => {
         if (e.target.files) {
@@ -50,14 +52,17 @@ const ProjectForm = () => {
                 fileURI = await uploadFileToIPFS(file);
             }
             try {
-                await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
-                setLoading(false);
+                res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
+                if (res) getProjectsByUser(chainId, provider, address)
+                router.push("/dashboard")
                 setTags([]);
                 setFile();
                 setDeadline(new Date())
                 setForm({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" })
+                setLoading(false);
             } catch (err) {
                 console.log(err)
+                setLoading(false)
             }
         }
     }

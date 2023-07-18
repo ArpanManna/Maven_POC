@@ -1,9 +1,7 @@
 import Layout from '@/components/Layout';
 import { ContextProvider } from '@/context';
-import { socketConnection } from '@/lib/Notify';
 import '@/styles/globals.css'
-import { ThirdwebWeb3Provider, useWeb3 } from "@3rdweb/hooks";
-import { useEffect } from 'react';
+import { ThirdwebWeb3Provider } from "@3rdweb/hooks";
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
@@ -14,9 +12,6 @@ export default function App({ Component, pageProps }) {
     injected: {}
   };
 
-  useEffect(() => {
-
-  },[])
 
   return (
     <ThirdwebWeb3Provider

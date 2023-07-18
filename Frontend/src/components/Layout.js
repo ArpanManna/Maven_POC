@@ -8,7 +8,6 @@ import { useContextState } from "@/context";
     const {chainId, provider, address} = useWeb3();
     const [{}, dispatch] = useContextState();
 
-
     useEffect(() => {
         if (address) getCurrentUserDetails();
     },[address]);

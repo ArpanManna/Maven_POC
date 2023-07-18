@@ -5,6 +5,7 @@ import disputeResolutionABI from "../assets/abis/disputeResolution.json"
 import axios from 'axios';
 import async from 'async';
 import { sendNotification } from "@/lib/Notify";
+import { OptInChannel } from "@/lib/pushProtocol";
 
 const rpc = "https://polygon-mumbai.g.alchemy.com/v2/-a6_POS01b0lSBGeNnfc25nTbElQneFq";
 
@@ -214,28 +215,39 @@ export const getTotalBids = async (chainId, provider, projectId) => {
 
 
 export const requestRandomWords = async (chainId, provider, projectId) => {
-    console.log(projectId)
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     try {
         await disputeResolutionContract.requestRandomWords();
         const signature = await disputeResolutionContract.lastRequestId();
-        console.log(signature)
         const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
-        const res = await disputeResolutionContract.initializeVoting(projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
-        console.log("----------------");
-        console.log("----------------", res);
-
-        // console.log(randomNumber.randomWords.toNumber());
+        const tx = await disputeResolutionContract.initializeVoting(projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        txNotify("success", "Sent", tx.hash);
+        const txStatus = await getTransactionStatus(tx.hash);
+        if (txStatus === 1) {
+            txNotify("success", "Successful", tx.hash);
+            const sender = await provider.getSigner().getAddress();
+            await sendNotification(`Dispute Initialized!`,  `You have raised the dispute for project ${projectId}.`, sender);
+        } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
     }
 }
 
 export const voteForDisputeResolution = async (chainId, provider, projectId, vote, randomNumber) => {
-    console.log(chainId, "provider", projectId, vote, randomNumber)
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     try {
-        await disputeResolutionContract.vote(projectId, vote, randomNumber);
+        const tx = await disputeResolutionContract.vote(projectId, vote, randomNumber);
+        txNotify("success", "Sent", tx.hash);
+        const txStatus = await getTransactionStatus(tx.hash);
+        if (txStatus === 1) {
+            txNotify("success", "Successful", tx.hash);
+            const sender = await provider.getSigner().getAddress();
+            let voteTo = "Freelancer";
+            if (vote === '2') {
+                voteTo = "Client"
+            }
+            await sendNotification(`Vote Sent!`,  `You have successfully voted for ${voteTo}`, sender);
+        } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err);
     }
@@ -247,6 +259,69 @@ export const getVotingResult = async (chainId, provider, projectId) => {
         const res = await disputeResolutionContract.getVotingResult(projectId);
         return res.toNumber();
     } catch (err) {
+        console.log(err);
+    }
+}
+
+export const createUserProfile = async (chainId, provider, userType, profileURI, txNotify) => {
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
+    try {
+        const tx = await mavenContract.createProfile(userType, profileURI);
+        txNotify("success", "Sent", tx.hash);
+        const txStatus = await getTransactionStatus(tx.hash);
+        if (txStatus === 1) {
+            txNotify("success", "Successful", tx.hash);
+        } else txNotify("error", "Failed", tx.hash);    
+    }
+         catch (err) {
+        console.log(err);
+    }
+}
+
+
+export const getUserDetails = async (chainId, provider, address, dispatch) => {
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
+    try {
+        const profile = await mavenContract.getProfile(address);
+        const profileInfo = await getIPFSResponse(profile.uri);
+        const metadata = await getIPFSResponse(profileInfo.metaDataURI);
+        let file;
+        if (profileInfo.fileURI) {
+             file = await getIPFSResponse(profile.fileURI);
+        }
+
+        if (profile) {
+            const userData = {
+                "address": profile.addr,
+                "tba": profile.tba,
+                "profileURI": profile.uri,
+                "userType": profile._type,
+                "profileTokenId": profile.tokenId.toNumber(),
+                "profileInfo": {metadata, file}
+            }
+        dispatch({
+            type: 'UPDATE_USER_DATA',
+            payload: {
+                currentUserDetails: userData,
+            },
+        });
+        }
+        
+    } catch (err) {
+        const userData = {
+            "address":"",
+            "tba": "",
+            "profileURI": "",
+            "userType": "",
+            "profileTokenId": "",
+            "profileInfo": ""
+        }
+        dispatch({
+            type: 'UPDATE_USER_DATA',
+            payload: {
+                currentUserDetails: userData,
+            },
+        });
         console.log(err);
     }
 }

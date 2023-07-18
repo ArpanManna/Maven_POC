@@ -42,22 +42,22 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
     {
       title: 'Milestone Title',
       dataIndex: 'MilestoneTitle',
-      width: 180,
+      width: 240,
     },
     {
       title: 'NFT Id',
       dataIndex: 'NFTId',
-      width: 120,
+      width: 130,
     },
     {
       title: 'Amount',
       dataIndex: 'Amount',
-      width: 120,
+      width: 140,
     },
     {
       title: 'Owner',
       dataIndex: 'Owner',
-      width: 120,
+      width: 150,
     },
     {
       title: 'Action',

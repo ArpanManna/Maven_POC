@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react'
 const Dashboard = () => {
   return (
     <>
-      <Nav />
       <div className='px-12 py-8'>
         <Space direction="vertical" className='w-full'>
           <Accordion />

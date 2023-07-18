@@ -26,8 +26,6 @@ const PlaceBidForm = ({ id, projectOwner }) => {
     let data = [...milestones];
     const { name, value } = event.target;
     if (name === 'price') {
-      console.log(name)
-
       const reg = /^-?\d*(\.\d*)?$/;
       if (reg.test(value) || value === '' || value === '-') {
         data[index][name] = value;

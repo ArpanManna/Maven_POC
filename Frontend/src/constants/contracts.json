@@ -1,10 +1,10 @@
 {
     "1": {
-        "maven": "0x00302bA53d7B063287914EE262924F2745EA700b",
+        "maven": "0x83d8A5EE2bffBBfA031Dd5120BEEba0d74F50FFd",
         "disputeResolution": "0xc64e60a663E22e3200B05626a322E9D26EB4ba6d"
     },
     "80001": {
-        "maven": "0x00302bA53d7B063287914EE262924F2745EA700b",
+        "maven": "0x83d8A5EE2bffBBfA031Dd5120BEEba0d74F50FFd",
         "disputeResolution": "0xc64e60a663E22e3200B05626a322E9D26EB4ba6d"
     }
 }

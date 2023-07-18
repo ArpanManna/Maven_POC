@@ -5,11 +5,11 @@ import Link from 'next/link'
 import WalletConnect from './UI/WalletConnect'
 import { useWeb3 } from '@3rdweb/hooks'
 import { useCallback, useEffect, useState } from 'react'
-import ToastMessage from "@/components/UI/Toast";
 import { EVENTS, createSocketConnection } from '@pushprotocol/socket'
 import NotificationDrawer from './UI/NotificationDrawer';
 import avatar from "../assets/imgs/avatar2.svg"
 import Image from 'next/image'
+import { ToastMessage } from './UI/Toast'
 
 const navigation = [
   // { name: 'Maven', href: '/', current: true },

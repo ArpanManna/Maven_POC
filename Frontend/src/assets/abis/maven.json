@@ -133,6 +133,31 @@
 			},
 			{
 				"indexed": false,
+				"internalType": "uint256",
+				"name": "bidId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "BidCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "projectId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
 				"internalType": "address",
 				"name": "client",
 				"type": "address"
@@ -661,6 +686,16 @@
 						"internalType": "enum Maven.ProfileType",
 						"name": "_type",
 						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "tba",
+						"type": "address"
 					}
 				],
 				"internalType": "struct Maven.Profile",

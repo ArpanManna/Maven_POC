@@ -33,7 +33,7 @@ export const displayIcon = (type) => {
 
 const explorerUrl = "https://mumbai.polygonscan.com/tx/";
 
-const ToastMessage = ({ type, title, body }) =>
+export const ToastMessage = ({ type, title, body }) =>
     toast[type](
         <div>
             <div style={{ flexGrow: 1, fontSize: 10, padding: "8px 12px" }}>
@@ -63,5 +63,3 @@ export const TransactionToastMessage = ({ type, title, txHash }) =>
     );
 
 TransactionToastMessage.dismiss = toast.dismiss;
-
-export default ToastMessage;

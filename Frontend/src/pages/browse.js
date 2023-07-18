@@ -5,8 +5,6 @@ import React from 'react'
 const browse = () => {
   return (
     <>
-    <Nav />
-
     <BrowseTabs />
     </>
   )

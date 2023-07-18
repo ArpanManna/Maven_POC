@@ -1,3 +1,4 @@
+import Layout from '@/components/Layout';
 import { ContextProvider } from '@/context';
 import { socketConnection } from '@/lib/Notify';
 import '@/styles/globals.css'
@@ -12,6 +13,10 @@ export default function App({ Component, pageProps }) {
   const connectors = {
     injected: {}
   };
+
+  useEffect(() => {
+
+  },[])
 
   return (
     <ThirdwebWeb3Provider
@@ -29,7 +34,9 @@ export default function App({ Component, pageProps }) {
         closeOnClick
         pauseOnHover
       />
+      <Layout>
       <Component {...pageProps} />
+      </Layout>
       </ContextProvider>
     </ThirdwebWeb3Provider>)
 }

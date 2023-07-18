@@ -6,6 +6,7 @@ import { Input } from 'antd'
 import { useRouter } from 'next/router'
 import { getVotingResult, voteForDisputeResolution } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
+import Spinner from '@/components/UI/Spinner'
 
 const MilestoneDispute = () => {
     const { provider, chainId } = useWeb3();
@@ -14,6 +15,7 @@ const MilestoneDispute = () => {
 
     const [random, setRandom] = useState();
     const [result, setResult] = useState();
+    const [loading, setLoading] = useState(false);
 
     const voters = [
         "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
@@ -28,7 +30,9 @@ const MilestoneDispute = () => {
 
     const handleVote = async (e) => {
         if (random && chainId) {
+            setLoading(true);
             await voteForDisputeResolution(chainId, provider, projectId, e.target.value, random);
+            setLoading(false);
         }
     }
 
@@ -46,7 +50,7 @@ const MilestoneDispute = () => {
     }
     return (
         <div>
-            <Nav />
+            {loading && <Spinner />}
             <div className='border grid  grid-cols-6 gap-2 py-8 shadow-md px-12'>
                 <div className='col-span-1 border p-4'>
                     <h2 className='text-center font-bold my-2'> Voter List</h2>
@@ -55,7 +59,6 @@ const MilestoneDispute = () => {
                         <div key={i} className='flex flex-wrap gap-2 items-center'>
                             <Image src={avatar4} height={20} width={20} alt='avatar' />
                             <p className='my-2 font-mono text-center' key={i}>0x...{voter.slice(voter.length - 5)}</p>
-
                         </div>
                     ))}
                 </div>
@@ -92,7 +95,6 @@ const MilestoneDispute = () => {
                             <button className='px-4  py-1 bg-palatte4 rounded-md' onClick={(e) => handleVotingResult(e)}>Get Voting Result</button>
                             {result && <p className='font-mono font-semibold'>{result === 1 ? "Freelancer" : "Client"}</p>}
                         </div>
-
                     </div>
                 </div>
             </div>

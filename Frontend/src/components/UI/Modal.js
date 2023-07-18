@@ -3,14 +3,17 @@ import { useWeb3 } from '@3rdweb/hooks';
 import { Dialog, Transition } from '@headlessui/react'
 import { Input } from 'antd'
 import { Fragment, useState } from 'react'
+import Spinner from './Spinner';
 
 export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const [reason, setReason] = useState('');
-  const {address, provider, chainId} = useWeb3();
+  const [loading, setLoading] = useState(false);
+  const { provider, chainId } = useWeb3();
 
   const handleDispute = async () => {
+    setLoading(true);
     await requestRandomWords(chainId, provider, projectId);
-
+    setLoading(false);
   }
 
   return (
@@ -51,23 +54,23 @@ export default function Modal({ modalStatus, setModalStatus, projectId }) {
                     <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Dispute Reason." className='mt-2 p-2' />
 
                   </div>
-
-                  <div className="mt-4 flex justify-center flex-wrap gap-8">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-palatte4 px-4 py-2 text-sm font-medium text-white hover:bg-palatte2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={handleDispute}
-                    >
-                      Submit
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={() => setModalStatus(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                  {loading ? <Spinner /> :
+                    <div className="mt-4 flex justify-center flex-wrap gap-8">
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-palatte4 px-4 py-2 text-sm font-medium text-white hover:bg-palatte2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        onClick={handleDispute}
+                      >
+                        Submit
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        onClick={() => setModalStatus(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>}
                 </Dialog.Panel>
               </Transition.Child>
             </div>

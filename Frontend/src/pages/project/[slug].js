@@ -44,7 +44,6 @@ const ProjectDetail = () => {
 
   return (
     <div className=''>
-      <Nav />
       <div className='container px-8 py-12'>
         <div className='flex justify-between'>
           <h2 className='text-3xl mb-2'>{projectName}</h2>

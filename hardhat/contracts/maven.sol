@@ -132,9 +132,10 @@ contract Maven is ERC721URIStorage, Registry{
     // @dev - returns all projects that are in bidding state
     function getAllProjectsBidding() public view returns(Project[] memory){
         uint projectCount = _projectIdsInBidding.current();
+        uint totalCount = _projectIds.current();
         Project[] memory allProjects = new Project[](projectCount);
         uint curIndex = 0;
-        for(uint i=1;i<=projectCount;i++){
+        for(uint i=1;i<=totalCount;i++){
             Project storage curItem = projectIdToProjectDetails[i];
             if(curItem.status == ProjectStatus.Bidding){
                 allProjects[curIndex] = curItem;

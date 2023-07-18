@@ -143,6 +143,6 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner{
     function getRequestStatus(uint256 _requestId) external view returns (bool fulfilled, uint randomWords) {
         require(s_requests[_requestId].exists, "request not found");
         RequestStatus memory request = s_requests[_requestId];
-        return (request.fulfilled, request.randomWords[0] % 100);
+        return (request.fulfilled, request.randomWords[0] % 500);
     }
 }

@@ -50,7 +50,7 @@ const ProfileDetail = () => {
                     </div>
                     <div className="">
                         <div className="px-7 mb-8">
-                            <button className='py-2 px-4 float-right font-mono text-white bg-palatte1 rounded-md'>Edit Profiile</button>
+                            {/* <button className='py-2 px-4 float-right font-mono text-white bg-palatte1 rounded-md'>Edit Profiile</button> */}
                             <div className='flex flex-wrap gap-2 sm:gap-4'>
                                 <h2 className="text-3xl font-bold text-palatte4 ">{profile?.profileInfo?.metadata?.fullName}</h2>
                                 <h2 className="text-sm font-semibold mt-3 text-palatte2 ">0x...{profile?.address && profile.address.slice(profile.address.length -5)}</h2>

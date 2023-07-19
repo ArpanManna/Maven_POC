@@ -52,12 +52,13 @@ const ProjectForm = () => {
             }
             try {
                 const res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
-                if (res) getProjectsByUser(chainId, provider, address)
-                router.push("/dashboard")
-                setTags([]);
-                setFile();
-                setDeadline(new Date())
-                setForm({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" })
+                // if (res) await getProjectsByUser(chainId, provider, address)
+                setTimeout(router.push("/dashboard"), 2000)
+
+                // setTags([]);
+                // setFile();
+                // setDeadline(new Date())
+                // setForm({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" })
                 setLoading(false);
             } catch (err) {
                 console.log(err)

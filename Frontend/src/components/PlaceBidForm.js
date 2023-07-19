@@ -134,7 +134,7 @@ const PlaceBidForm = ({ id, projectOwner }) => {
         <button onClick={addFields} className='text-white  bg-gradient-to-r mt-2 from-palatte3 to-palatte5 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4'>Add More..</button>
         <br />
         {loading ? <Spinner /> :
-          <button type="button" onClick={handleFormSubmit} className="text-white bg-gradient-to-r mt-2 from-blue-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4">Place Bid</button>
+          <button type="button" onClick={handleFormSubmit} className="text-white bg-gradient-to-r mt-4 from-palatte1 to-palatte4 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4">Place Bid</button>
         }
       </div>
     </div>

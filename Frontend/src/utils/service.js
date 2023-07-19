@@ -180,7 +180,7 @@ export const transferMilestone = async (chainId, provider, projectId, milestoneI
         if (txStatus === 1) {
             txNotify("success", "Successful", tx.hash);
             const freelancer = await provider.getSigner().getAddress();
-            await sendNotification(`Milestone ${milestoneId} Completed`, `Milestone ${milestoneId} has been transfered by ${freelancer}!`, projectOwner);
+            await sendNotification(`Milestone ${milestoneId} ownership transferred!`, `Ownership of Milestone ${milestoneId} has been transfered by ${freelancer} to your job TBA! Kindly process payment.`, projectOwner);
         } else txNotify("error", "Failed", tx.hash); 
     } catch (err) {
         console.log(err)

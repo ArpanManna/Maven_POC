@@ -18,15 +18,15 @@ const ProfileDetail = () => {
             setPop(true)
             router.push('/createprofile');
         }
-    }, [address]);
+    }, [address, currentUserDetails]);
 
-    useEffect(() => {
-        if (pop) simpleNotify("info", "Profile Required", "Create a profile first!")
-    },[pop])
+    // useEffect(() => {
+    //     if (pop) simpleNotify("info", "Profile Required", "Create a profile first!")
+    // },[pop])
 
-    const simpleNotify = useCallback((type, title, body) => {
-        ToastMessage({ type, title, body });
-    }, []);
+    // // const simpleNotify = useCallback((type, title, body) => {
+    // //     ToastMessage({ type, title, body });
+    // // }, []);
 
     useEffect(() => {
         setProfile(currentUserDetails.currentUserDetails);

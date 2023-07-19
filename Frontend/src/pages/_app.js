@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 export default function App({ Component, pageProps }) {
-  const supportedChainIds = [1, 5, 80001, 11155111];
+  const supportedChainIds = [80001];
 
   const connectors = {
     injected: {}

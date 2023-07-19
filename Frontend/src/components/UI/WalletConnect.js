@@ -3,15 +3,22 @@ import { Menu, Transition } from '@headlessui/react';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import metamaskIcon from "../../assets/imgs/Metamask.svg"
+import SimpleModal from './SimpleModal';
 
 const Modal = dynamic(() => import("./Modal"), {
     ssr: false,
   });
 
 const WalletConnect = () => {
+    const [errorStatus, setErrorStatus] = useState(false)
     const { connectWallet, address, disconnectWallet, error, balance } = useWeb3();
+
+    useEffect(() => {
+        if (error) setErrorStatus(true)
+    }, [error]);
+
     return (
         <>
             {address ? (
@@ -74,7 +81,7 @@ const WalletConnect = () => {
                     <Image src={metamaskIcon} alt='Connect' width={18} height={18}/>
                 </button>
             )}
-            {error && <Modal title="Unsupported Network"/>}
+            {errorStatus && <SimpleModal modalStatus={errorStatus} setModalStatus={setErrorStatus} title={"Unsupported Network"} description={"Please change the network to Polygon Matic."} />}
         </>
     );
 }

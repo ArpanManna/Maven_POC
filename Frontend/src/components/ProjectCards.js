@@ -23,7 +23,8 @@ const ProjectCards = () => {
 
   const getProjects = async () => {
     setLoading(true)
-    const res = await getAllJobPosts(chainId, provider);
+    let res = await getAllJobPosts(chainId, provider);
+    res = res.sort((x, y) => (parseInt(x.id) < parseInt(y.id)) ? 1 : -1)
     setPosts(res);
     setLoading(false);
   }

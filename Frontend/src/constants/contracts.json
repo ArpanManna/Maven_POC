@@ -4,7 +4,15 @@
         "disputeResolution": "0xc64e60a663E22e3200B05626a322E9D26EB4ba6d"
     },
     "80001": {
-        "maven": "0x83d8A5EE2bffBBfA031Dd5120BEEba0d74F50FFd",
-        "disputeResolution": "0xc64e60a663E22e3200B05626a322E9D26EB4ba6d"
+        "maven": "0x6b1B4a5935a863be975FE278e315455316fbd229",
+        "disputeResolution": "0xe8c510D5a7a9303faF85A060652869C883Ee3c03"
+    },
+    "11155111": {
+        "maven": "0xb6e8f128dDf55659Fd0C47C1bcfBF73A87c67cF8",
+        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
+    },
+    "5": {
+        "maven": "0xb4e880ABB602C0901dB604C54c8fa39Eb1E247a9",
+        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
     }
 }

@@ -8,6 +8,8 @@ import { useWeb3 } from '@3rdweb/hooks';
 import Spinner from './UI/Spinner';
 import ToastMessage, { TransactionToastMessage } from './UI/Toast';
 import { DatePicker, Input } from 'antd';
+// import { DatePicker } from 'antd';
+import * as db from '@/utils/polybase';
 import { useRouter } from 'next/router';
 
 const ProjectForm = () => {
@@ -42,7 +44,7 @@ const ProjectForm = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        if (projectName && projectDescription && priceFrom && priceTo) {
+        if (projectName && projectDescription && priceFrom && priceTo && tags) {
             setLoading(true);
             form.skillsRequired = tags;
             const metaDataURI = await uploadFileToIPFS(JSON.stringify(form))
@@ -52,6 +54,11 @@ const ProjectForm = () => {
             }
             try {
                 const res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
+                await db.createProject(projectId, projectName, projectDescription, [], tags, priceFrom, priceTo);
+                // await async.eachLimit(tags, 100, async (tag) => {
+                for (let i = 0; i < tags.length; i += 1) {
+                    await db.publicProject(tags[i], projectId);
+                }
                 if (res) getProjectsByUser(chainId, provider, address)
                 router.push("/dashboard")
                 setTags([]);

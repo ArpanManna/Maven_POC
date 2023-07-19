@@ -10,6 +10,7 @@ import { TransactionToastMessage } from "./UI/Toast";
 import { OptInChannel } from "@/lib/pushProtocol";
 import { useRouter } from "next/router";
 import { useContextState } from "@/context";
+import * as db from '@/utils/polybase';
 
 const UserDetailsForm = () => {
   const [user, setUser] = useState("freelancer");
@@ -54,7 +55,8 @@ const UserDetailsForm = () => {
     }))
 
     try {
-      await createUserProfile(chainId, provider, user, profileURI, txNotify);
+      const {owner, tokenId, tba} = await createUserProfile(chainId, provider, user, profileURI, txNotify);
+      await db.createProfile(owner, tokenId, tba, form.fullName, form.headline, form.summary, fileURI, skills);
       await OptInChannel(address, provider);
       await getUserDetails(chainId, provider, address, dispatch);
        

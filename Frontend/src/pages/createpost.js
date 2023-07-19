@@ -1,31 +1,21 @@
-import Nav from '@/components/Nav';
 import ProjectForm from '@/components/ProjectForm';
-import { ToastMessage } from '@/components/UI/Toast';
 import { useContextState } from '@/context';
 import { useWeb3 } from '@3rdweb/hooks';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 const CreatePost = () => {
     const [{ currentUserDetails }] = useContextState();
     const { address } = useWeb3();
     const router = useRouter();
-    const [pop, setPop] = useState(false)
 
     useEffect(() => {
         if (address && !currentUserDetails?.currentUserDetails?.profileTokenId) {
-            setPop(true)
             router.push('/createprofile');
         }
-    }, [address]);
+    }, [address, currentUserDetails]);
 
-    useEffect(() => {
-        if (pop) simpleNotify("info", "Profile Required", "Create a profile first!")
-    },[pop])
-
-    const simpleNotify = useCallback((type, title, body) => {
-        ToastMessage({ type, title, body });
-    }, []);
+    console.log(currentUserDetails)
 
     return (
         <>

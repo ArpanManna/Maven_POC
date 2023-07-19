@@ -1,8 +1,9 @@
+import { ToastMessage } from '@/components/UI/Toast';
 import UserDetailsForm from '@/components/UserDetailsForm';
 import { useContextState } from '@/context';
 import { useWeb3 } from '@3rdweb/hooks';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 
 const CreateProfile = () => {
     const [{ currentUserDetails }] = useContextState();

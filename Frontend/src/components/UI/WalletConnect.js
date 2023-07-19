@@ -5,9 +5,8 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import metamaskIcon from "../../assets/imgs/Metamask.svg"
-import SimpleModal from './SimpleModal';
 
-const Modal = dynamic(() => import("./Modal"), {
+const SimpleModal = dynamic(() => import("./SimpleModal"), {
     ssr: false,
   });
 

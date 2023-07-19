@@ -11,7 +11,6 @@ export default function Layout({ children }) {
   const [{ }, dispatch] = useContextState();
   const [disconnected, setDisconnected] = useState(true);
 
-
   useEffect(() => {
     if (address) getCurrentUserDetails();
   }, [address]);
@@ -25,9 +24,13 @@ export default function Layout({ children }) {
         socketOptions: { autoConnect: true }
       });
       pushSDKSocket?.on(EVENTS.CONNECT, () => { console.log('connected') })
-      pushSDKSocket?.on(EVENTS.DISCONNECT, (err) => setDisconnected(true));
+      pushSDKSocket?.on(EVENTS.DISCONNECT, (err) => {
+        console.log(err);
+        setDisconnected(true)
+      });
       pushSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (message) => console.log(message))
       pushSDKSocket?.on(EVENTS.USER_FEEDS, (notification) => {
+        console.log(notification);
         simpleNotify("success", notification.payload.notification.title, notification.payload.notification.body)
       })
       pushSDKSocket?.on(EVENTS.USER_SPAM_FEEDS, (spam) => console.log(spam))
@@ -37,7 +40,7 @@ export default function Layout({ children }) {
   const simpleNotify = useCallback((type, title, body) => {
     ToastMessage({ type, title, body });
   }, []);
-  
+
   const getCurrentUserDetails = async () => {
     await getUserDetails(chainId, provider, address, dispatch);
   }

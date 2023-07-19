@@ -13,6 +13,10 @@ const NotificationDrawer = () => {
       if (address) getNotifications();
   }, [address])
 
+  useEffect(() => {
+    if (address) getNotifications();
+}, [])
+
   const getNotifications = async () => {
       const res = await fetchNotifications(address);
       setAllNotifications(res)

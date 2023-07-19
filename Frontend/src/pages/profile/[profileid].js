@@ -11,22 +11,13 @@ const ProfileDetail = () => {
     const [profile, setProfile] = useState({
         address: '', pofileTokenId: '', tba: '', userType:'', profileInfo:''
     });
-    const [pop, setPop] = useState(false)
 
     useEffect(() => {
         if (address && !currentUserDetails?.currentUserDetails?.profileTokenId) {
-            setPop(true)
             router.push('/createprofile');
         }
     }, [address, currentUserDetails]);
 
-    // useEffect(() => {
-    //     if (pop) simpleNotify("info", "Profile Required", "Create a profile first!")
-    // },[pop])
-
-    // // const simpleNotify = useCallback((type, title, body) => {
-    // //     ToastMessage({ type, title, body });
-    // // }, []);
 
     useEffect(() => {
         setProfile(currentUserDetails.currentUserDetails);

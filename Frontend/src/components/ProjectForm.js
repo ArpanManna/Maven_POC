@@ -11,6 +11,7 @@ import { DatePicker, Input } from 'antd';
 // import { DatePicker } from 'antd';
 import * as db from '@/utils/polybase';
 import { useRouter } from 'next/router';
+import { sendNotification } from '@/lib/Notify';
 
 const ProjectForm = () => {
     const [tags, setTags] = useState([]);
@@ -37,9 +38,9 @@ const ProjectForm = () => {
                 })
             }
         } else
-        setForm({
-            ...form, [name]: value
-        })
+            setForm({
+                ...form, [name]: value
+            })
     }
 
     const handleFormSubmit = async (e) => {
@@ -54,17 +55,18 @@ const ProjectForm = () => {
             }
             try {
                 const res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
-                await db.createProject(projectId, projectName, projectDescription, [], tags, priceFrom, priceTo);
-                // await async.eachLimit(tags, 100, async (tag) => {
+                await sendNotification("Job Post Created!", `Job NFTId: 3, Job Token Bound Address: 0x...hjs7`, address)
+                await db.createProject(res, projectName, projectDescription, [], tags, priceFrom, priceTo);
+
                 for (let i = 0; i < tags.length; i += 1) {
                     await db.publicProject(tags[i], projectId);
                 }
-                if (res) getProjectsByUser(chainId, provider, address)
-                setTimeout(router.push("/dashboard"), 2000)
-                setTags([]);
-                setFile();
-                setDeadline(new Date())
-                setForm({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" })
+                if (res) await getProjectsByUser(chainId, provider, address);
+                router.push("/dashboard");
+                // setTags([]);
+                // setFile();
+                // setDeadline(new Date())
+                // setForm({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" })
                 setLoading(false);
             } catch (err) {
                 console.log(err)
@@ -118,7 +120,7 @@ const ProjectForm = () => {
                     <Input id="priceTo" pattern='[0-9]+' name="priceTo" value={priceTo} onChange={handleFormChange} type="text" required="" placeholder="Highest Price" className="block w-1/3 px-5 py-2 my-2 text-base text-gray-800 placeholder-gray-400 placeholder:font-semi-bold transition duration-500 ease-in-out transform border-1 rounded-lg bg-gray-50 border border-gray-300" />
                 </div>
             </div>
-            
+
             {loading ?
                 <div className='py-8'><Spinner /></div>
                 :

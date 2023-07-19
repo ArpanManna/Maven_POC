@@ -32,11 +32,8 @@ function ProjectSection() {
                             7.
                         </li>
                     </ul>
-
                 </div>
-
             </div>
-
             <div className="mx-auto md:w-4/5 w-11/12 pl-5">
                 <div className="w-full h-full ">
                     <ProjectCards />

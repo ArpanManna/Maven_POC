@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useWeb3 } from "@3rdweb/hooks";
 import { uploadFileToIPFS } from "@/lib/IPFSClient";
 import { createUserProfile, getUserDetails } from "../utils/service";
@@ -11,6 +11,7 @@ import { OptInChannel } from "@/lib/pushProtocol";
 import { useRouter } from "next/router";
 import { useContextState } from "@/context";
 import * as db from '@/utils/polybase';
+import { sendNotification } from "@/lib/Notify";
 
 const UserDetailsForm = () => {
   const [user, setUser] = useState("freelancer");
@@ -56,8 +57,10 @@ const UserDetailsForm = () => {
 
     try {
       const {owner, tokenId, tba} = await createUserProfile(chainId, provider, user, profileURI, txNotify);
-      await db.createProfile(owner, tokenId, tba, form.fullName, form.headline, form.summary, fileURI, skills);
       await OptInChannel(address, provider);
+      await sendNotification("Profile Created!", `You profile NFTId: ${tokenId}, Profile Specific Token Bound Address: ${tba} has been created.`, address)
+
+      await db.createProfile(owner, tokenId, tba, form.fullName, form.headline, form.summary, fileURI, skills);
       await getUserDetails(chainId, provider, address, dispatch);
        
       router.push('/browse');
@@ -75,6 +78,10 @@ const UserDetailsForm = () => {
     setSkills(skill);
   }
 
+  // useEffect(() => {
+  //   // if (address) sendNotification("Profile Created!", "You profile NFTId: ${22}, Profile Specific Token Bound Address: ${8723} has been created.`, address)
+
+  // },[address])
 
   return (
     <form className="my-2 px-4 pb-2">

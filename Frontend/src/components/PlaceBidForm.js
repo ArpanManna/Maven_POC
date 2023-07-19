@@ -6,6 +6,7 @@ import React, { useCallback, useState } from 'react'
 import Spinner from './UI/Spinner';
 import { TransactionToastMessage } from './UI/Toast';
 import { DatePicker, Input } from 'antd';
+import * as db from '@/utils/polybase';
 
 const PlaceBidForm = ({ id, projectOwner }) => {
   const [loading, setLoading] = useState(false);
@@ -75,7 +76,10 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       let milestoneArray = milestones.map(({ price, ...rest }) => price);
       const expectedTimeline = moment(deadline).unix()
       const proposalURI = await uploadFileToIPFS(JSON.stringify({ proposal, milestones }))
-      await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify)
+      await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify);
+      console.log(milestones);
+      const bidId = await db.createBid(bidPrice, `${expectedTimeline}`, proposal, [], JSON.stringify(milestones));
+      await db.addBidToProject(id, bidId);
       setLoading(false);
       setMileStones([
         { title: '', price: '' },

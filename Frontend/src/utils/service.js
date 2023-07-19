@@ -6,6 +6,7 @@ import axios from 'axios';
 import async from 'async';
 import { sendNotification } from "@/lib/Notify";
 import { OptInChannel } from "@/lib/pushProtocol";
+import * as db from '@/utils/polybase';
 
 const rpc = "https://polygon-mumbai.g.alchemy.com/v2/-a6_POS01b0lSBGeNnfc25nTbElQneFq";
 
@@ -36,22 +37,64 @@ const getIPFSResponse = async (uri) => {
     } catch (err) {
         console.log(err)
     }
-}
+};
 
 export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, priceTO, fileURI, deadline, txNotify) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.createProject(metaDataURI, priceFrom, priceTO, fileURI, deadline)
+        // console.log(tx);
+        // console.log(project_id.toNumber(), sender);
         txNotify("success", "Sent", tx.hash);
+        const receipt = await tx.wait();
+        console.log(receipt);
+        const data = receipt.logs[0].data;
+        const [project_id] = ethers.utils.defaultAbiCoder.decode(
+            ['uint', 'address'], data
+        );
+        console.log(data);
         const txStatus = await getTransactionStatus(tx.hash);
         if (txStatus === 1) txNotify("success", "Successful", tx.hash);
         else txNotify("error", "Failed", tx.hash);
+        return `${project_id.toNumber()}`;
     } catch (err) {
         console.log(err)
     }
 }
 
+
 export const getAllJobPosts = async (chainId, provider) => {
+    try {
+        const retData = [];
+        const response = await db.getAllJobPosts('BIDDING');
+        for (const x of response) {
+            // const obj = {};
+            retData.push({
+                bidCount: x.bids.length,
+                createdOn: x.postDate,
+                deadline: x.deadline,
+                fileURI: x.mediaUris,
+                finalBid: x.selectedBid ? x.selectedBid : null,
+                freelancer: '',
+                highestBid: x.highestBid,
+                lowestBid: x.lowestBid,
+                id: x.id,
+                metadata: {
+                    priceFrom: x.budgetLowerLimit,
+                    priceTo: x.budgetUpperLimit,
+                    projectDescription: x.description,
+                    projectName: x.title,
+                },
+                skillsRequired: x.skillIds,
+                owner: x.address,
+                status: 0,
+            });
+        }
+
+        console.log('polydata', retData);
+    } catch (err) {
+        console.log(err);
+    }
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getAllProjectsBidding();
@@ -270,7 +313,18 @@ export const createUserProfile = async (chainId, provider, userType, profileURI,
         txNotify("success", "Sent", tx.hash);
         const txStatus = await getTransactionStatus(tx.hash);
         if (txStatus === 1) {
+            const receipt = await tx.wait();
+            // let data = [];
+            let res;
+            for (const x of receipt.events) {
+                if (x.event === 'ProfileCreated') {
+                    res = x.args;
+                }
+            }
+            // const data = receipt.logs[0].data;
+            const [owner, tokenId, tba] = res;
             txNotify("success", "Successful", tx.hash);
+            return {owner, tokenId: `${tokenId.toNumber()}`, tba};
         } else txNotify("error", "Failed", tx.hash);    
     }
          catch (err) {

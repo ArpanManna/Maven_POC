@@ -52,7 +52,7 @@ const WalletConnect = () => {
                                                     </span>
                                                 </div>
                                                 <div className="mt-3 text-center font-medium uppercase tracking-wider">
-                                                    {balance && balance.formatted} ETH
+                                                    {balance && balance.formatted} MATIC
                                                 </div>
                                             </div>
                                         </Menu.Item>

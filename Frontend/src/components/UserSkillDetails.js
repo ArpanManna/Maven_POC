@@ -2,38 +2,59 @@ import React, { useState } from "react";
 import { Select } from "antd";
 
 const UserSkillDetails = ({onSkillChange}) => {
-  const [items, setItems] = useState([{
-    value: "solidity",
-    label: "Solidity",
+  const [items, setItems] = useState([
+  {
+    "value": "3",
+    "label": "PHP"
   },
   {
-    value: "java",
-    label: "Java",
+    "value": "4",
+    "label": "Perl"
   },
   {
-    value: "C++",
-    label: "C++",
+    "value": "5",
+    "label": "ASP"
   },
   {
-    value: "Rust",
-    label: "Rust",
+    "value": "6",
+    "label": "C Programming"
   },
   {
-    value: "Hardhat",
-    label: "hardhat",
+    "value": "7",
+    "label": "Java"
   },
   {
-    value: "AMM",
-    label: "AMM",
+    "value": "8",
+    "label": "JSP"
   },
   {
-    value: "Ethereum",
-    label: "Ethereum",
+    "value": "9",
+    "label": "JavaScript"
   },
   {
-    value: "Solana",
-    label: "Solana",
-  }
+    "value": "10",
+    "label": "XML"
+  },
+  {
+    "value": "11",
+    "label": "Cold Fusion"
+  },
+  {
+    "value": "12",
+    "label": "Adobe Flash"
+  },
+  {
+    "value": "13",
+    "label": "Python"
+  },
+  {
+    "value": "14",
+    "label": "Visual Basic"
+  },
+  {
+    "value": "15",
+    "label": ".NET"
+  },
 ]);
   
   return (

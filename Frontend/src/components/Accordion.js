@@ -22,8 +22,9 @@ const Accordion = () => {
 
     const getProjectByAddress = async () => {
         setLoading(true);
-        const data = await getProjectsByUser(chainId, provider, address);
+        let data = await getProjectsByUser(chainId, provider, address);
         if (data) {
+            data = data.sort((x, y) => (parseInt(x.post.id) < parseInt(y.post.id)) ? 1 : -1)
             setProjects(data);
             dispatch({
                 type: 'DASHBOARD_UPDATE',

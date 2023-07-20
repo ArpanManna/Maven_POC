@@ -6,15 +6,15 @@ import moment from 'moment';
 import MilestoneTable from './UI/MilestoneTable';
 import { useContextState } from '@/context';
 import Modal from './UI/Modal';
+import { getAccountUrl } from '@/utils/explorer';
 
 const Accordion = () => {
     const { address, chainId, provider } = useWeb3();
     const [loading, setLoading] = useState(false);
     const [disputeProject, setDisputeProject] = useState();
-    const [projects, setProjects] = useState([]);
     const [modalStatus, setModalStatus] = useState(false);
 
-    const [{ }, dispatch] = useContextState();
+    const [{ dashboardProjects }, dispatch] = useContextState();
 
     useEffect(() => {
         if (address) getProjectByAddress()
@@ -22,21 +22,11 @@ const Accordion = () => {
 
     const getProjectByAddress = async () => {
         setLoading(true);
-        let data = await getProjectsByUser(chainId, provider, address);
-        if (data) {
-            data = data.sort((x, y) => (parseInt(x.post.id) < parseInt(y.post.id)) ? 1 : -1)
-            setProjects(data);
-            dispatch({
-                type: 'DASHBOARD_UPDATE',
-                payload: {
-                    dashboardProjects: data,
-                },
-            });
-        }
+        await getProjectsByUser(chainId, provider, address, dispatch);
         setLoading(false);
     }
 
-
+    console.log(dashboardProjects);
     const handleDispute = async (projectId) => {
         setDisputeProject(projectId)
         setModalStatus(true);
@@ -49,16 +39,16 @@ const Accordion = () => {
     };
 
     if (loading) return (<p className='text-center py-12'>Loading...</p>)
-    if (projects.length === 0) 
+    if (dashboardProjects.length === 0)
         return (
-        <div className='text-center my-8'>
-            <p className='font-mono font-lg'>No projects to show!</p>
-        </div>
+            <div className='text-center my-8'>
+                <p className='font-mono font-lg'>No projects to show!</p>
+            </div>
         )
     return (
         <>
             {
-                projects && projects.map(({ bid, post }) => (
+                dashboardProjects && dashboardProjects.map(({ bid, post }) => (
                     <Collapse className='my-4'
                         key={post.id}
                         collapsible="header"
@@ -83,18 +73,27 @@ const Accordion = () => {
                                             <h2>IPFS: </h2>
                                             <a href={post.metadataURI} target='__blank' className='cursor-pointer font-light underline text-blue-600'>https:ipfs.io....</a>
                                         </div>
-                                        <h2>Token Bound Address: 0x...78h</h2>
-                                        {bid.freelancer && <h2>Freelancer: {'0x...'}
-                                            {bid.freelancer.slice(bid.freelancer.length - 6)}</h2>}
+                                        <div className='flex flex-wrap gap-2'>
+                                            <h2>TBA:</h2>
+                                            <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...{bid.freelancer.slice(bid.freelancer.length - 6)}</a>
+                                        </div>
+                                        {bid.freelancer &&
+                                        <div className='flex flex-wrap gap-2'>
+                                        <h2>Freelancer:</h2>
+                                        <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...{bid.freelancer.slice(bid.freelancer.length - 6)}</a>
+                                    </div>
+                                        }
                                         <h2>Published On: {moment.unix(post.createdOn).format("MM/DD/YYYY")}</h2>
                                         <h2>Deadline: {moment.unix(post.deadline).format("MM/DD/YYYY")}</h2>
-                                        <button className='px-4 py-2 mt-4 rounded-md text-white font-mono text-sm bg-palatte4' onClick={() => handleDispute(post.id)}>Raise Dispute</button>
+                                        {post.status === 1 &&
+                                            <button className='px-4 py-2 mt-4 rounded-md text-white font-mono text-sm bg-palatte4' onClick={() => handleDispute(post.id)}>Raise Dispute</button>
+                                        }
                                     </div>
-
                                     <div className='col-span-3'>
-                                        {post.status === 1 ?
+                                        {post.status === 0 ?
                                             <MilestoneTable milestones={bid.proposal.milestones} postStatusIdToLabel={postStatusIdToLabel} owner={post.owner} freelancer={bid.freelancer} projectId={post.id} />
-                                            : <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
+                                            : post.status === 2 ? <p className='text-center mt-16 font-mono text-lg'>Project Completed.</p> :
+                                                <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
                                         }
                                     </div>
                                 </div>,

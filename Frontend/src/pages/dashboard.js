@@ -1,7 +1,6 @@
 import Accordion from '@/components/Accordion';
-import Nav from '@/components/Nav'
 import { Space } from 'antd';
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 const Dashboard = () => {
   return (

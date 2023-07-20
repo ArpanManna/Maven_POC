@@ -55,7 +55,7 @@ export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, p
         if (txStatus === 1) txNotify("success", "Successful", tx.hash);
         else txNotify("error", "Failed", tx.hash);
         return `${project_id.toNumber()}`;
-        
+
     } catch (err) {
         console.log(err)
     }
@@ -178,10 +178,14 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getBidDetails(projectId.toNumber(), bidId);
+        console.log(data)
         let bid = ({ projectId: data[0].toString(), freelancer: data[1], bidPrice: data[2].toString(), deliveryTime: data[3].toString() })
         let proposal = await getIPFSResponse(data[4])
         data[6].forEach((tokenId, index) => {
             proposal.milestones[index].tokenId = tokenId.toNumber();
+        });
+        data[7].forEach((status, index) => {
+            proposal.milestones[index].status = status;
         })
         bid = ({ ...bid, proposal });
         return bid;
@@ -190,11 +194,11 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
     }
 };
 
-export const getProjectsByUser = async (chainId, provider, address) => {
+export const getProjectsByUser = async (chainId, provider, address, dispatch) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const projects = await mavenContract.getProjectProfile(address);
-        const posts = []
+        let posts = []
 
         await async.eachLimit(projects, 100, async (projectId) => {
             let data = {}
@@ -204,9 +208,21 @@ export const getProjectsByUser = async (chainId, provider, address) => {
             data.bid = bidDetail
             posts.push(data)
         });
-        return (posts)
+        if (posts) {
+            posts = posts.sort((x, y) => (parseInt(x.post.id) < parseInt(y.post.id)) ? 1 : -1)
+            dispatch({
+                type: 'DASHBOARD_UPDATE',
+                payload: posts,
+            });
+        }
     } catch (err) {
-        console.log(err)
+        console.log(err);
+            dispatch({
+                type: 'DASHBOARD_UPDATE',
+                payload: {
+                    dashboardProjects: [],
+                },
+            });
     }
 }
 
@@ -316,7 +332,6 @@ export const createUserProfile = async (chainId, provider, userType, profileURI,
                 res = x.args;
             }
         }
-        console.log(res)
         // const data = receipt.logs[0].data;
         const [owner, tokenId, tba] = res;
         txNotify("success", "Successful", tx.hash);
@@ -347,9 +362,7 @@ export const getUserDetails = async (chainId, provider, address, dispatch) => {
             }
             dispatch({
                 type: 'UPDATE_USER_DATA',
-                payload: {
-                    currentUserDetails: userData,
-                },
+                payload:  userData,
             });
         }
 
@@ -364,9 +377,7 @@ export const getUserDetails = async (chainId, provider, address, dispatch) => {
         }
         dispatch({
             type: 'UPDATE_USER_DATA',
-            payload: {
-                currentUserDetails: userData,
-            },
+            payload: userData,
         });
         console.log(err);
     }

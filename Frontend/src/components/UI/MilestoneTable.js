@@ -1,25 +1,35 @@
 import React, { useCallback, useState } from 'react';
 import { Space, Table } from 'antd';
 import { useWeb3 } from '@3rdweb/hooks';
-import { processPayment, transferMilestone } from '@/utils/service';
+import { getProjectsByUser, processPayment, transferMilestone } from '@/utils/service';
 import { TransactionToastMessage } from './Toast';
 import Spinner from './Spinner';
-import Modal from './Modal';
+import { useContextState } from '@/context';
 
-const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, projectId}) => {
+const MilestoneTable = ({milestones, owner, freelancer, projectId}) => {
   const [loading, setLoading] = useState(false);
   const {address, chainId, provider} = useWeb3();
+  const [{}, dispatch] = useContextState();
 
   const handleProcessPayment = async (milestoneId) => {
     setLoading(true);
     await processPayment(chainId, provider, projectId, milestoneId, freelancer, txNotify);
+    await getProjectsByUser(chainId, provider, address, dispatch);
     setLoading(false);
   }
 
   const handleTransferOwnership = async (milestoneId) => {
     setLoading(true);
     await transferMilestone(chainId, provider, projectId, milestoneId, owner, txNotify);
+    await getProjectsByUser(chainId, provider, address, dispatch);
     setLoading(false);
+  }
+
+  const milestoneStatusIdToLabel = {
+    0: "In Progress",
+    1: "Payment Pending",
+    2: "Completed",
+    3: "Disputed"
   }
 
   const txNotify = useCallback((type, title, txHash) => {
@@ -27,14 +37,16 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
   }, []);
 
   const data = [];
+
   for (let i = 0; i < milestones.length; i++) {
+    console.log(milestones[i])
     data.push({
       key: i,
       MilestoneTitle: milestones[i].title,
       NFTId: milestones[i].tokenId,
       Amount: milestones[i].price,
       Owner: `0x...89bb`,
-      Status: postStatusIdToLabel[milestones[i].status],
+      Status: milestoneStatusIdToLabel[milestones[i].status],
     });
   };
 
@@ -42,22 +54,27 @@ const MilestoneTable = ({milestones, postStatusIdToLabel, owner, freelancer, pro
     {
       title: 'Milestone Title',
       dataIndex: 'MilestoneTitle',
-      width: 240,
+      width: 220,
     },
     {
       title: 'NFT Id',
       dataIndex: 'NFTId',
-      width: 130,
+      width: 100,
     },
     {
       title: 'Amount',
       dataIndex: 'Amount',
-      width: 140,
+      width: 100,
     },
     {
       title: 'Owner',
       dataIndex: 'Owner',
-      width: 150,
+      width: 100,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'Status',
+      width: 130,
     },
     {
       title: 'Action',

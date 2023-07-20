@@ -6,14 +6,16 @@ import moment from 'moment'
 import { TransactionToastMessage } from './UI/Toast'
 import avatar2 from '../assets/imgs/avatar2.svg';
 import Image from 'next/image'
+import { useContextState } from '@/context'
 
 const ProposalsTab = ({ id, proposals, projectOwner }) => {
   const [loading, setLoading] = useState(false);
   const { address, chainId, provider } = useWeb3();
+  const [{}, dispatch] = useContextState();
 
   const handleBidSelection = async (bidId, bidOwner, bidPrice) => {
     setLoading(true);
-    await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice, txNotify);
+    await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice, txNotify, dispatch);
     setLoading(false);
   }
 

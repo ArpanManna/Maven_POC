@@ -7,7 +7,7 @@ import { Avatar, Segmented, Space, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import Spinner from "./UI/Spinner";
 import { TransactionToastMessage } from "./UI/Toast";
-import { OptInChannel } from "@/lib/pushProtocol";
+import { OptInChannel, fetchNotifications } from "@/lib/pushProtocol";
 import { useRouter } from "next/router";
 import { useContextState } from "@/context";
 import * as db from '@/utils/polybase';
@@ -58,7 +58,8 @@ const UserDetailsForm = () => {
     try {
       const {owner, tokenId, tba} = await createUserProfile(chainId, provider, user, profileURI, txNotify);
       await OptInChannel(address, provider);
-      await sendNotification("Profile Created!", `You profile NFTId: ${tokenId}, Profile Specific Token Bound Address: ${tba} has been created.`, address)
+      await sendNotification("Profile Created!", `Your profile with NFTId: ${tokenId} and unique Token Bound Address ${tba} has been created.`, address)
+      await fetchNotifications(address, dispatch);
 
       await db.createProfile(owner, tokenId, tba, form.fullName, form.headline, form.summary, fileURI, skills);
       await getUserDetails(chainId, provider, address, dispatch);
@@ -116,7 +117,7 @@ const UserDetailsForm = () => {
         type="text"
         required=""
         placeholder="Professional Headline"
-        className="block w-full px-5 py-2 mt-1 text-mono text-gray-800 font-bold placeholder-gray-400 placeholder:font-semibold transition duration-500 ease-in-out transform rounded-lg"
+        className="block w-full px-5 py-2 mt-1 text-mono text-gray-800 font-semibold placeholder-gray-400 placeholder:font-semibold transition duration-500 ease-in-out transform rounded-lg"
       />
       <div className="relative mt-2">
         <label

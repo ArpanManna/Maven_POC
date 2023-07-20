@@ -13,14 +13,14 @@ const MilestoneTable = ({milestones, owner, freelancer, projectId}) => {
 
   const handleProcessPayment = async (milestoneId) => {
     setLoading(true);
-    await processPayment(chainId, provider, projectId, milestoneId, freelancer, txNotify);
+    await processPayment(chainId, provider, projectId, milestoneId, freelancer, txNotify, dispatch);
     await getProjectsByUser(chainId, provider, address, dispatch);
     setLoading(false);
   }
 
   const handleTransferOwnership = async (milestoneId) => {
     setLoading(true);
-    await transferMilestone(chainId, provider, projectId, milestoneId, owner, txNotify);
+    await transferMilestone(chainId, provider, projectId, milestoneId, owner, txNotify, dispatch);
     await getProjectsByUser(chainId, provider, address, dispatch);
     setLoading(false);
   }

@@ -5,8 +5,8 @@ import disputeResolutionABI from "../assets/abis/disputeResolution.json"
 import axios from 'axios';
 import async from 'async';
 import { sendNotification } from "@/lib/Notify";
-import { OptInChannel } from "@/lib/pushProtocol";
 import * as db from '@/utils/polybase';
+import { fetchNotifications } from "@/lib/pushProtocol";
 
 const rpc = "https://polygon-mumbai.g.alchemy.com/v2/-a6_POS01b0lSBGeNnfc25nTbElQneFq";
 
@@ -39,21 +39,25 @@ const getIPFSResponse = async (uri) => {
     }
 };
 
-export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, priceTO, fileURI, deadline, txNotify) => {
+export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, priceTO, fileURI, deadline, txNotify, address, dispatch) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.createProject(metaDataURI, priceFrom, priceTO, fileURI, deadline)
         txNotify("success", "Sent", tx.hash);
         const receipt = await tx.wait();
-        console.log(receipt);
-        const data = receipt.logs[0].data;
-        const [project_id] = ethers.utils.defaultAbiCoder.decode(
-            ['uint', 'address'], data
-        );
-        console.log(data);
         const txStatus = await getTransactionStatus(tx.hash);
         if (txStatus === 1) txNotify("success", "Successful", tx.hash);
         else txNotify("error", "Failed", tx.hash);
+        const {client, projectId, tokenId, tba} = receipt.events[3].args;
+        // const [project_id] = ethers.utils.defaultAbiCoder.decode(
+        //     ['uint', 'address'], data
+        // );
+
+        await sendNotification("Job Post Created!", `A new Job with NFT Id: ${tokenId} and Token Bound Address: ${tba} has been created.`, address)
+        await fetchNotifications(address, dispatch);
+
+
+        
         return `${project_id.toNumber()}`;
 
     } catch (err) {
@@ -120,6 +124,7 @@ export const placeBid = async (chainId, provider, projectId, bidPrice, expectedT
             txNotify("success", "Successful", tx.hash);
             const freelancer = await provider.getSigner().getAddress();
             await sendNotification(`New Bid Placed`, `You have got a new bid in your project from ${freelancer}`, projectOwner);
+            await sendNotification(`New Bid Placed`, `You have placed a new bid in project ${projectId}`, freelancer);
         } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
@@ -144,7 +149,7 @@ export const getJobProposalsByID = async (chainId, provider, projectId) => {
     }
 }
 
-export const selectBid = async (chainId, provider, projectId, bidOwner, bidId, bidPrice, txNotify) => {
+export const selectBid = async (chainId, provider, projectId, bidOwner, bidId, bidPrice, txNotify, dispatch) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.selectBid(projectId, bidOwner, bidId, { value: parseInt(bidPrice) });
@@ -154,6 +159,9 @@ export const selectBid = async (chainId, provider, projectId, bidOwner, bidId, b
             txNotify("success", "Successful", tx.hash);
             const client = await provider.getSigner().getAddress();
             await sendNotification(`Bid Selected`, `Your bid has been selected by ${client}`, bidOwner);
+            await sendNotification(`Bid Selected`, `You have selected a bid from ${bidOwner}`, client);
+            await fetchNotifications(client, dispatch);
+
         } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
@@ -167,6 +175,7 @@ const getProjectById = async (chainId, provider, projectId) => {
         let post = ({ id: data[0].toString(), metadataURI: data[5], owner: data[1], freelancer: data[2], lowestBid: data[3].toString(), highestBid: data[4].toString(), createdOn: data[7].toString(), deadline: data[8].toString(), finalBid: data[9].toString(), status: data[10] })
         const metadataRes = await getIPFSResponse(data[5])
         const JDRes = await getIPFSResponse(data[6])
+
         post = ({ ...post, metadata: metadataRes, file: JDRes })
         return post
     } catch (err) {
@@ -178,7 +187,6 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getBidDetails(projectId.toNumber(), bidId);
-        console.log(data)
         let bid = ({ projectId: data[0].toString(), freelancer: data[1], bidPrice: data[2].toString(), deliveryTime: data[3].toString() })
         let proposal = await getIPFSResponse(data[4])
         data[6].forEach((tokenId, index) => {
@@ -217,16 +225,14 @@ export const getProjectsByUser = async (chainId, provider, address, dispatch) =>
         }
     } catch (err) {
         console.log(err);
-            dispatch({
-                type: 'DASHBOARD_UPDATE',
-                payload: {
-                    dashboardProjects: [],
-                },
-            });
+        dispatch({
+            type: 'DASHBOARD_UPDATE',
+            payload: [],
+        });
     }
 }
 
-export const transferMilestone = async (chainId, provider, projectId, milestoneId, projectOwner, txNotify) => {
+export const transferMilestone = async (chainId, provider, projectId, milestoneId, projectOwner, txNotify, dispatch) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.transferMilestoneOwnership(projectId, milestoneId);
@@ -235,14 +241,17 @@ export const transferMilestone = async (chainId, provider, projectId, milestoneI
         if (txStatus === 1) {
             txNotify("success", "Successful", tx.hash);
             const freelancer = await provider.getSigner().getAddress();
-            await sendNotification(`Milestone ${milestoneId} ownership transferred!`, `Ownership of Milestone ${milestoneId} has been transfered by ${freelancer} to your job TBA! Kindly process payment.`, projectOwner);
+            await sendNotification(`Milestone ${milestoneId} ownership transferred!`, `Ownership of Milestone ${milestoneId} of peoject ${projectId} has been transfered by ${freelancer} to your job TBA! Kindly process payment.`, projectOwner);
+            await sendNotification(`Milestone ${milestoneId} ownership transferred!`, `You have transferred ownership of Milestone ${milestoneId} of project ${projectId} `, freelancer);
+            await fetchNotifications(freelancer, dispatch);
+
         } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
     }
 }
 
-export const processPayment = async (chainId, provider, projectId, milestoneId, freelancer, txNotify) => {
+export const processPayment = async (chainId, provider, projectId, milestoneId, freelancer, txNotify, dispatch) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.processMilestoneCompletion(projectId, milestoneId);
@@ -251,7 +260,9 @@ export const processPayment = async (chainId, provider, projectId, milestoneId, 
         if (txStatus === 1) {
             txNotify("success", "Successful", tx.hash);
             const client = await provider.getSigner().getAddress();
-            await sendNotification(`Payment Credited`, `You got the payment of milestone ${milestoneId} from ${client}!`, freelancer);
+            await sendNotification(`Payment Credited`, `You got the payment of milestone ${milestoneId} for project ${projectId} from ${client}!`, freelancer);
+            await sendNotification(`Payment Released`, `You have released the payment of milestone ${milestoneId} of project ${projectId} to ${freelancer}!`, client);
+            await fetchNotifications(address, dispatch);
         } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
@@ -325,14 +336,12 @@ export const createUserProfile = async (chainId, provider, userType, profileURI,
     const txStatus = await getTransactionStatus(tx.hash);
     if (txStatus === 1) {
         const receipt = await tx.wait();
-        // let data = [];
         let res;
         for (const x of receipt.events) {
             if (x.event === 'ProfileCreated') {
                 res = x.args;
             }
         }
-        // const data = receipt.logs[0].data;
         const [owner, tokenId, tba] = res;
         txNotify("success", "Successful", tx.hash);
         return { owner, tokenId: `${tokenId.toNumber()}`, tba };
@@ -362,7 +371,7 @@ export const getUserDetails = async (chainId, provider, address, dispatch) => {
             }
             dispatch({
                 type: 'UPDATE_USER_DATA',
-                payload:  userData,
+                payload: userData,
             });
         }
 

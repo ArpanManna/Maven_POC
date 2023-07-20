@@ -12,7 +12,7 @@ const getUser = async (account, env = 'staging') => {
     const user = await PushAPI.user.get({
         account: `eip155:${account}`,
         env,
-      });
+    });
     return user;
 };
 // helper
@@ -83,11 +83,24 @@ const approveChats = async (senderAddress, signer, env = 'staging') => {
     return response;
 }
 
-export const fetchNotifications = async(address) => {
-    return await PushAPI.user.getFeeds({
-    user: `eip155:80001:${address}`, // user address in CAIP
-    env: 'staging'
-  });
+export const fetchNotifications = async (address, dispatch) => {
+    try {
+        const notifications = await PushAPI.user.getFeeds({
+            user: `eip155:80001:${address}`, // user address in CAIP
+            env: 'staging'
+        });
+        dispatch({
+            type: 'FETCH_NOTIFICATIONS',
+            payload: notifications,
+        });
+    } catch {
+        dispatch({
+            type: 'FETCH_NOTIFICATIONS',
+            payload: [],
+        });
+    }
+
+
 }
 
 export const OptInChannel = async (address, provider) => {
@@ -96,11 +109,11 @@ export const OptInChannel = async (address, provider) => {
         channelAddress, // channel address in CAIP
         userAddress: `eip155:80001:${address}`, // user address in CAIP
         onSuccess: () => {
-         console.log('opt in success');
+            console.log('opt in success');
         },
         onError: () => {
-          console.error('opt in error');
+            console.error('opt in error');
         },
         env: 'staging'
-      })
+    })
 }

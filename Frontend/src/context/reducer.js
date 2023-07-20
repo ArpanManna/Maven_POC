@@ -8,7 +8,8 @@ export const initialState = {
     "userType": '',
     "profileTokenId": '',
     "profileInfo": ''
-  }
+  },
+  notifications: [] 
 };
 
 export const reducer = (initialState, action) => {
@@ -24,6 +25,11 @@ export const reducer = (initialState, action) => {
         ...initialState,
         currentUserDetails: action.payload,
       };
+      case 'FETCH_NOTIFICATIONS':
+        return {
+          ...initialState,
+          notifications: action.payload,
+        };
     default:
       return initialState;
   }

@@ -15,8 +15,6 @@ const CreatePost = () => {
         }
     }, [address, currentUserDetails]);
 
-    console.log(currentUserDetails)
-
     return (
         <>
         <div className='min-h-screen'>

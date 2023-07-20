@@ -20,14 +20,14 @@ const CreateProfile = () => {
             router.push('/browse');
         }
     }
-    
+
     useEffect(() => {
         setOpen(true);
-        if(open){
+        if (open) {
             simpleNotify("info", "Profile Required", "Create a profile first!");
         }
-        setOpen(false);
-    }, [])
+        setOpen(false)
+    }, [open])
 
     const simpleNotify = useCallback((type, title, body) => {
         ToastMessage({ type, title, body });

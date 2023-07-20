@@ -3,23 +3,24 @@ pragma solidity ^0.8.9;
 
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "./Registry.sol";
+import "./ERC6551Account.sol";
 
-
-contract Maven {
+contract Maven is ERC721URIStorage, Registry{
     using Counters for Counters.Counter;
     using SafeMath for uint256;
     Counters.Counter private _projectIds; // keep track of projects created
-<<<<<<< Updated upstream
-    Counters.Counter private _projectIdsInBidding; // keep track of projects in bidding
-    uint stakePercentage = 5;
-=======
     Counters.Counter public _projectIdsInBidding; // keep track of projects in bidding
     Counters.Counter private _tokenIds; // keep track of token Id
     uint stakePercentage = 4;
->>>>>>> Stashed changes
+    Counters.Counter public _projectIdsInBidding; // keep track of projects in bidding
+    Counters.Counter private _tokenIds; // keep track of token Id
+    uint stakePercentage = 4;
+    
     address deployer;
 
-    constructor(){
+    constructor(address _implementationContract) ERC721("Maven Protocol", "MVP") Registry(_implementationContract){
         deployer = msg.sender;
     }
 
@@ -42,17 +43,11 @@ contract Maven {
     }
 
     struct Profile{
-<<<<<<< Updated upstream
-        address addr;
-        string uri;
-        ProfileType _type;
-=======
         address addr;  // profile address
         string uri;    // profile URI
         ProfileType _type;  // client or freelancer ( @notice - validators  be added in future)
         uint tokenId;  // NFT id
         address tba;  // Profile Token Bound Address
->>>>>>> Stashed changes
     }
 
     struct Project{
@@ -76,40 +71,23 @@ contract Maven {
         uint deliveryTime;   // expected delivery date
         string proposalUri;  // URI of bid proposal 
         uint[] milestonePrices;   // price breakdown milestone-wise
-<<<<<<< Updated upstream
-=======
         uint[] tokens;           // NFT token Ids for milestones
         MilestoneStatus[] status;      
->>>>>>> Stashed changes
     }
 
     mapping(uint => Project) projectIdToProjectDetails;    // mapping of project Id to project details
     mapping(uint => Bid[]) projectIdToBids;   // mapping of projectId to bids
     mapping(address => mapping(uint => uint)) stakedAmount; // mapping of client Id to (project Id => staked amount)
     mapping(address => uint[]) projectProfiles;  // mapping of address to project Ids
-<<<<<<< Updated upstream
-    mapping(address => Profile) profile;
-=======
     mapping(address => Profile) profile;        // mapping of address to Profiles
     mapping(uint => uint) public projectTokenId;   // mapping of project Id to nft token Id;
     mapping(uint => address) tokenIds;      // mapping of token id to tba
->>>>>>> Stashed changes
 
     modifier onlyProjectOwner(uint projectId) {
         require(msg.sender == projectIdToProjectDetails[projectId].client, "Only project owner can call");
         _;
     }
 
-<<<<<<< Updated upstream
-    event ProjectCreated(uint projectId, address client);
-    event FreeLancerSelected(uint projectId, address client, address freelancer);
-    event PaymentReleased(uint projectId, uint milestoneId, uint amount, address freelancer);
-
-    function createProfile(string memory _type, string memory _uri) public {
-        require(profile[msg.sender].addr == address(0), "Profile already created!");
-        if(compare(_type, "client")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Client);
-        else if(compare(_type, "freelancer")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Freelancer);
-=======
     modifier profileExists(address _addr) {
         require(profile[_addr].tokenId != 0, "First create profile");
         _;
@@ -135,17 +113,34 @@ contract Maven {
         if(compare(_type, "client")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Client, newTokenId, tba);
         else if(compare(_type, "freelancer")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Freelancer, newTokenId, tba);
         emit ProfileCreated(msg.sender, newTokenId, tba);
->>>>>>> Stashed changes
     }
 
-    function getProfile() public view returns(Profile memory) {
-        require(profile[msg.sender].addr != address(0), "No such Profile address exists!");
-        return profile[msg.sender];
+    function getProfile(address _addr) public view returns(Profile memory) {
+        require(profile[_addr].addr != address(0), "No such Profile address exists!");
+        return profile[_addr];
+
     }
 
+    // @dev - this function mints a new NFT id and Token Bound address
+    function mintTokenAndTba(address _to, string memory _uri) internal returns(uint, address){
+        _tokenIds.increment();
+        uint newTokenId = _tokenIds.current();
+        _mint(_to, newTokenId);
+        _setTokenURI(newTokenId, _uri);
+        address tba = _createAccount(block.chainid, address(this), newTokenId);
+        return (newTokenId, tba);
+    }
+
+    function mintToken(address _to, string memory _uri) internal returns(uint){
+        _tokenIds.increment();
+        uint newTokenId = _tokenIds.current();
+        _mint(_to, newTokenId);
+        _setTokenURI(newTokenId, _uri);
+        return (newTokenId);
+    }
     function updateProfile(address _addr, string memory _uri) public {
         require(profile[msg.sender].addr != address(0), "Profile do not exist");
-        profile[_addr] = Profile(msg.sender, _uri, profile[msg.sender]._type);
+        profile[_addr] = Profile(msg.sender, _uri, profile[msg.sender]._type, profile[msg.sender].tokenId, profile[msg.sender].tba);
     }
 
     function createProject(string memory _uri, uint lbid, uint ubid, string memory _JDuri, uint deadline) external profileExists(msg.sender) returns(uint){
@@ -155,34 +150,23 @@ contract Maven {
         projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, block.timestamp, deadline, 0, ProjectStatus.Bidding);
         _projectIdsInBidding.increment();
         projectProfiles[msg.sender].push(newProjectId);
-<<<<<<< Updated upstream
-        emit ProjectCreated(newProjectId, msg.sender);
-=======
+
         // create Project NFT and TBA
         (uint newTokenId, address tba) = mintTokenAndTba(profile[msg.sender].tba, _uri);
         projectTokenId[newProjectId] = newTokenId;
         tokenIds[newTokenId] = tba;
         emit ProjectCreated(msg.sender, newProjectId, newTokenId, tba);
->>>>>>> Stashed changes
         return newProjectId;
     }
 
     // @dev - returns all projects that are in bidding state
     function getAllProjectsBidding() public view returns(Project[] memory){
-<<<<<<< Updated upstream
-        uint projectCount = _projectIdsInBidding.current();
-        Project[] memory allProjects = new Project[](projectCount);
-        uint curIndex = 0;
-        for(uint i=1;i<=projectCount;i++){
-            Project storage curItem = projectIdToProjectDetails[i];
-=======
         uint projectCountInBid = _projectIdsInBidding.current();
         uint totalCount = _projectIds.current();
         Project[] memory allProjects = new Project[](projectCountInBid);
         uint curIndex = 0;
         for(uint i=1;i<=totalCount;i++){
             Project memory curItem = projectIdToProjectDetails[i];
->>>>>>> Stashed changes
             if(curItem.status == ProjectStatus.Bidding){
                 allProjects[curIndex] = curItem;
                 curIndex += 1;
@@ -222,12 +206,9 @@ contract Maven {
         require(projectIdToProjectDetails[_projectId].status != ProjectStatus.Completed, "Project Completed");
         require(msg.sender != projectIdToProjectDetails[_projectId].client, "Client cannot bid for project");
         require(!checkAlreadyBid(_projectId, msg.sender), "Freelancer already bid for this project!");
-<<<<<<< Updated upstream
-        Bid memory newBid = Bid(_projectId, msg.sender, bidPrice, time, proposalUri, milestonePrices);
-=======
         Bid memory newBid = Bid(_projectId, msg.sender, bidPrice, time, proposalUri, milestonePrices, new uint[](0), new MilestoneStatus[](0));
->>>>>>> Stashed changes
         projectIdToBids[_projectId].push(newBid);
+        emit BidCreated(_projectId, projectIdToBids[_projectId].length-1, msg.sender);
     }
 
 
@@ -253,8 +234,6 @@ contract Maven {
         project.finalBidId = bidId;
         project.status = ProjectStatus.InProgress;
         _projectIdsInBidding.decrement();
-<<<<<<< Updated upstream
-=======
         uint jobTokenId = projectTokenId[projectId];
         //address tba = _account(block.chainid, address(this), jobTokenId);
         address tba = tokenIds[jobTokenId];
@@ -268,7 +247,6 @@ contract Maven {
         //safeTransferFrom(profile[msg.sender].tba, profile[winnerBidder].tba, jobTokenId);
         ERC6551Account ma = ERC6551Account(payable(profile[msg.sender].tba));
         ma.transferERC721Tokens(address(this), profile[winnerBidder].tba, jobTokenId);
->>>>>>> Stashed changes
         projectProfiles[winnerBidder].push(projectId);
         emit FreeLancerSelected(projectId, msg.sender, winnerBidder);
     }
@@ -278,10 +256,7 @@ contract Maven {
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         Bid memory _bid = projectIdToBids[projectId][bidId];
         require(milestoneIndex < _bid.milestonePrices.length, "Milestone Index not valid");
-<<<<<<< Updated upstream
-=======
         require(ownerOf(projectIdToBids[projectId][bidId].tokens[milestoneIndex]) == profile[msg.sender].tba, "Milestone ownership not transfered");
->>>>>>> Stashed changes
         uint amountToPay = _bid.milestonePrices[milestoneIndex];
         address freelancer = _bid.freelancer;
         payable(freelancer).transfer(amountToPay);
@@ -295,8 +270,6 @@ contract Maven {
         emit PaymentReleased(projectId, milestoneIndex, amountToPay, freelancer);
     }
 
-<<<<<<< Updated upstream
-=======
     function transferMilestoneOwnership(uint projectId, uint milestoneIndex) public {
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         require(msg.sender == projectIdToBids[projectId][bidId].freelancer, "Sender is not the worker");
@@ -313,12 +286,15 @@ contract Maven {
     }
 
 
->>>>>>> Stashed changes
     // @dev returns the projects Ids corresponding to particular address
     // @dev client : projects, freelancers : projects working on
-    function getProjectProfile() public view returns(uint[] memory){
-        require(projectProfiles[msg.sender].length != 0, "Not a valid Client or Freelancer Profile");
-        return projectProfiles[msg.sender];
+    function getProjectProfile(address _addr) public view returns(uint[] memory){
+        require(projectProfiles[_addr].length != 0, "Not a valid Client or Freelancer Profile");
+        return projectProfiles[_addr];
+    }
+
+    function getTBA(uint tokenId) public view returns(address) {
+        return tokenIds[tokenId];
     }
 
     function getTBA(uint tokenId) public view returns(address) {
@@ -343,10 +319,4 @@ contract Maven {
         payable(_addr).transfer(amount);
     }
 
-<<<<<<< Updated upstream
-
-    // transfer contract balance to contract address
-
-=======
->>>>>>> Stashed changes
 }

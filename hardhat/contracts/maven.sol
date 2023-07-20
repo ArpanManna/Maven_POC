@@ -14,6 +14,10 @@ contract Maven is ERC721URIStorage, Registry{
     Counters.Counter public _projectIdsInBidding; // keep track of projects in bidding
     Counters.Counter private _tokenIds; // keep track of token Id
     uint stakePercentage = 4;
+    Counters.Counter public _projectIdsInBidding; // keep track of projects in bidding
+    Counters.Counter private _tokenIds; // keep track of token Id
+    uint stakePercentage = 4;
+    
     address deployer;
 
     constructor(address _implementationContract) ERC721("Maven Protocol", "MVP") Registry(_implementationContract){
@@ -114,6 +118,7 @@ contract Maven is ERC721URIStorage, Registry{
     function getProfile(address _addr) public view returns(Profile memory) {
         require(profile[_addr].addr != address(0), "No such Profile address exists!");
         return profile[_addr];
+
     }
 
     // @dev - this function mints a new NFT id and Token Bound address
@@ -145,6 +150,7 @@ contract Maven is ERC721URIStorage, Registry{
         projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, block.timestamp, deadline, 0, ProjectStatus.Bidding);
         _projectIdsInBidding.increment();
         projectProfiles[msg.sender].push(newProjectId);
+
         // create Project NFT and TBA
         (uint newTokenId, address tba) = mintTokenAndTba(profile[msg.sender].tba, _uri);
         projectTokenId[newProjectId] = newTokenId;
@@ -285,6 +291,10 @@ contract Maven is ERC721URIStorage, Registry{
     function getProjectProfile(address _addr) public view returns(uint[] memory){
         require(projectProfiles[_addr].length != 0, "Not a valid Client or Freelancer Profile");
         return projectProfiles[_addr];
+    }
+
+    function getTBA(uint tokenId) public view returns(address) {
+        return tokenIds[tokenId];
     }
 
     function getTBA(uint tokenId) public view returns(address) {

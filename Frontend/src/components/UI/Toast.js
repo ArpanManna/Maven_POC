@@ -1,3 +1,4 @@
+import { getTransactionUrl } from "@/utils/explorer";
 import React from "react";
 import { toast } from "react-toastify";
 
@@ -31,7 +32,6 @@ export const displayIcon = (type) => {
     }
 };
 
-const explorerUrl = "https://mumbai.polygonscan.com/tx/";
 
 export const ToastMessage = ({ type, title, body }) =>
     toast[type](
@@ -45,21 +45,18 @@ export const ToastMessage = ({ type, title, body }) =>
         </div>
     );
 
-ToastMessage.dismiss = toast.dismiss;
-
-
 export const TransactionToastMessage = ({ type, title, txHash }) =>
     toast[type](
-        
         <div className="p-2">
             <h2 className="font-xs w-full">
                 Transaction {title} !!
             </h2>
             {txHash &&
-                <a href={`${explorerUrl}${txHash}`}
+                <a href={getTransactionUrl(txHash)}
                     target="__blank" className="underline hover:text-blue-600 mb-2 xs:mt-0 xs:tracking-widest">View on polyscan</a>
             }
         </div>
     );
 
+ToastMessage.dismiss = toast.dismiss;
 TransactionToastMessage.dismiss = toast.dismiss;

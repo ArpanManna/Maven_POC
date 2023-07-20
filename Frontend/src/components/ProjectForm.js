@@ -57,7 +57,6 @@ const ProjectForm = () => {
                 const res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify)
                 await sendNotification("Job Post Created!", `Job NFTId: 3, Job Token Bound Address: 0x...hjs7`, address)
                 await db.createProject(res, projectName, projectDescription, [], tags, priceFrom, priceTo);
-
                 for (let i = 0; i < tags.length; i += 1) {
                     await db.publicProject(tags[i], projectId);
                 }
@@ -70,6 +69,7 @@ const ProjectForm = () => {
                 setLoading(false);
             } catch (err) {
                 console.log(err)
+                router.push("/dashboard");
                 setLoading(false)
             }
         }

@@ -3,11 +3,12 @@ import UserDetailsForm from '@/components/UserDetailsForm';
 import { useContextState } from '@/context';
 import { useWeb3 } from '@3rdweb/hooks';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 const CreateProfile = () => {
     const [{ currentUserDetails }] = useContextState();
     const { address } = useWeb3();
+    const [open, setOpen] = useState(false);
     const router = useRouter()
 
     useEffect(() => {
@@ -15,13 +16,17 @@ const CreateProfile = () => {
     }, [address]);
 
     const redirectToBrowse = () => {
-        if (address && currentUserDetails?.currentUserDetails?.profileTokenId) {
+        if (address && currentUserDetails?.profileTokenId) {
             router.push('/browse');
         }
     }
     
     useEffect(() => {
-        simpleNotify("info", "Profile Required", "Create a profile first!")
+        setOpen(true);
+        if(open){
+            simpleNotify("info", "Profile Required", "Create a profile first!");
+        }
+        setOpen(false);
     }, [])
 
     const simpleNotify = useCallback((type, title, body) => {

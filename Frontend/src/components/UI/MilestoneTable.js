@@ -39,7 +39,6 @@ const MilestoneTable = ({milestones, owner, freelancer, projectId}) => {
   const data = [];
 
   for (let i = 0; i < milestones.length; i++) {
-    console.log(milestones[i])
     data.push({
       key: i,
       MilestoneTitle: milestones[i].title,
@@ -81,9 +80,10 @@ const MilestoneTable = ({milestones, owner, freelancer, projectId}) => {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
+          {console.log(record.Status != 0, record)}
           {owner === address ? 
-          <button className='px-4 py-2 rounded-md text-white font-mono text-sm bg-blue-400' onClick={() => handleProcessPayment(record.key)}>Release Payment</button> :
-          <button className='px-4 py-2 rounded-md text-white font-mono text-sm bg-blue-400' onClick={() => handleTransferOwnership(record.key)}>Request Payment</button>
+          <button disabled={loading || record.Status != "Payment Pending"} className='px-4 py-2 disabled:bg-gray-400 rounded-md text-white font-mono text-sm bg-blue-400' onClick={() => handleProcessPayment(record.key)}>Release Payment</button> :
+          <button disabled={loading || record.Status != "In Progress"} className='px-4 py-2 disabled:bg-gray-400 rounded-md text-white font-mono text-sm bg-green-400' onClick={() => handleTransferOwnership(record.key)}>Request Payment</button>
         }
       </Space>
       ),

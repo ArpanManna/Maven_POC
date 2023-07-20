@@ -26,7 +26,6 @@ const Accordion = () => {
         setLoading(false);
     }
 
-    console.log(dashboardProjects);
     const handleDispute = async (projectId) => {
         setDisputeProject(projectId)
         setModalStatus(true);
@@ -52,7 +51,7 @@ const Accordion = () => {
                     <Collapse className='my-4'
                         key={post.id}
                         collapsible="header"
-                        defaultActiveKey={['1']}
+                        defaultActiveKey={['0']}
                         items={[
                             {
                                 key: '1',
@@ -75,7 +74,7 @@ const Accordion = () => {
                                         </div>
                                         <div className='flex flex-wrap gap-2'>
                                             <h2>TBA:</h2>
-                                            <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...{bid.freelancer.slice(bid.freelancer.length - 6)}</a>
+                                            <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...tba07</a>
                                         </div>
                                         {bid.freelancer &&
                                         <div className='flex flex-wrap gap-2'>
@@ -90,7 +89,7 @@ const Accordion = () => {
                                         }
                                     </div>
                                     <div className='col-span-3'>
-                                        {post.status === 0 ?
+                                        {post.status === 1 ?
                                             <MilestoneTable milestones={bid.proposal.milestones} postStatusIdToLabel={postStatusIdToLabel} owner={post.owner} freelancer={bid.freelancer} projectId={post.id} />
                                             : post.status === 2 ? <p className='text-center mt-16 font-mono text-lg'>Project Completed.</p> :
                                                 <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>

@@ -10,7 +10,7 @@ const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired
     const router = useRouter()
 
     useEffect(() => {
-        if (address && !currentUserDetails?.currentUserDetails?.profileTokenId) {
+        if (address && !currentUserDetails?.profileTokenId) {
             router.push('/createprofile');
         }
     }, [address, currentUserDetails]);

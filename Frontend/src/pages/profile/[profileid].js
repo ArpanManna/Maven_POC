@@ -13,14 +13,14 @@ const ProfileDetail = () => {
     });
 
     useEffect(() => {
-        if (address && !currentUserDetails?.currentUserDetails?.profileTokenId) {
+        if (address && !currentUserDetails?.profileTokenId) {
             router.push('/createprofile');
         }
     }, [address, currentUserDetails]);
 
 
     useEffect(() => {
-        setProfile(currentUserDetails.currentUserDetails);
+        setProfile(currentUserDetails);
     },[currentUserDetails, address])
     
     return (

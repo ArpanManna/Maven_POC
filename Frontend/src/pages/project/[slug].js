@@ -17,13 +17,13 @@ const ProjectDetail = () => {
   const data = router.query;
   
   const jobDetail = JSON.parse(data.post)
-  const {id, projectName, projectDescription, owner, skillsRequired, currency, priceFrom, priceTo} = jobDetail;
+  const {id, projectName, projectDescription, owner, skillsRequired, currency, priceFrom, priceTo, bidCount, tokenId, tba} = jobDetail;
 
   const items = [
     {
       key: '1',
       label: `Details`,
-      children: <ProjectDetailTab id ={id} projectOwner={owner} projectName={projectName} projectDescription={projectDescription} skillsRequired={skillsRequired} currency={currency} priceFrom={priceFrom} priceTo={priceTo} />,
+      children: <ProjectDetailTab id ={id} projectOwner={owner} projectName={projectName} projectDescription={projectDescription} skillsRequired={skillsRequired} currency={currency} priceFrom={priceFrom} priceTo={priceTo} bidCount={bidCount} tba={tba} tokenId={tokenId}/>,
     },
     {
       key: '2',
@@ -31,7 +31,6 @@ const ProjectDetail = () => {
       children: <ProposalsTab id={id} proposals={proposals} projectOwner={owner}/>,
     }
   ];
-
 
   useEffect(() => {
     if (chainId && isMounted) getAllProposals();
@@ -46,28 +45,14 @@ const ProjectDetail = () => {
     <div className=''>
       <div className='container px-8 py-12'>
         <div className='flex justify-between'>
-          <h2 className='text-3xl mb-2'>{projectName}</h2>
-          <div className=''>
-            <div className='flex font-bold flex-wrap gap-4'>
-              <h2>Bids</h2>
-              <h2>Average Bid</h2>
-            </div>
-            <div className='flex flex-wrap gap-8'>
-              <h2>20</h2>
-              <h2>$200</h2>
-            </div>
-          </div>
+          <h2 className='text-3xl mb-3'>{projectName}</h2>
+          <div className='py-2 px-4 shadow-sm rounded-md bg-gray-50 border'>
+                    <h2 className='text-sm font-semibold text-palatte3'>Total Bids: {bidCount}</h2>
 
+                    <h2 className='text-sm font-semibold text-palatte3'>Bid Price: {priceFrom} wei to {priceTo} wei</h2>
+                    </div>
         </div>
-{/* 
-        <Tabs>
-          <Tab component={<ProjectDetailTab id ={id} projectOwner={owner} projectName={projectName} projectDescription={projectDescription} skillsRequired={skillsRequired} currency={currency} priceFrom={priceFrom} priceTo={priceTo} />} active>Details</Tab>
-          <Tab component={<ProposalsTab id={id} proposals={proposals} projectOwner={owner}/>}>
-            Proposals
-          </Tab>
-        </Tabs> */}
       <Tabs defaultActiveKey="1" items={items} />
-
       </div>
       <MyChat _signer={provider?.getSigner()} clientAddress={owner}/>
     </div>

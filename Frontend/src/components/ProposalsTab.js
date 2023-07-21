@@ -27,7 +27,7 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
     <div className='container text-black p-4'>
       <div className="container mx-auto px-12 py-2 grid grid-cols-2 gap-6 items-center">
         {
-          proposals.map(({ proposalId, bidPrice, owner, estimatedTimeline, milestones, proposal }, index) => (
+          proposals && proposals.map(({ proposalId, bidPrice, owner, estimatedTimeline, milestones, proposal }, index) => (
             <div key={index} className="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
               <div className='grid grid-cols-4 gap-2'>
                 <div className='flex justify-center'>
@@ -39,8 +39,8 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
                     {/* <h2 className='font-bold text-2xl'>
                       Tek Raj Joshi
                     </h2> */}
-                    <h2 className='font-medium text-2xl'>
-                      {owner.slice(0, 6)}
+                    <h2 className='font-medium text-xl'>
+                      Bid From: {owner.slice(0, 6)}
                       {'...'}
                       {owner.slice(owner.length - 6)}
                     </h2>

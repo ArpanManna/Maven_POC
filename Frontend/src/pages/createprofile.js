@@ -1,6 +1,7 @@
 import { ToastMessage } from '@/components/UI/Toast';
 import UserDetailsForm from '@/components/UserDetailsForm';
 import { useContextState } from '@/context';
+import { useIsMounted } from '@/lib/hooks/us-is-mounted';
 import { useWeb3 } from '@3rdweb/hooks';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react'
@@ -8,26 +9,18 @@ import React, { useCallback, useEffect, useState } from 'react'
 const CreateProfile = () => {
     const [{ currentUserDetails }] = useContextState();
     const { address } = useWeb3();
-    const [open, setOpen] = useState(false);
-    const router = useRouter()
+    const router = useRouter();
+    const isMounted = useIsMounted();
 
     useEffect(() => {
-        setTimeout(redirectToBrowse, 2000)
-    }, [address]);
-
-    const redirectToBrowse = () => {
-        if (address && currentUserDetails?.profileTokenId) {
-            router.push('/browse');
-        }
-    }
-
-    useEffect(() => {
-        setOpen(true);
-        if (open) {
+        if (isMounted) {
             simpleNotify("info", "Profile Required", "Create a profile first!");
         }
-        setOpen(false)
-    }, [open])
+    }, [isMounted])
+
+    if (currentUserDetails?.profileTokenId) {
+        router.push('/browse');
+    }
 
     const simpleNotify = useCallback((type, title, body) => {
         ToastMessage({ type, title, body });

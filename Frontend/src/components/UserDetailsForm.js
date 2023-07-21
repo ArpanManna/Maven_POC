@@ -79,10 +79,10 @@ const UserDetailsForm = () => {
     setSkills(skill);
   }
 
-  // useEffect(() => {
-  //   // if (address) sendNotification("Profile Created!", "You profile NFTId: ${22}, Profile Specific Token Bound Address: ${8723} has been created.`, address)
+  useEffect(() => {
+    // if (address) sendNotification("Profile Created!", "You profile NFTId: ${22}, Profile Specific Token Bound Address: ${8723} has been created.`, address)
 
-  // },[address])
+  },[address])
 
   return (
     <form className="my-2 px-4 pb-2">

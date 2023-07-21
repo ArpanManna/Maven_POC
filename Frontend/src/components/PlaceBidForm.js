@@ -77,10 +77,10 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       const expectedTimeline = moment(deadline).unix()
       const proposalURI = await uploadFileToIPFS(JSON.stringify({ proposal, milestones }))
       await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify);
-      console.log(milestones);
+      setLoading(false);
+      
       const bidId = await db.createBid(bidPrice, `${expectedTimeline}`, proposal, [], JSON.stringify(milestones));
       await db.addBidToProject(id, bidId);
-      setLoading(false);
       setMileStones([
         { title: '', price: '' },
       ]);
@@ -118,27 +118,37 @@ const PlaceBidForm = ({ id, projectOwner }) => {
           <div key={index} className='flex flex-wrap gap-4 my-2'>
             <Input
               name='title'
-              className="block px-4 py-2.5 w-1/3 text-mono text-gray-800 font-semibold placeholder-gray-400 placeholder:font-semibold transition duration-500 ease-in-out transform border-gray-400 rounded-lg"
+              className="block px-4 py-2.5 w-1/3 text-mono text-gray-800 font-semibold placeholder-gray-400 placeholder:font-semibold transition duration-500 ease-in-out transform border-gray-400 rounded-md"
               placeholder='Milestone'
               onChange={event => handleMilestoneChange(event, index)}
               value={milestones.title}
             />
             <Input
               name='price'
-              className="block px-4 py-2.5 w-1/3 text-mono text-gray-800 font-semibold placeholder-gray-400 placeholder:font-semibold transition duration-500 ease-in-out transform border-gray-400 rounded-lg"
+              className="block px-4 py-2.5 w-1/3 text-mono text-gray-800 font-semibold placeholder-gray-400 placeholder:font-semibold transition duration-500 ease-in-out transform border-gray-400 rounded-md"
               placeholder='Price'
               onChange={event => handleMilestoneChange(event, index)}
               value={milestones.price}
             />
-            <button onClick={() => removeFields(index)} className='text-white bg-gradient-to-r from-palatte2 to-palatte4 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2 text-center'>Remove</button>
+            <button onClick={() => removeFields(index)} className='text-white bg-palatte4 shadow-md shadow-cyan-500/50 font-medium rounded-md text-sm px-2 py-1 text-center'>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+
+            </button>
           </div>
         )
         )}
 
-        <button onClick={addFields} className='text-white  bg-gradient-to-r mt-2 from-palatte3 to-palatte5 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4'>Add More..</button>
+        <button onClick={addFields} className='text-white  bg-gradient-to-r mt-2 from-palatte3 to-palatte5 hover:bg-gradient-to-br shadow-md shadow-cyan-500/50 font-medium rounded-md text-sm px-2 py-1 text-center mb-4'>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+
+        </button>
         <br />
         {loading ? <Spinner /> :
-          <button type="button" onClick={handleFormSubmit} className="text-white bg-gradient-to-r mt-4 from-palatte1 to-palatte4 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4">Place Bid</button>
+          <button type="button" onClick={handleFormSubmit} className="text-white bg-gradient-to-r mt-4 from-palatte1 to-palatte4 hover:bg-gradient-to-br shadow-md shadow-cyan-500/50 font-medium rounded-md text-sm px-5 py-2.5 text-center mb-4">Place Bid</button>
         }
       </div>
     </div>

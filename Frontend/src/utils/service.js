@@ -98,19 +98,20 @@ export const getAllJobPosts = async (chainId, provider) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getAllProjectsBidding();
-        let posts = []
+        let posts = [];
 
         await async.eachLimit(data, 10, async (_data) => {
-            let post = ({ id: _data.projectId.toNumber(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toString(), highestBid: _data[4].toString(), createdOn: _data[7].toString(), deadline: _data[8].toString(), finalBid: _data[9].toString(), status: _data[10] })
+            let post = ({ id: _data.projectId.toNumber(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toNumber(), highestBid: _data[4].toNumber(), createdOn: _data[7].toNumber(), deadline: _data[8].toNumber(), finalBid: _data[9].toNumber(), status: _data[10], tokenId: _data.tokenId.toNumber(), tba: _data.tba })
             const metadataRes = await getIPFSResponse(_data[5])
             const JDRes = await getIPFSResponse(_data[6])
-            const bidCount = await getTotalBids(chainId, provider, _data[0].toString());
+            const bidCount = await getTotalBids(chainId, provider, _data[0].toNumber());
             post = ({ ...post, metadata: metadataRes, fileURI: JDRes, bidCount })
             posts.push(post)
         });
         return posts;
     } catch (err) {
         console.log(err)
+        return [];
     }
 }
 
@@ -138,7 +139,7 @@ export const getJobProposalsByID = async (chainId, provider, projectId) => {
         let proposals = []
 
         await async.eachLimit(data, 100, async (_data) => {
-            let proposalDetail = ({ proposalId: _data[0].toString(), owner: _data[1], bidPrice: _data[2].toString(), estimatedTimeline: _data[3].toString() })
+            let proposalDetail = ({ proposalId: _data[0].toNumber(), owner: _data[1], bidPrice: _data[2].toNumber(), estimatedTimeline: _data[3].toNumber() })
             const proposal = await getIPFSResponse(_data[4])
             proposalDetail = ({ ...proposalDetail, proposal: proposal, milestones: _data[5] })
             proposals.push(proposalDetail)
@@ -172,7 +173,22 @@ const getProjectById = async (chainId, provider, projectId) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getProjectDetails(projectId.toNumber());
-        let post = ({ id: data[0].toString(), metadataURI: data[5], owner: data[1], freelancer: data[2], lowestBid: data[3].toString(), highestBid: data[4].toString(), createdOn: data[7].toString(), deadline: data[8].toString(), finalBid: data[9].toString(), status: data[10] })
+        let post = (
+            {
+                id: data.projectId.toNumber(),
+                metadataURI: data.projectUri,
+                owner: data.client,
+                freelancer: data.freelancer,
+                lowestBid: data.lbid.toNumber(),
+                highestBid: data.ubid.toNumber(),
+                createdOn: data.creationTime.toNumber(),
+                deadline: data.deadline.toNumber(),
+                finalBid: data.finalBidId.toNumber(),
+                status: data.status,
+                tokenId: data.tokenId.toNumber(),
+                tba: data.tba
+            }
+        )
         const metadataRes = await getIPFSResponse(data[5])
         const JDRes = await getIPFSResponse(data[6])
 
@@ -187,7 +203,7 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getBidDetails(projectId.toNumber(), bidId);
-        let bid = ({ projectId: data[0].toString(), freelancer: data[1], bidPrice: data[2].toString(), deliveryTime: data[3].toString() })
+        let bid = ({ projectId: data[0].toNumber(), freelancer: data[1], bidPrice: data[2].toNumber(), deliveryTime: data[3].toNumber() })
         let proposal = await getIPFSResponse(data[4])
         data[6].forEach((tokenId, index) => {
             proposal.milestones[index].tokenId = tokenId.toNumber();
@@ -262,7 +278,7 @@ export const processPayment = async (chainId, provider, projectId, milestoneId, 
             const client = await provider.getSigner().getAddress();
             await sendNotification(`Payment Credited`, `You got the payment of milestone ${milestoneId} for project ${projectId} from ${client}!`, freelancer);
             await sendNotification(`Payment Released`, `You have released the payment of milestone ${milestoneId} of project ${projectId} to ${freelancer}!`, client);
-            await fetchNotifications(address, dispatch);
+            await fetchNotifications(client, dispatch);
         } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)

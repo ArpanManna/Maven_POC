@@ -71,7 +71,7 @@ export default Accordion;
 
 const AccordionTitle = ({ post, bid }) => {
     return (
-        <div className='flex flex-wrap gap-4 justify-center'>
+        <div className='flex-1 grid grid-cols-8 w-full gap-4'>
             <div className='col-span-4'>
                 <p className='text-lg -mt-1'>{post.metadata.projectName}</p>
                 <p>Created On: {moment.unix(post.createdOn).format("MM/DD/YYYY")}</p>
@@ -79,12 +79,11 @@ const AccordionTitle = ({ post, bid }) => {
             <div className='col-span-3'>
                 <p className='text-md -mt-1'>Owner: {`0x...${post.owner.slice(post.owner.length - 6)}`}</p>
                 <p>TBA:
-                    <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...tba07</a>
+                    <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...{post.tba.slice(post.tba.length-6)}</a>
                 </p>
                 <p>Assets (Milestones): { }</p>
             </div>
             <div className='col-span-1'>
-                <p>{`0x...${post.owner.slice(post.owner.length - 6)}`}</p>
                 <p>{postStatusIdToLabel[post.status]}</p>
             </div>
         </div>

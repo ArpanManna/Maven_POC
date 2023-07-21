@@ -6,13 +6,10 @@ import { uploadFileToIPFS } from '@/lib/IPFSClient';
 import { createJobPost } from '@/utils/service';
 import { useWeb3 } from '@3rdweb/hooks';
 import Spinner from './UI/Spinner';
-import ToastMessage, { TransactionToastMessage } from './UI/Toast';
+import { TransactionToastMessage } from './UI/Toast';
 import { DatePicker, Input } from 'antd';
-// import { DatePicker } from 'antd';
 import * as db from '@/utils/polybase';
 import { useRouter } from 'next/router';
-import { sendNotification } from '@/lib/Notify';
-import { fetchNotifications } from '@/lib/pushProtocol';
 import { useContextState } from '@/context';
 
 const ProjectForm = () => {

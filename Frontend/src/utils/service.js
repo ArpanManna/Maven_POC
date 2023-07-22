@@ -7,6 +7,7 @@ import async from 'async';
 import { sendNotification } from "@/lib/Notify";
 import * as db from '@/utils/polybase';
 import { fetchNotifications } from "@/lib/pushProtocol";
+import { uploadFileToIPFS } from "@/lib/IPFSClient";
 
 const rpc = "https://polygon-mumbai.g.alchemy.com/v2/-a6_POS01b0lSBGeNnfc25nTbElQneFq";
 
@@ -115,7 +116,7 @@ export const getAllJobPosts = async (chainId, provider) => {
     }
 }
 
-export const placeBid = async (chainId, provider, projectId, bidPrice, expectedTimeline, proposalURI, milestones, projectOwner, txNotify) => {
+export const placeBid = async (chainId, provider, projectId, bidPrice, expectedTimeline, proposalURI, milestones, projectOwner, txNotify, dispatch) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.bid(projectId, bidPrice, expectedTimeline, proposalURI, milestones);
@@ -126,6 +127,8 @@ export const placeBid = async (chainId, provider, projectId, bidPrice, expectedT
             const freelancer = await provider.getSigner().getAddress();
             await sendNotification(`New Bid Placed`, `You have got a new bid in your project from ${freelancer}`, projectOwner);
             await sendNotification(`New Bid Placed`, `You have placed a new bid in project ${projectId}`, freelancer);
+            await fetchNotifications(freelancer, dispatch);
+        
         } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
@@ -169,10 +172,10 @@ export const selectBid = async (chainId, provider, projectId, bidOwner, bidId, b
     }
 }
 
-const getProjectById = async (chainId, provider, projectId) => {
+export const getProjectById = async (chainId, provider, projectId) => {
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
-        const data = await mavenContract.getProjectDetails(projectId.toNumber());
+        const data = await mavenContract.getProjectDetails(projectId);
         let post = (
             {
                 id: data.projectId.toNumber(),
@@ -189,10 +192,11 @@ const getProjectById = async (chainId, provider, projectId) => {
                 tba: data.tba
             }
         )
+        const assetsHolding = await mavenContract.balanceOf(data.tba);
         const metadataRes = await getIPFSResponse(data[5])
         const JDRes = await getIPFSResponse(data[6])
 
-        post = ({ ...post, metadata: metadataRes, file: JDRes })
+        post = ({ ...post, metadata: metadataRes, file: JDRes, assetsHolding: assetsHolding.toNumber() })
         return post
     } catch (err) {
         console.log(err)
@@ -205,13 +209,16 @@ export const getBidByBidId = async (chainId, provider, projectId, bidId) => {
         const data = await mavenContract.getBidDetails(projectId.toNumber(), bidId);
         let bid = ({ projectId: data[0].toNumber(), freelancer: data[1], bidPrice: data[2].toNumber(), deliveryTime: data[3].toNumber() })
         let proposal = await getIPFSResponse(data[4])
-        data[6].forEach((tokenId, index) => {
+        data[6].forEach(async(tokenId, index) => {
+            const milestoneOwner = await mavenContract.ownerOf(tokenId.toNumber());
             proposal.milestones[index].tokenId = tokenId.toNumber();
+            proposal.milestones[index].currentOwner = milestoneOwner;
         });
         data[7].forEach((status, index) => {
             proposal.milestones[index].status = status;
         })
         bid = ({ ...bid, proposal });
+        console.log(bid)
         return bid;
     } catch (err) {
         return {}
@@ -226,11 +233,11 @@ export const getProjectsByUser = async (chainId, provider, address, dispatch) =>
 
         await async.eachLimit(projects, 100, async (projectId) => {
             let data = {}
-            const post = await getProjectById(chainId, provider, projectId);
+            const post = await getProjectById(chainId, provider, projectId.toNumber());
             data.post = post;
             const bidDetail = await getBidByBidId(chainId, provider, projectId, post.finalBid)
-            data.bid = bidDetail
-            posts.push(data)
+            data.bid = bidDetail;
+            posts.push(data);
         });
         if (posts) {
             posts = posts.sort((x, y) => (parseInt(x.post.id) < parseInt(y.post.id)) ? 1 : -1)
@@ -254,13 +261,14 @@ export const transferMilestone = async (chainId, provider, projectId, milestoneI
         const tx = await mavenContract.transferMilestoneOwnership(projectId, milestoneId);
         txNotify("success", "Sent", tx.hash);
         const txStatus = await getTransactionStatus(tx.hash);
+        const freelancer = await provider.getSigner().getAddress();
+        await getProjectsByUser(chainId, provider, freelancer, dispatch);
+
         if (txStatus === 1) {
             txNotify("success", "Successful", tx.hash);
-            const freelancer = await provider.getSigner().getAddress();
             await sendNotification(`Milestone ${milestoneId} ownership transferred!`, `Ownership of Milestone ${milestoneId} of peoject ${projectId} has been transfered by ${freelancer} to your job TBA! Kindly process payment.`, projectOwner);
             await sendNotification(`Milestone ${milestoneId} ownership transferred!`, `You have transferred ownership of Milestone ${milestoneId} of project ${projectId} `, freelancer);
             await fetchNotifications(freelancer, dispatch);
-
         } else txNotify("error", "Failed", tx.hash);
     } catch (err) {
         console.log(err)
@@ -268,14 +276,18 @@ export const transferMilestone = async (chainId, provider, projectId, milestoneI
 }
 
 export const processPayment = async (chainId, provider, projectId, milestoneId, freelancer, txNotify, dispatch) => {
+   
+   console.log(projectId, milestoneId)
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.processMilestoneCompletion(projectId, milestoneId);
         txNotify("success", "Sent", tx.hash);
         const txStatus = await getTransactionStatus(tx.hash);
+        const client = await provider.getSigner().getAddress();
+        await getProjectsByUser(chainId, provider, client, dispatch);
+
         if (txStatus === 1) {
             txNotify("success", "Successful", tx.hash);
-            const client = await provider.getSigner().getAddress();
             await sendNotification(`Payment Credited`, `You got the payment of milestone ${milestoneId} for project ${projectId} from ${client}!`, freelancer);
             await sendNotification(`Payment Released`, `You have released the payment of milestone ${milestoneId} of project ${projectId} to ${freelancer}!`, client);
             await fetchNotifications(client, dispatch);
@@ -296,13 +308,14 @@ export const getTotalBids = async (chainId, provider, projectId) => {
 }
 
 
-export const requestRandomWords = async (chainId, provider, projectId) => {
+export const initializeDispute = async (chainId, provider, projectId, disputeReason, txNotify) => {
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     try {
         await disputeResolutionContract.requestRandomWords();
         const signature = await disputeResolutionContract.lastRequestId();
         const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
-        const tx = await disputeResolutionContract.initializeVoting(projectId, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        const disputeReasonURI = await uploadFileToIPFS(disputeReason);
+        const tx = await disputeResolutionContract.initializeVoting(projectId, disputeReasonURI, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
         txNotify("success", "Sent", tx.hash);
         const txStatus = await getTransactionStatus(tx.hash);
         if (txStatus === 1) {
@@ -315,7 +328,7 @@ export const requestRandomWords = async (chainId, provider, projectId) => {
     }
 }
 
-export const voteForDisputeResolution = async (chainId, provider, projectId, vote, randomNumber) => {
+export const voteForDisputeResolution = async (chainId, provider, projectId, vote, randomNumber, txNotify) => {
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     try {
         const tx = await disputeResolutionContract.vote(projectId, vote, randomNumber);
@@ -371,6 +384,8 @@ export const getUserDetails = async (chainId, provider, address, dispatch) => {
         const profile = await mavenContract.getProfile(address);
         const profileInfo = await getIPFSResponse(profile.uri);
         const metadata = await getIPFSResponse(profileInfo.metaDataURI);
+        const assetHoldings = await mavenContract.balanceOf(profile.tba);
+
         let file;
         if (profileInfo.fileURI) {
             file = await getIPFSResponse(profile.fileURI);
@@ -383,7 +398,8 @@ export const getUserDetails = async (chainId, provider, address, dispatch) => {
                 "profileURI": profile.uri,
                 "userType": profile._type,
                 "profileTokenId": profile.tokenId.toNumber(),
-                "profileInfo": { metadata, file }
+                "profileInfo": { metadata, file },
+                "assetHoldings": assetHoldings.toNumber()
             }
             dispatch({
                 type: 'UPDATE_USER_DATA',
@@ -398,12 +414,36 @@ export const getUserDetails = async (chainId, provider, address, dispatch) => {
             "profileURI": "",
             "userType": "",
             "profileTokenId": "",
-            "profileInfo": ""
+            "profileInfo": "",
+            "assetHoldings": 0
         }
         dispatch({
             type: 'UPDATE_USER_DATA',
             payload: userData,
         });
         console.log(err);
+    }
+}
+
+
+export const getAllDisputedProjects = async(chainId,provider) => {
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
+    try {
+        const data = await mavenContract.getAllProjectsDisputed();
+        let posts = [];
+        console.log(data);
+
+        // await async.eachLimit(data, 10, async (_data) => {
+        //     let post = ({ id: _data.projectId.toNumber(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toNumber(), highestBid: _data[4].toNumber(), createdOn: _data[7].toNumber(), deadline: _data[8].toNumber(), finalBid: _data[9].toNumber(), status: _data[10], tokenId: _data.tokenId.toNumber(), tba: _data.tba })
+        //     const metadataRes = await getIPFSResponse(_data[5])
+        //     const JDRes = await getIPFSResponse(_data[6])
+        //     const bidCount = await getTotalBids(chainId, provider, _data[0].toNumber());
+        //     post = ({ ...post, metadata: metadataRes, fileURI: JDRes, bidCount })
+        //     posts.push(post)
+        // });
+        return posts;
+    } catch (err) {
+        console.log(err)
+        return [];
     }
 }

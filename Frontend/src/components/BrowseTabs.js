@@ -1,18 +1,18 @@
 import React from 'react';
 import { Tabs } from 'antd';
 import ProjectCards from './ProjectCards';
-import FreelancerSection from './FreelancerSection';
+import DisputedProjectsSection from './DisputedProjectsSection';
 
 const items = [
   {
     key: '1',
-    label: `Projects`,
+    label: `Ongoing Projects`,
     children: <ProjectCards />,
   },
   {
     key: '2',
-    label: `Freelancers`,
-    children: <FreelancerSection />,
+    label: `Disputed Projects`,
+    children: <DisputedProjectsSection />,
   }
 ];
 

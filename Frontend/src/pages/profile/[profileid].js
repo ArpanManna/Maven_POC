@@ -53,7 +53,8 @@ const ProfileDetail = () => {
                                     <div className='flex flex-wrap gap-2'>
                                         <h2 className="text-md font-semibold mt-1 text-palatte1 ">Profile NFT Id: {profile?.profileTokenId && profile.profileTokenId}</h2>
                                     </div>
-                                        <h2 className="text-md font-bold font-mono mt-1 text-palatte1 ">Token Bound Address: 0x...{profile?.tba && profile.tba.slice(profile.tba.length -5)}</h2>
+                                    <h2 className="text-md font-bold font-mono mt-1 text-palatte1 ">Token Bound Address: 0x...{profile?.tba && profile.tba.slice(profile.tba.length -5)}</h2>
+                                        <h2 className="text-md font-bold font-mono mt-1 text-palatte1 ">Asset Holdings: {profile.assetHoldings}</h2>
                                     <h2 className='font-semibold mt-4'>Skills</h2>
                                     <div className='flex flex-wrap gap-2 mt-2'>
                                         <p className='border px-4 py-2 w-auto rounded-md'>Javascript</p>

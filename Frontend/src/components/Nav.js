@@ -7,6 +7,7 @@ import NotificationDrawer from './UI/NotificationDrawer';
 import avatar from "../assets/imgs/avatar2.svg"
 import Image from 'next/image'
 import { useWeb3 } from '@3rdweb/hooks'
+import { useContextState } from '@/context'
 
 const navigation = [
   // { name: 'Maven', href: '/', current: true },
@@ -21,6 +22,7 @@ function classNames(...classes) {
 
 export default function Nav() {
   const {address} = useWeb3();
+  const [{currentUserDetails}] = useContextState();
   
   return (
     <Disclosure as="nav" className="bg-palatte1">
@@ -67,7 +69,9 @@ export default function Nav() {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex gap-4 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                {currentUserDetails.userType !== 1 &&  
                 <Link href="/createpost" className='text-white text-sm font-medium rounded-3xl bg-palatte4 px-4 py-2 hover:bg-palatte2'>Create Post</Link>
+}
                 <NotificationDrawer />
                 <WalletConnect />
                 {

@@ -16,8 +16,6 @@ const postStatusIdToLabel = {
 const Accordion = () => {
     const { address, chainId, provider } = useWeb3();
     const [loading, setLoading] = useState(false);
-    const [disputeProject, setDisputeProject] = useState();
-    const [modalStatus, setModalStatus] = useState(false);
 
     const [{ dashboardProjects }, dispatch] = useContextState();
 
@@ -29,11 +27,6 @@ const Accordion = () => {
         setLoading(true);
         await getProjectsByUser(chainId, provider, address, dispatch);
         setLoading(false);
-    }
-
-    const handleDispute = async (projectId) => {
-        setDisputeProject(projectId)
-        setModalStatus(true);
     }
 
     if (loading) return (<p className='text-center py-12'>Loading...</p>)
@@ -62,7 +55,6 @@ const Accordion = () => {
                     />
                 ))
             }
-            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject} />}
         </>
     )
 };
@@ -77,11 +69,11 @@ const AccordionTitle = ({ post, bid }) => {
                 <p>Created On: {moment.unix(post.createdOn).format("MM/DD/YYYY")}</p>
             </div>
             <div className='col-span-3'>
-                <p className='text-md -mt-1'>Owner: {`0x...${post.owner.slice(post.owner.length - 6)}`}</p>
+                <p className='text-md -mt-1'>Client: {`0x...${post.owner.slice(post.owner.length - 6)}`}</p>
                 <p>TBA:
-                    <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...{post.tba.slice(post.tba.length-6)}</a>
+                    <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'> 0x...{post.tba.slice(post.tba.length-6)}</a>
                 </p>
-                <p>Assets (Milestones): { }</p>
+                <p>Assets (Milestones): {post.assetsHolding}</p>
             </div>
             <div className='col-span-1'>
                 <p>{postStatusIdToLabel[post.status]}</p>
@@ -91,18 +83,23 @@ const AccordionTitle = ({ post, bid }) => {
 }
 
 const AccordionBody = ({ post, bid }) => {
+    const [disputeProject, setDisputeProject] = useState();
+    const [modalStatus, setModalStatus] = useState(false);
+
+    const handleDispute = async (projectId) => {
+        setDisputeProject(projectId)
+        setModalStatus(true);
+    }
+
     return (
         <div className='grid grid-cols-4' key={post.id}>
             <div className='my-2 p-8 col-span-1 '>
-                <h2>Token Id: {post.id}</h2>
+                <h2>Token Id: {post.tokenId}</h2>
                 <div className='flex flex-wrap gap-3'>
                     <h2>IPFS: </h2>
                     <a href={post.metadataURI} target='__blank' className='cursor-pointer font-light underline text-blue-600'>https:ipfs.io....</a>
                 </div>
-                <div className='flex flex-wrap gap-2'>
-                    <h2>TBA:</h2>
-                    <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...tba07</a>
-                </div>
+
                 {bid.freelancer &&
                     <div className='flex flex-wrap gap-2'>
                         <h2>Freelancer:</h2>
@@ -122,6 +119,8 @@ const AccordionBody = ({ post, bid }) => {
                         <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
                 }
             </div>
+            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject} />}
+
         </div>
     )
 }

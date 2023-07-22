@@ -14,6 +14,11 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "string",
+				"name": "_uri",
+				"type": "string"
+			},
+			{
 				"internalType": "address[]",
 				"name": "toBeWhitelisted",
 				"type": "address[]"
@@ -203,6 +208,11 @@
 		],
 		"name": "disputedProjects",
 		"outputs": [
+			{
+				"internalType": "string",
+				"name": "disputeReason",
+				"type": "string"
+			},
 			{
 				"internalType": "address",
 				"name": "disputeRaiser",

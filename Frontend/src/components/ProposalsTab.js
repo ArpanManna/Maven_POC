@@ -1,22 +1,25 @@
-import { getJobProposalsByID, selectBid } from '@/utils/service'
+import { selectBid } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Spinner from './UI/Spinner'
 import moment from 'moment'
 import { TransactionToastMessage } from './UI/Toast'
 import avatar2 from '../assets/imgs/avatar2.svg';
 import Image from 'next/image'
 import { useContextState } from '@/context'
+import { useRouter } from 'next/router'
 
 const ProposalsTab = ({ id, proposals, projectOwner }) => {
   const [loading, setLoading] = useState(false);
   const { address, chainId, provider } = useWeb3();
   const [{}, dispatch] = useContextState();
+  const router = useRouter();
 
   const handleBidSelection = async (bidId, bidOwner, bidPrice) => {
     setLoading(true);
     await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice, txNotify, dispatch);
     setLoading(false);
+    router.push("/dashboard");
   }
 
   const txNotify = useCallback((type, title, txHash) => {
@@ -33,7 +36,7 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
                 <div className='flex justify-center'>
                   <Image src={avatar2} height={100} width={100}/>
                 </div>
-
+{console.log(milestones)}
                 <div className='col-span-3 text-left'>
                   <div className='flex flex-wrap gap-4'>
                     {/* <h2 className='font-bold text-2xl'>
@@ -54,10 +57,15 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
               <h5 className="my-4  tracking-tight">{proposal.proposal}</h5>
               <div className='flex justify-between text-sm mb-4'>
               </div>
-              <div className='flex justify-between font-bold text-sm'>
+              <div className='flex justify-between text-sm'>
                 {
                   address === projectOwner &&
                   <>
+                  <div className='text-sm '> 
+                    <h2>Bid Amount: {bidPrice} </h2>
+                    <h2>Stake Amount: {bidPrice * 0.04} </h2>
+                    <h2>Platform Fee: {bidPrice * 0.01} </h2>
+                  </div>
                      <p className='text-sm'> Total amount to pay: {bidPrice * 1.05}</p>
 
                     {loading ? <Spinner /> :

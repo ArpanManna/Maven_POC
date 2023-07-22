@@ -1,7 +1,7 @@
 import React from 'react'
 import { Tab, Tabs } from './Tabs'
 import ProjectSection from './ProjectSection'
-import FreelancerSection from './FreelancerSection'
+import FreelancerSection from './DisputedProjectsSection'
 
 const DashboardTabs = () => {
     return (

@@ -14,14 +14,12 @@ const MilestoneTable = ({milestones, owner, freelancer, projectId}) => {
   const handleProcessPayment = async (milestoneId) => {
     setLoading(true);
     await processPayment(chainId, provider, projectId, milestoneId, freelancer, txNotify, dispatch);
-    await getProjectsByUser(chainId, provider, address, dispatch);
     setLoading(false);
   }
 
   const handleTransferOwnership = async (milestoneId) => {
     setLoading(true);
     await transferMilestone(chainId, provider, projectId, milestoneId, owner, txNotify, dispatch);
-    await getProjectsByUser(chainId, provider, address, dispatch);
     setLoading(false);
   }
 
@@ -44,7 +42,7 @@ const MilestoneTable = ({milestones, owner, freelancer, projectId}) => {
       MilestoneTitle: milestones[i].title,
       NFTId: milestones[i].tokenId,
       Amount: milestones[i].price,
-      Owner: `0x...89bb`,
+      Owner: milestones[i].currentOwner ? (`${milestones[i].currentOwner.slice(0,4)}...${milestones[i].currentOwner.slice(42-6)}`) : "0x...000",
       Status: milestoneStatusIdToLabel[milestones[i].status],
     });
   };
@@ -68,19 +66,18 @@ const MilestoneTable = ({milestones, owner, freelancer, projectId}) => {
     {
       title: 'Owner',
       dataIndex: 'Owner',
-      width: 100,
+      width: 130,
     },
     {
       title: 'Status',
       dataIndex: 'Status',
-      width: 130,
+      width: 100,
     },
     {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          {console.log(record.Status != 0, record)}
           {owner === address ? 
           <button disabled={loading || record.Status != "Payment Pending"} className='px-4 py-2 disabled:bg-gray-400 rounded-md text-white font-mono text-sm bg-blue-400' onClick={() => handleProcessPayment(record.key)}>Release Payment</button> :
           <button disabled={loading || record.Status != "In Progress"} className='px-4 py-2 disabled:bg-gray-400 rounded-md text-white font-mono text-sm bg-green-400' onClick={() => handleTransferOwnership(record.key)}>Request Payment</button>

@@ -7,6 +7,7 @@ import Spinner from './UI/Spinner';
 import { TransactionToastMessage } from './UI/Toast';
 import { DatePicker, Input } from 'antd';
 import * as db from '@/utils/polybase';
+import { useContextState } from '@/context';
 
 const PlaceBidForm = ({ id, projectOwner }) => {
   const [loading, setLoading] = useState(false);
@@ -21,6 +22,7 @@ const PlaceBidForm = ({ id, projectOwner }) => {
   const { bidPrice, proposal } = proposalForm;
 
   const { chainId, provider } = useWeb3();
+  const [{}, dispatch] = useContextState();
 
   const handleMilestoneChange = (event, index) => {
     let data = [...milestones];
@@ -76,7 +78,7 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       let milestoneArray = milestones.map(({ price, ...rest }) => price);
       const expectedTimeline = moment(deadline).unix()
       const proposalURI = await uploadFileToIPFS(JSON.stringify({ proposal, milestones }))
-      await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify);
+      await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify, dispatch);
       setLoading(false);
       
       const bidId = await db.createBid(bidPrice, `${expectedTimeline}`, proposal, [], JSON.stringify(milestones));

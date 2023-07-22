@@ -1,9 +1,10 @@
-import { requestRandomWords } from '@/utils/service';
+import { initializeDispute } from '@/utils/service';
 import { useWeb3 } from '@3rdweb/hooks';
 import { Dialog, Transition } from '@headlessui/react'
 import { Input } from 'antd'
-import { Fragment, useState } from 'react'
+import { Fragment, useCallback, useState } from 'react'
 import Spinner from './Spinner';
+import { TransactionToastMessage } from './Toast';
 
 export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const [reason, setReason] = useState('');
@@ -11,10 +12,16 @@ export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const { provider, chainId } = useWeb3();
 
   const handleDispute = async () => {
-    setLoading(true);
-    await requestRandomWords(chainId, provider, projectId);
-    setLoading(false);
+    if (reason) {
+      setLoading(true);
+      await initializeDispute(chainId, provider, projectId, reason, txNotify);
+      setLoading(false);
+    }
   }
+
+  const txNotify = useCallback((type, title, txHash) => {
+    TransactionToastMessage({ type, title, txHash });
+  }, []);
 
   return (
     <>
@@ -52,9 +59,7 @@ export default function Modal({ modalStatus, setModalStatus, projectId }) {
                   </Dialog.Title>
                   <div className="mt-2">
                     <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Dispute Reason." className='mt-2 p-2' />
-
                   </div>
-                  {loading ? <Spinner /> :
                     <div className="mt-4 flex justify-center flex-wrap gap-8">
                       <button
                         type="button"
@@ -70,7 +75,7 @@ export default function Modal({ modalStatus, setModalStatus, projectId }) {
                       >
                         Cancel
                       </button>
-                    </div>}
+                    </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

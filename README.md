@@ -37,6 +37,8 @@ To ensure that both parties are committed to the project, the client must first 
 
 ## How are "profile NFTs" created?
 
+We were the **first project** to integrate ERC-6551 to create NFT profiles, well before Lens Protocol announced their v2 version.
+
 The newly designed technique of ERC-6551 was used to create **profile NFTs**. This technique allows for the creation of more complex and interactive NFTs than were previously possible. It also makes it possible to store more data on each NFT, which could be used to create more personalized and unique experiences for users.
 
 To create a profile, an ERC-721 token is minted for each profile. Then, a token bound account (TBA) wallet address is generated using ERC-6551 and is associated with the ERC-721 **profile NFT.**

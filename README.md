@@ -2,8 +2,6 @@
 
 Ownership protected freelancing platform that connects freelancers with clients using Blockchain.
 
-## Website
-
 ## Description
 
 This platform helps freelancers find jobs that match their skills and experience.
@@ -16,7 +14,7 @@ The project is designed to help freelancers find work and get paid, while also p
 
 ## Architecture
 
-![Shape1](RackMultipart20230723-1-vx01xb_html_9d389da263ffc1d9.gif)
+![Github ReadMe](https://github.com/ArpanManna/Maven_POC/assets/115616879/a7dae3e2-2a76-4ce3-aac0-56d0b252eda0)
 
 ## Technologies Used
 
@@ -35,20 +33,31 @@ The newly designed technique of ERC-6551 was used to create **profile NFTs**. Th
 To create a profile, an ERC-721 token is minted for each profile. Then, a token bound account (TBA) wallet address is generated using ERC-6551 and is associated with the ERC-721 **profile NFT.**
 
 Our platform provides support for EIP-4337 **account abstraction**.
+![Github ReadMe-2](https://github.com/ArpanManna/Maven_POC/assets/115616879/29d3c2c2-351a-4b3a-b5ec-4d62a6e90313)
 
-![Shape2](RackMultipart20230723-1-vx01xb_html_57d5b2c6392eb1a2.gif)
+
 
 ## How is job ownership protected using ERC-6551?
 
-1. Whenever a client posts a job then ERC-721 token is minted for the job. Then, a token bound account (TBA) wallet address is generated using ERC-6551 and associated with the ERC-721 **job NFT.** These job NFTs are further associated inside profile NFTs to protect ownership of jobs for each client initially. ![Shape3](RackMultipart20230723-1-vx01xb_html_ab21f0ecf2f5db5b.gif)
-2. Whenever a client selects a freelancer bid for the job then the proposed number of milestones in the bid are minted as NFTs and the **milestone NFTs** are added in the TBA wallet of the corresponding job NFT.
- ![Shape7](RackMultipart20230723-1-vx01xb_html_f11a01665643073b.gif)
+1. Whenever a client posts a job then ERC-721 token is minted for the job. Then, a token bound account (TBA) wallet address is generated using ERC-6551 and associated with the ERC-721 **job NFT.** These job NFTs are further associated inside profile NFTs to protect ownership of jobs for each client initially.
+![Github ReadMe-3](https://github.com/ArpanManna/Maven_POC/assets/115616879/6f9d4327-93a4-4f66-b443-7c25756c70bd)
 
-1. The platform then automatically transfers the job NFT and TBA wallet (along with the milestones NFT) to the freelancer's profile Token Bound Address. ![Shape9](RackMultipart20230723-1-vx01xb_html_fdc2c52516bd64e1.gif)
-2. When a freelancer completes a milestone then the milestone NFT is transferred back to the client profile Token Bound Address (TBA). ![Shape10](RackMultipart20230723-1-vx01xb_html_b4b621f0f0e41ec5.gif)
-3. When all the milestones are completed, the job NFT will be burn by the platform.
-4. Finally, the profile NFT will contain the milestone NFT for this job in its TBA wallet. ![Shape13](RackMultipart20230723-1-vx01xb_html_876cff0fd4d33d56.gif)
-5. In case a dispute arises, the ownership of the job NFT and the uncompleted milestone NFTs are transferred to the platform and will be withheld until the dispute is resolved. It will then transfer the ownership of these to the winning party.
+2. Whenever a client selects a freelancer bid for the job then the proposed number of milestones in the bid are minted as NFTs and the **milestone NFTs** are added in the TBA wallet of the corresponding job NFT.
+
+![Github ReadMe-4](https://github.com/ArpanManna/Maven_POC/assets/115616879/1851cc56-6462-4326-9dc6-d80dc077b735)
+
+3. The platform then automatically transfers the job NFT and TBA wallet (along with the milestones NFT) to the freelancer's profile Token Bound Address.
+   ![Github ReadMe-5](https://github.com/ArpanManna/Maven_POC/assets/115616879/f3915374-0a92-45bf-a951-f5500bf1305f)
+
+4. When a freelancer completes a milestone then the milestone NFT is transferred back to the client profile Token Bound Address (TBA). 
+![Github ReadMe-6](https://github.com/ArpanManna/Maven_POC/assets/115616879/14c7b7bc-fcb2-494c-a78f-573e86d2b05a)
+
+5. When all the milestones are completed, the job NFT will be burn by the platform.
+
+6. Finally, the profile NFT will contain the milestone NFT for this job in its TBA wallet.
+ ![Github ReadMe-7](https://github.com/ArpanManna/Maven_POC/assets/115616879/0233029e-f966-41b0-8dc9-c55ac442430c)
+   
+6. In case a dispute arises, the ownership of the job NFT and the uncompleted milestone NFTs are transferred to the platform and will be withheld until the dispute is resolved. It will then transfer the ownership of these to the winning party.
 
 ## How voters are selected anonymously?
 

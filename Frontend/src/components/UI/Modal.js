@@ -6,7 +6,7 @@ import { Fragment, useCallback, useState } from 'react'
 import Spinner from './Spinner';
 import { TransactionToastMessage } from './Toast';
 
-export default function Modal({ modalStatus, setModalStatus, projectId }) {
+export default function Modal({ modalStatus, setModalStatus, projectId, freelancer }) {
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
   const { provider, chainId } = useWeb3();
@@ -14,7 +14,7 @@ export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const handleDispute = async () => {
     if (reason) {
       setLoading(true);
-      await initializeDispute(chainId, provider, projectId, reason, txNotify);
+      await initializeDispute(chainId, provider, projectId, freelancer, reason, txNotify);
       setLoading(false);
     }
   }

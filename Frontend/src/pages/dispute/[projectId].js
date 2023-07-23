@@ -4,10 +4,12 @@ import avatar4 from '../../assets/imgs/avatar2.svg'
 import Image from 'next/image'
 import { Input } from 'antd'
 import { useRouter } from 'next/router'
-import { getProjectById, getVotingResult, voteForDisputeResolution } from '@/utils/service'
+import { getDisputeDetails, getProjectById, getVotingResult, voteForDisputeResolution } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'
 import Spinner from '@/components/UI/Spinner'
 import { TransactionToastMessage } from '@/components/UI/Toast'
+import addresses from "../../constants/Contracts.json"
+import moment from 'moment'
 
 const MilestoneDispute = () => {
     const { provider, chainId } = useWeb3();
@@ -15,32 +17,33 @@ const MilestoneDispute = () => {
     const { projectId } = router.query;
 
     const [random, setRandom] = useState();
-    const [result, setResult] = useState();
+    const [result, setResult] = useState(0);
     const [projectDetails, setProjectDetails] = useState({
         owner: "",
         freelancer: ""
     });
+    const [disputeDetail, setDisputeDetail] = useState(
+        {disputeReason: '', duration:'', disputeRaisedBy:'', voterList:''}
+    );
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (chainId && projectId) getDisputeDetails();
+        if (chainId && projectId) getDisputeData();
     }, [chainId, projectId]);
 
-    const getDisputeDetails = async () => {
+    const getDisputeData = async () => {
         const res = await getProjectById(chainId, provider, projectId);
+        const dispute = await getDisputeDetails(chainId, provider, projectId);
+        
         setProjectDetails(res);
+        setDisputeDetail(dispute)
     }
 
-    const voters = [
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-    ]
+    const votingResultLabel = {
+        0: "None",
+        1: "Freelancer",
+        2: "Client"
+    }
 
     const handleVote = async (e) => {
         if (random && chainId) {
@@ -60,6 +63,8 @@ const MilestoneDispute = () => {
 
     const handleVotingResult = async () => {
         const res = await getVotingResult(chainId, provider, projectId);
+        console.log(res)
+        console.log(typeof res)
         setResult(res);
     }
 
@@ -68,7 +73,14 @@ const MilestoneDispute = () => {
     }, []);
 
     const {owner, freelancer} = projectDetails;
+    const {disputeReason, duration, disputeRaisedBy, voterList} = disputeDetail;
 
+    // console.log(disputeDetail)
+    // const now = moment().unix();
+    
+    // const remaining = now - duration;
+    // console.log("now",now, "duration", duration, remaining)
+    // console.log(moment.duration(remaining).minutes())
     return (
         <div>
             {loading && <Spinner />}
@@ -76,10 +88,10 @@ const MilestoneDispute = () => {
                 <div className='col-span-1 border p-4'>
                     <h2 className='text-center font-bold my-2'> Voter List</h2>
                     <hr />
-                    {voters.map((voter, i) => (
+                    {voterList && voterList.map((voter, i) => (
                         <div key={i} className='flex flex-wrap gap-2 items-center'>
                             <Image src={avatar4} height={20} width={20} alt='avatar' />
-                            <p className='my-2 font-mono text-center' key={i}>0x...{voter.slice(voter.length - 5)}</p>
+                            <p className='my-2 font-mono text-center' key={i}>0x...{voter.slice(36)}</p>
                         </div>
                     ))}
                 </div>
@@ -92,13 +104,18 @@ const MilestoneDispute = () => {
                             <div>
                                 <h2 className='my-1'>Project Id: {projectId}</h2>
 
-                                <h2 className='my-1'>Current Owner: {"0x30...366F"} (Maven)</h2>
-                                <h2 className='my-1'>Dispute Reason: Improper project requirements</h2>
+                                <h2 className='my-1'>Current Owner: 0x...{addresses[80001].disputeResolution.slice(36)} (Dispute Resolution Contract)</h2>
+                                <h2 className='my-1'>Dispute Raised By : 0x...{disputeRaisedBy.slice(36)}</h2>
+                                
+                                <h2 className='my-1'>Dispute Reason: {disputeReason}</h2>
                             </div>
                             <div>
                                 <h2 className='my-1'>Client: 0x...{owner.slice(36)}</h2>
                                 <h2 className='my-1'>Freelancer: 0x...{freelancer.slice(36)}</h2>
                             </div>
+                        </div>
+                        <div className='text-right'>
+                            {/* <p>{remaining && remaining}</p> */}
                         </div>
                         <hr />
                         <div className='grid grid-cols-2 gap-8 my-8'>
@@ -114,7 +131,8 @@ const MilestoneDispute = () => {
                         </div>
                         <div className='flex px-8 flex-wrap gap-8 pb-2'>
                             <button className='text-white bg-gradient-to-r mt-4 from-palatte1 to-palatte4 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4' onClick={(e) => handleVotingResult(e)}>Get Voting Result</button>
-                            {result && <p className='font-mono font-semibold'>{result === 1 ? "Freelancer" : "Client"}</p>}
+                            <h2 className='font-bold mt-6'>
+                                {votingResultLabel[result]}</h2>
                         </div>
                     </div>
                 </div>

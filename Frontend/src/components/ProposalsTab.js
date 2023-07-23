@@ -8,16 +8,17 @@ import avatar2 from '../assets/imgs/avatar2.svg';
 import Image from 'next/image'
 import { useContextState } from '@/context'
 import { useRouter } from 'next/router'
+import { getAccountUrl } from '@/utils/explorer'
 
 const ProposalsTab = ({ id, proposals, projectOwner }) => {
   const [loading, setLoading] = useState(false);
   const { address, chainId, provider } = useWeb3();
-  const [{}, dispatch] = useContextState();
+  const [{ }, dispatch] = useContextState();
   const router = useRouter();
 
-  const handleBidSelection = async (bidId, bidOwner, bidPrice) => {
+  const handleBidSelection = async (proposalId, bidOwner, bidPrice) => {
     setLoading(true);
-    await selectBid(chainId, provider, id, bidOwner, bidId, bidPrice, txNotify, dispatch);
+    await selectBid(chainId, provider, id, bidOwner, proposalId, bidPrice, txNotify, dispatch);
     setLoading(false);
     router.push("/dashboard");
   }
@@ -34,19 +35,14 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
             <div key={index} className="block w-full p-6 mb-2 text-gray-800 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
               <div className='grid grid-cols-4 gap-2'>
                 <div className='flex justify-center'>
-                  <Image src={avatar2} height={100} width={100}/>
+                  <Image src={avatar2} height={100} width={100} />
                 </div>
-{console.log(milestones)}
                 <div className='col-span-3 text-left'>
-                  <div className='flex flex-wrap gap-4'>
-                    {/* <h2 className='font-bold text-2xl'>
-                      Tek Raj Joshi
-                    </h2> */}
-                    <h2 className='font-medium text-xl'>
-                      Bid From: {owner.slice(0, 6)}
-                      {'...'}
-                      {owner.slice(owner.length - 6)}
-                    </h2>
+
+                    <div className='flex flex-wrap gap-2 font-semibold text-lg'>
+                  <p>Bid From: </p>
+                  <a href={getAccountUrl(owner)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>{`0x...${owner.slice(36)}`}</a>
+                  {/* <RedirectIcon className="mt-1"/> */}
                   </div>
 
                   <h2 className='text-md'>Bid Price: {bidPrice} wei</h2>
@@ -57,22 +53,40 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
               <h5 className="my-4  tracking-tight">{proposal.proposal}</h5>
               <div className='flex justify-between text-sm mb-4'>
               </div>
-              <div className='flex justify-between text-sm'>
                 {
                   address === projectOwner &&
                   <>
-                  <div className='text-sm '> 
-                    <h2>Bid Amount: {bidPrice} </h2>
-                    <h2>Stake Amount: {bidPrice * 0.04} </h2>
-                    <h2>Platform Fee: {bidPrice * 0.01} </h2>
-                  </div>
-                     <p className='text-sm'> Total amount to pay: {bidPrice * 1.05}</p>
+                  <div className='flex justify-between text-sm'>
+                    <div className='text-xs grid grid-cols-1 divide-y font-mono border py-2 px-4 border-palatte4'>
+                    <h2 className='font-bold'>Amount Breakdown</h2>
+                      
+                      <h2>Bid Amount: {bidPrice} wei</h2>
+                      <h2>Stake Amount: {bidPrice * 0.04} wei</h2>
+                      <h2>Platform Fee: {bidPrice * 0.01} wei</h2>
+                    <h2 className='font-bold text-right'>Total:  {bidPrice * 1.05} wei</h2>
 
-                    {loading ? <Spinner /> :
-                      <button className='border px-4 py-2 -mt-1 rounded-md bg-gradient-to-r from-palatte4 to-palatte1 hover:bg-gradient-to-br text-white' onClick={() => handleBidSelection(index, owner, bidPrice * 1.05)}>Select Bid</button>
+                    </div>
+                    <div className='text-xs grid grid-cols-1 divide-y font-mono border py-2 px-4 border-palatte4'>
+                    <h2 className='font-bold'>Milestones Breakdown</h2>
+                    {
+                      proposal.milestones && proposal.milestones.map(({title, price}) => (
+                        <h2 className='text-right'>{title}: {price} wei</h2>
+
+                      ))
+                    }
+                    <h2 className='font-bold text-right'>Total:  {bidPrice * 1.05} wei</h2>
+
+                    </div>
+                    <div>
+
+                    </div>
+                    </div>
+                     {loading ? <Spinner /> :
+                      <button className='border float-right px-4 py-2 mt-4 rounded-md bg-gradient-to-r from-palatte4 to-palatte1 hover:bg-gradient-to-br text-white' onClick={() => handleBidSelection(index, owner, bidPrice * 1.05)}>Select Bid</button>
                     }
                   </>
-                }</div>
+                 
+                }
             </div>
           ))
         }

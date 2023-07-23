@@ -3,6 +3,8 @@ import PlaceBidForm from './PlaceBidForm'
 import { useWeb3 } from '@3rdweb/hooks'
 import { useContextState } from '@/context';
 import { useRouter } from 'next/router';
+import { getAccountUrl } from '@/utils/explorer';
+import RedirectIcon from '@/assets/imgs/RedirectIcon';
 
 const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired, priceFrom, priceTo, bidCount, tokenId, tba }) => {
     const [{ currentUserDetails }] = useContextState();
@@ -16,8 +18,6 @@ const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired
         }
     }, [address, currentUserDetails]);
 
-    console.log(currentUserDetails)
-
     return (
         <div className='container text-black p-4 shadow-md rounded-md'>
             <div className='p-4'>
@@ -29,7 +29,11 @@ const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired
 </svg>
 
                 <h2 className='font-semibold'>Token Id: {tokenId}</h2>
-                <h2 className='font-semibold ml-32'>Token Bound Address: 0x...{tba.slice(tba.length - 6)}</h2>
+                <div className='flex flex-wrap gap-2 font-semibold'>
+                  <p>Token Bound Address: </p>
+                  <a href={getAccountUrl(tba)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>{`0x...${tba.slice(36)}`}</a>
+                  <RedirectIcon />
+                </div>
               </div>
                 </div>
                 <p className='my-8'>
@@ -38,7 +42,7 @@ const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired
                 <h2 className='text-lg font-semibold'> Skills:</h2>
                 <div className='flex flex-wrap gap-4'>
                     {skillsRequired && skillsRequired.map((skill, i) => (
-                        <p key={`${skill}${i}`} className='font-semibold my-4 border-2 rounded-lg px-3 py-1'>{skill}</p>
+                        <p key={`${skill}${i}`} className='font-semibold my-4 border-palatte4 border rounded-lg px-3 py-1'>{skill}</p>
                     ))}
                 </div>
                 

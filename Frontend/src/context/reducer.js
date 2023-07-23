@@ -13,7 +13,6 @@ export const initialState = {
 };
 
 export const reducer = (initialState, action) => {
-  console.log(action)
   switch (action.type) {
     case 'DASHBOARD_UPDATE':
       return {

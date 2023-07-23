@@ -50,9 +50,6 @@ export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, p
         if (txStatus === 1) txNotify("success", "Successful", tx.hash);
         else txNotify("error", "Failed", tx.hash);
         const {client, projectId, tokenId, tba} = receipt.events[3].args;
-        // const [project_id] = ethers.utils.defaultAbiCoder.decode(
-        //     ['uint', 'address'], data
-        // );
 
         await sendNotification("Job Post Created!", `A new Job with NFT Id: ${tokenId} and Token Bound Address: ${tba} has been created.`, address)
         await fetchNotifications(address, dispatch);
@@ -276,8 +273,6 @@ export const transferMilestone = async (chainId, provider, projectId, milestoneI
 }
 
 export const processPayment = async (chainId, provider, projectId, milestoneId, freelancer, txNotify, dispatch) => {
-   
-   console.log(projectId, milestoneId)
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         const tx = await mavenContract.processMilestoneCompletion(projectId, milestoneId);
@@ -308,14 +303,18 @@ export const getTotalBids = async (chainId, provider, projectId) => {
 }
 
 
-export const initializeDispute = async (chainId, provider, projectId, disputeReason, txNotify) => {
+export const initializeDispute = async (chainId, provider, projectId, freelancer, disputeReason, txNotify) => {
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         await disputeResolutionContract.requestRandomWords();
         const signature = await disputeResolutionContract.lastRequestId();
+        console.log(signature);
         const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
+        console.log(randomNumber);
         const disputeReasonURI = await uploadFileToIPFS(disputeReason);
-        const tx = await disputeResolutionContract.initializeVoting(projectId, disputeReasonURI, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        const tx = await mavenContract.initializeDispute(freelancer, addresses[chainId].disputeResolution, projectId, 1, disputeReasonURI, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        
         txNotify("success", "Sent", tx.hash);
         const txStatus = await getTransactionStatus(tx.hash);
         if (txStatus === 1) {
@@ -426,24 +425,35 @@ export const getUserDetails = async (chainId, provider, address, dispatch) => {
 }
 
 
-export const getAllDisputedProjects = async(chainId,provider) => {
-    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
+export const getDisputeDetails = async(chainId, provider, projectId) => {
+    const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider)
+    try {
+        const data = await disputeResolutionContract.getVoteDetails(projectId);
+            const disputeReason = await getIPFSResponse(data[0])
+            return { disputeReason: disputeReason, voterList: data[3], duration: data[2].toNumber(), disputeRaisedBy: data[1] }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+export const getAllDisputedProjects = async(chainId, provider) => {
+    const mavenContract = initializeContract(addresses[chainId].disputeResolutionContract, mavenABI, provider)
     try {
         const data = await mavenContract.getAllProjectsDisputed();
         let posts = [];
-        console.log(data);
 
-        // await async.eachLimit(data, 10, async (_data) => {
-        //     let post = ({ id: _data.projectId.toNumber(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toNumber(), highestBid: _data[4].toNumber(), createdOn: _data[7].toNumber(), deadline: _data[8].toNumber(), finalBid: _data[9].toNumber(), status: _data[10], tokenId: _data.tokenId.toNumber(), tba: _data.tba })
-        //     const metadataRes = await getIPFSResponse(_data[5])
-        //     const JDRes = await getIPFSResponse(_data[6])
-        //     const bidCount = await getTotalBids(chainId, provider, _data[0].toNumber());
-        //     post = ({ ...post, metadata: metadataRes, fileURI: JDRes, bidCount })
-        //     posts.push(post)
-        // });
+        await async.eachLimit(data, 10, async (_data) => {
+            let post = ({ id: _data.projectId.toNumber(), owner: _data[1], freelancer: _data[2], lowestBid: _data[3].toNumber(), highestBid: _data[4].toNumber(), createdOn: _data[7].toNumber(), deadline: _data[8].toNumber(), finalBid: _data[9].toNumber(), status: _data[10], tokenId: _data.tokenId.toNumber(), tba: _data.tba })
+            const metadataRes = await getIPFSResponse(_data[5])
+            const JDRes = await getIPFSResponse(_data[6])
+            const bidCount = await getTotalBids(chainId, provider, _data[0].toNumber());
+            post = ({ ...post, metadata: metadataRes, fileURI: JDRes, bidCount })
+            posts.push(post)
+        });
         return posts;
     } catch (err) {
         console.log(err)
         return [];
     }
 }
+ 

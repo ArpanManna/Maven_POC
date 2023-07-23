@@ -8,7 +8,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 const CreateProfile = () => {
     const [{ currentUserDetails }] = useContextState();
-    const { address } = useWeb3();
     const router = useRouter();
     const isMounted = useIsMounted();
 

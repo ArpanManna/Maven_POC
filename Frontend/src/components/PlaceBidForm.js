@@ -74,6 +74,7 @@ const PlaceBidForm = ({ id, projectOwner }) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (bidPrice && deadline && milestones.length > 0 && proposal) {
+      
       setLoading(true);
       let milestoneArray = milestones.map(({ price, ...rest }) => price);
       const expectedTimeline = moment(deadline).unix()

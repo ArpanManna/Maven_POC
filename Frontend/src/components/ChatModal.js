@@ -43,10 +43,10 @@ export default function ChatModal() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     if (provider) {
       const signer = provider.getSigner();
-      console.log("working");
+      // console.log("working");
       createUserIfNecessary(signer).then((user) => {
         // Perform any necessary actions with the user object
-        console.log(user);
+        // console.log(user);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,6 +1,4 @@
 import React, { useCallback, useState } from 'react'
-import TagsInput from 'react-tagsinput'
-import 'react-tagsinput/react-tagsinput.css'
 import moment from 'moment/moment';
 import { uploadFileToIPFS } from '@/lib/IPFSClient';
 import { createJobPost } from '@/utils/service';
@@ -11,9 +9,10 @@ import { DatePicker, Input } from 'antd';
 import * as db from '@/utils/polybase';
 import { useRouter } from 'next/router';
 import { useContextState } from '@/context';
+import UserSkillDetails from './UserSkillDetails';
 
 const ProjectForm = () => {
-    const [tags, setTags] = useState([]);
+    const [skills, setSkills] = useState([]);
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" });
     const [deadline, setDeadline] = useState(new Date());
@@ -28,6 +27,11 @@ const ProjectForm = () => {
             setFile(e.target.files[0]);
         }
     };
+
+    const handleSkillsChange = (skill) => {
+        setSkills(skill);
+      }
+
     const handleFormChange = async (e) => {
         const { name, value } = e.target;
         if (name === ("priceFrom" || "priceTo")) {
@@ -45,9 +49,9 @@ const ProjectForm = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        if (projectName && projectDescription && priceFrom && priceTo && tags) {
+        if (projectName && projectDescription && priceFrom && priceTo && skills) {
             setLoading(true);
-            form.skillsRequired = tags;
+            form.skillsRequired = skills;
             const metaDataURI = await uploadFileToIPFS(JSON.stringify(form))
             let fileURI = '';
             if (file) {
@@ -56,9 +60,9 @@ const ProjectForm = () => {
             try {
                 const res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify, address, dispatch)
                 
-                await db.createProject(res, projectName, projectDescription, [], tags, priceFrom, priceTo);
-                for (let i = 0; i < tags.length; i += 1) {
-                    await db.publicProject(tags[i], projectId);
+                await db.createProject(res, projectName, projectDescription, [], skills, priceFrom, priceTo);
+                for (let i = 0; i < skills.length; i += 1) {
+                    await db.publicProject(skills[i], projectId);
                 }
                 if (res) await getProjectsByUser(chainId, provider, address);
                 router.push("/dashboard");
@@ -69,7 +73,7 @@ const ProjectForm = () => {
                 setLoading(false);
             } catch (err) {
                 console.log(err)
-                router.push("/dashboard");
+                // router.push("/dashboard");
                 setLoading(false)
             }
         }
@@ -79,9 +83,6 @@ const ProjectForm = () => {
         TransactionToastMessage({ type, title, txHash });
     }, []);
 
-    const handleSkillChange = value => {
-        setTags(value);
-    }
     const handleDeadlineChange = (date, dateString) => {
         setDeadline(date);
     };
@@ -97,7 +98,7 @@ const ProjectForm = () => {
             </div>
             <div className="relative mt-3">
                 <label htmlFor="projectSkills" className="leading-7 text-md mb-2 font-semibold text-gray-600">What skills are required?</label>
-                <TagsInput
+                {/* <TagsInput
                     inputProps={{
                         placeholder: 'Enter Skills'
                     }}
@@ -105,6 +106,8 @@ const ProjectForm = () => {
                     maxTags={5}
                     value={tags}
                     onChange={handleSkillChange} />
+                     */}
+                     <UserSkillDetails onSkillChange={handleSkillsChange} />
             </div>
             <div className="relative mt-3">
                 <label htmlFor="projectDeadline" className="leading-7 text-md mb-2 font-semibold text-gray-600">Estimated Timeline:</label>

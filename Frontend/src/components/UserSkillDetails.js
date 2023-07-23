@@ -4,68 +4,67 @@ import { Select } from "antd";
 const UserSkillDetails = ({onSkillChange}) => {
   const [items, setItems] = useState([
   {
-    "value": "3",
-    "label": "PHP"
+    "value": "Solidity",
+    "label": "Solidity"
   },
   {
-    "value": "4",
-    "label": "Perl"
+    "value": "Next.js",
+    "label": "Next.js"
   },
   {
-    "value": "5",
-    "label": "ASP"
+    "value": "Ethereum",
+    "label": "Ethereum"
   },
   {
-    "value": "6",
-    "label": "C Programming"
+    "value": "Node.js",
+    "label": "Node.js"
   },
   {
-    "value": "7",
-    "label": "Java"
+    "value": "AWS",
+    "label": "AWS"
   },
   {
-    "value": "8",
-    "label": "JSP"
-  },
-  {
-    "value": "9",
-    "label": "JavaScript"
-  },
-  {
-    "value": "10",
-    "label": "XML"
-  },
-  {
-    "value": "11",
-    "label": "Cold Fusion"
-  },
-  {
-    "value": "12",
-    "label": "Adobe Flash"
-  },
-  {
-    "value": "13",
+    "value": "Python",
     "label": "Python"
   },
   {
-    "value": "14",
-    "label": "Visual Basic"
+    "value": "Javascript",
+    "label": "JavaScript"
   },
   {
-    "value": "15",
-    "label": ".NET"
+    "value": "UI/UX",
+    "label": "UI/UX"
+  },
+  {
+    "value": "Rust",
+    "label": "Rust"
+  },
+  {
+    "value": "C++ Programming",
+    "label": "C++ Programming"
+  },
+  {
+    "value": "SEO",
+    "label": "SEO"
+  },
+  {
+    "value": "Communication",
+    "label": "Communication"
+  },
+  {
+    "value": "React.js",
+    "label": "React.js"
   },
 ]);
   
   return (
-    <div className=" py-2">
-      <h2 className="mt-4 mb-2 font-semibold">Skills:</h2>
+    <div className="py-2">
       <Select
         mode="multiple"
         size={"middle"}
         placeholder="Please select"
         defaultValue={[]}
-        className="w-full py-1"
+        className="w-full"
         options={items}
         onChange={onSkillChange}
       />

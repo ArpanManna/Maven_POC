@@ -7,6 +7,7 @@ import MilestoneTable from './UI/MilestoneTable';
 import { useContextState } from '@/context';
 import Modal from './UI/Modal';
 import { getAccountUrl } from '@/utils/explorer';
+import RedirectIcon from '@/assets/imgs/RedirectIcon';
 
 const postStatusIdToLabel = {
     0: "Bidding",
@@ -69,10 +70,17 @@ const AccordionTitle = ({ post, bid }) => {
                 <p>Created On: {moment.unix(post.createdOn).format("MM/DD/YYYY")}</p>
             </div>
             <div className='col-span-3'>
-                <p className='text-md -mt-1'>Client: {`0x...${post.owner.slice(post.owner.length - 6)}`}</p>
-                <p>TBA:
-                    <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'> 0x...{post.tba.slice(post.tba.length-6)}</a>
-                </p>
+                <div className='flex flex-wrap gap-2 font-semibold'>
+                <p>Client: </p>
+                <a href={getAccountUrl(post.owner)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>{`0x...${post.owner.slice(post.owner.length - 6)}`}</a>
+                <RedirectIcon />
+                </div>
+                <div className='flex flex-wrap gap-2 font-semibold'>
+                <p>TBA: </p>
+                <a href={getAccountUrl(post.tba)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>{`0x...${post.tba.slice(post.tba.length - 6)}`}</a>
+                <RedirectIcon />
+                </div>
+           
                 <p>Assets (Milestones): {post.assetsHolding}</p>
             </div>
             <div className='col-span-1'>
@@ -95,15 +103,19 @@ const AccordionBody = ({ post, bid }) => {
         <div className='grid grid-cols-4' key={post.id}>
             <div className='my-2 p-8 col-span-1 '>
                 <h2>Token Id: {post.tokenId}</h2>
-                <div className='flex flex-wrap gap-3'>
-                    <h2>IPFS: </h2>
-                    <a href={post.metadataURI} target='__blank' className='cursor-pointer font-light underline text-blue-600'>https:ipfs.io....</a>
+
+                <div className='flex flex-wrap gap-2 font-semibold'>
+                <p>IPFS: </p>
+                <a href={post.metadataURI} target='__blank' className='cursor-pointer hover:underline text-blue-600'>https:ipfs.io...</a>
+                <RedirectIcon />
                 </div>
+                
 
                 {bid.freelancer &&
-                    <div className='flex flex-wrap gap-2'>
-                        <h2>Freelancer:</h2>
-                        <a href={getAccountUrl()} target='__blank' className='cursor-pointer font-light hover:underline text-blue-600'>0x...{bid.freelancer.slice(bid.freelancer.length - 6)}</a>
+                    <div className='flex flex-wrap gap-2 font-semibold'>
+                    <p>Freelancer: </p>
+                    <a href={getAccountUrl(bid.freelancer)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>0x...{bid.freelancer.slice(36)}</a>
+                    <RedirectIcon />
                     </div>
                 }
                 <h2>Published On: {moment.unix(post.createdOn).format("MM/DD/YYYY")}</h2>
@@ -119,7 +131,7 @@ const AccordionBody = ({ post, bid }) => {
                         <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
                 }
             </div>
-            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject} />}
+            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject} freelancer={bid.freelancer}/>}
 
         </div>
     )

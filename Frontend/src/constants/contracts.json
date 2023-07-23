@@ -1,14 +1,6 @@
 {
     "80001": {
-        "maven": "0x0b09706af37Faa2DbA7f2AD971e9070Ba94d2CcE",
-        "disputeResolution": "0x187073b09D18ebcdac4E36c662209f1f1f2E739d"
-    },
-    "11155111": {
-        "maven": "0xb6e8f128dDf55659Fd0C47C1bcfBF73A87c67cF8",
-        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
-    },
-    "5": {
-        "maven": "0xb4e880ABB602C0901dB604C54c8fa39Eb1E247a9",
-        "disputeResolution": "0x8DeB0abaB37CfA84d146D5cc5Ca315585E3ba242"
+        "maven": "0x77117280761c7E9F85bE6c3A817bea71a6f2b77a",
+        "disputeResolution": "0xb070F911E10173dAd47B4B8bc0BED6D6b48D09bc"
     }
 }

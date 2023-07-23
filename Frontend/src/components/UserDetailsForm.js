@@ -79,10 +79,6 @@ const UserDetailsForm = () => {
     setSkills(skill);
   }
 
-  useEffect(() => {
-    // if (address) sendNotification("Profile Created!", "You profile NFTId: ${22}, Profile Specific Token Bound Address: ${8723} has been created.`, address)
-
-  },[address])
 
   return (
     <form className="my-2 px-4 pb-2">
@@ -178,7 +174,11 @@ const UserDetailsForm = () => {
         />
       </div>
 
-      {user === "freelancer" && <UserSkillDetails onSkillChange={handleSkillsChange} />}
+      {user === "freelancer" && 
+      <div>
+      <h2 className="mt-4 mb-2 font-semibold">Skills:</h2>
+<UserSkillDetails onSkillChange={handleSkillsChange} />
+      </div>}
       <div className="px-4 py-2">
         <button
           type="button"

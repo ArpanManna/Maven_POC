@@ -2,7 +2,9 @@ import { ToastMessage } from '@/components/UI/Toast';
 import { useContextState } from '@/context';
 import { useWeb3 } from '@3rdweb/hooks';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {useEffect, useState } from 'react'
+import avatar from "../../assets/imgs/avatar1.svg"
+import Image from 'next/image';
 
 const ProfileDetail = () => {
     const [{currentUserDetails}] = useContextState();
@@ -27,16 +29,18 @@ const ProfileDetail = () => {
         <>
             <div className="bg-palatte5 flex flex-wrap items-center justify-center">
                 <div className="container max-full bg-white rounded shadow-lg transform duration-200 easy-in-out m-8">
-                    <div className="h-2/4 sm:h-64 overflow-hidden">
-                        <img className="w-full rounded-t"
+                    <div className="h-2/4 bg-palatte1 sm:h-64 overflow-hidden">
+                        {/* <img className="w-full rounded-t"
                             src="https://images.unsplash.com/photo-1638803040283-7a5ffd48dad5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
-                            alt="Photo by aldi sigun on Unsplash" />
+                            alt="Photo by aldi sigun on Unsplash" /> */}
                     </div>
                     <div className="flex justify-start px-5 -mt-12 mb-5">
                         <span clspanss="block relative h-32 w-32">
-                            <img alt="Photo by aldi sigun on Unsplash"
+                            {/* <img alt="Photo by aldi sigun on Unsplash"
                                 src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fHByb2ZpbGUlMjBwaWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
                                 className="mx-auto object-cover rounded-full h-24 w-24 bg-white p-1" />
+                                 */}
+                            <Image src={avatar} alt="avatar" height={100} width={100} />
                         </span>
                     </div>
                     <div className="">

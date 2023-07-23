@@ -6,18 +6,16 @@ import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "./Registry.sol";
 import "./ERC6551Account.sol";
+import "./IVoting.sol";
 
 contract Maven is ERC721URIStorage, Registry{
     using Counters for Counters.Counter;
     using SafeMath for uint256;
     Counters.Counter private _projectIds; // keep track of projects created
     Counters.Counter public _projectIdsInBidding; // keep track of projects in bidding
+    Counters.Counter public _projectIdsInDisputed; // keep track of projects in bidding
     Counters.Counter private _tokenIds; // keep track of token Id
     uint stakePercentage = 4;
-    Counters.Counter public _projectIdsInBidding; // keep track of projects in bidding
-    Counters.Counter private _tokenIds; // keep track of token Id
-    uint stakePercentage = 4;
-    
     address deployer;
 
     constructor(address _implementationContract) ERC721("Maven Protocol", "MVP") Registry(_implementationContract){
@@ -27,7 +25,8 @@ contract Maven is ERC721URIStorage, Registry{
     enum ProjectStatus{
         Bidding,
         InProgress,
-        Completed
+        Completed,
+        Disputed
     }
 
     enum ProfileType{
@@ -62,6 +61,8 @@ contract Maven is ERC721URIStorage, Registry{
         uint deadline;    // project deadline
         uint finalBidId;     // after bidding
         ProjectStatus status;
+        uint tokenId;
+        address tba;
     }
 
     struct Bid{
@@ -118,7 +119,6 @@ contract Maven is ERC721URIStorage, Registry{
     function getProfile(address _addr) public view returns(Profile memory) {
         require(profile[_addr].addr != address(0), "No such Profile address exists!");
         return profile[_addr];
-
     }
 
     // @dev - this function mints a new NFT id and Token Bound address
@@ -147,12 +147,11 @@ contract Maven is ERC721URIStorage, Registry{
         require(msg.sender != deployer, "Deployer Not eligible to create project");
         _projectIds.increment();
         uint newProjectId = _projectIds.current();
-        projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, block.timestamp, deadline, 0, ProjectStatus.Bidding);
-        _projectIdsInBidding.increment();
-        projectProfiles[msg.sender].push(newProjectId);
-
         // create Project NFT and TBA
         (uint newTokenId, address tba) = mintTokenAndTba(profile[msg.sender].tba, _uri);
+        projectIdToProjectDetails[newProjectId] = Project(newProjectId, msg.sender, address(0), lbid, ubid, _uri, _JDuri, block.timestamp, deadline, 0, ProjectStatus.Bidding, newTokenId, tba);
+        _projectIdsInBidding.increment();
+        projectProfiles[msg.sender].push(newProjectId);
         projectTokenId[newProjectId] = newTokenId;
         tokenIds[newTokenId] = tba;
         emit ProjectCreated(msg.sender, newProjectId, newTokenId, tba);
@@ -168,6 +167,21 @@ contract Maven is ERC721URIStorage, Registry{
         for(uint i=1;i<=totalCount;i++){
             Project memory curItem = projectIdToProjectDetails[i];
             if(curItem.status == ProjectStatus.Bidding){
+                allProjects[curIndex] = curItem;
+                curIndex += 1;
+            }
+        }
+        return allProjects;
+    }
+        // @dev - returns all projects that are in disputed state
+    function getAllProjectsDisputed() public view returns(Project[] memory){
+        uint projectCountInDisputed = _projectIdsInDisputed.current();
+        uint totalCount = _projectIds.current();
+        Project[] memory allProjects = new Project[](projectCountInDisputed);
+        uint curIndex = 0;
+        for(uint i=1;i<=totalCount;i++){
+            Project memory curItem = projectIdToProjectDetails[i];
+            if(curItem.status == ProjectStatus.Disputed){
                 allProjects[curIndex] = curItem;
                 curIndex += 1;
             }
@@ -297,9 +311,33 @@ contract Maven is ERC721URIStorage, Registry{
         return tokenIds[tokenId];
     }
 
-    function getTBA(uint tokenId) public view returns(address) {
-        return tokenIds[tokenId];
+    function initializeDispute(address freelancer, address _votingContract, uint projectId, uint milestoneIndex, string memory _disputeReasonUri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public {
+        _projectIdsInDisputed.increment();
+        uint jobTokenId = projectTokenId[projectId];
+        //address payable tba = payable(tokenIds[jobTokenId]);
+        //ERC6551Account ma = ERC6551Account(tba);
+        //uint bidId = projectIdToProjectDetails[projectId].finalBidId;
+        //uint milestoneTokenId = projectIdToBids[projectId][bidId].tokens[milestoneIndex];
+        address payable tba = payable(profile[msg.sender].tba);
+        ERC6551Account ma = ERC6551Account(tba);
+        //ma.transferERC721Tokens(address(this), _votingContract, milestoneTokenId);
+        ma.transferERC721Tokens(address(this), _votingContract, jobTokenId);
+        IVoting(_votingContract).initializeVoting(projectId, _disputeReasonUri, toBeWhitelisted, _chainLinkVRFData);
+        //projectIdToBids[projectId][bidId].status[milestoneIndex] = MilestoneStatus.Disputed;
+        projectIdToProjectDetails[projectId].status = ProjectStatus.Disputed;
     }
+
+    // function resolveDispute(address _votingContract, uint projectId, uint milestoneIndex) public {
+    //     uint jobTokenId = projectTokenId[projectId];
+    //     address payable tba = payable(tokenIds[jobTokenId]);
+    //     ERC6551Account ma = ERC6551Account(tba);
+    //     uint bidId = projectIdToProjectDetails[projectId].finalBidId;
+    //     uint milestoneTokenId = projectIdToBids[projectId][bidId].tokens[milestoneIndex];
+    //     ma.transferERC721Tokens(address(this), , milestoneTokenId);
+    //     //projectIdToBids[projectId][bidId].status[milestoneIndex] = MilestoneStatus.Completed;
+    //     projectIdToProjectDetails[projectId].status = ProjectStatus.Completed;
+    //     _projectIdsInDisputed.decrement();
+    // }
 
     // internal string matching function
     function compare(string memory str1, string memory str2) internal pure returns (bool) {

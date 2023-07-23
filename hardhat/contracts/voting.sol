@@ -4,8 +4,9 @@ pragma solidity ^0.8.17;
 import "./VRFCoordinatorV2Interface.sol";
 import "./VRFConsumerBaseV2.sol";
 import "./ConfirmedOwner.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-contract Voting is VRFConsumerBaseV2, ConfirmedOwner{
+contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
     uint[] disputedProjectIds;
     address deployer;
     VRFCoordinatorV2Interface COORDINATOR;
@@ -16,6 +17,7 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner{
     uint32 callbackGasLimit = 100000;
     uint16 requestConfirmations = 3;
     uint32 numWords = 1;       //setting it to 1 as we need only 1 random value per request
+    bytes4 constant ERC721_RECEIVED = 0xf0b9e5ba;
 
     /**
      * HARDCODED FOR SEPOLIA
@@ -33,11 +35,13 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner{
 
     // @dev - vote : 1 for freelancer, vote 2 for client
 	struct Vote {
+        string disputeReason;
         address disputeRaiser;
 		uint votesFreelancer;    
         uint votesClient;
 		uint duration;
 		mapping (address => uint) voting_ballot;
+        address[] voters;
         address[] freelancers;
         address[] clients;
         uint randomness;   
@@ -53,12 +57,14 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner{
 	uint256 votingPeriodConstant = 30 minutes;
 
     // @dev - Initial setup: voting_ballot -> 0: not eligible, 3: eligible for voting
-    function initializeVoting(uint projectId, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public {
+    function initializeVoting(uint projectId, string memory _uri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public {
         require(disputedProjects[projectId].duration == 0, "Already Initialized!");
         require(toBeWhitelisted.length !=0, "Cannot Initialize : Empty voters list!");
         for(uint i=0; i<toBeWhitelisted.length; i++){
             disputedProjects[projectId].voting_ballot[toBeWhitelisted[i]] = 3;
         }
+        disputedProjects[projectId].voters = toBeWhitelisted;
+        disputedProjects[projectId].disputeReason = _uri;
         disputedProjects[projectId].disputeRaiser = msg.sender;
         disputedProjects[projectId].duration = block.timestamp + votingPeriodConstant;
         disputedProjects[projectId].randomness = _chainLinkVRFData;
@@ -97,9 +103,14 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner{
 	}
 
     // @dev - this functions returns list of voters address for(freelancers and clients)
-    function getVotingDetails(uint projectId) public view returns(address[] memory, address[] memory){
+    function getVotersOfProject(uint projectId) public view returns(address[] memory, address[] memory){
         //Vote storage vote =  projects[projectId];
         return (disputedProjects[projectId].freelancers,disputedProjects[projectId].clients);
+    }
+
+    function getVoteDetails(uint projectId) public view returns(string memory, address, uint, address[] memory){
+        Vote storage voteDetails = disputedProjects[projectId];
+        return (voteDetails.disputeReason, voteDetails.disputeRaiser, voteDetails.duration, voteDetails.voters);
     }
 
     // function getAllVotingDetails() public view returns(Vote[] memory){
@@ -143,6 +154,11 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner{
     function getRequestStatus(uint256 _requestId) external view returns (bool fulfilled, uint randomWords) {
         require(s_requests[_requestId].exists, "request not found");
         RequestStatus memory request = s_requests[_requestId];
-        return (request.fulfilled, request.randomWords[0] % 500);
+        return (request.fulfilled, request.randomWords[0] % 100);
     }
+
+    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
+
 }

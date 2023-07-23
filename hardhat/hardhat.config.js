@@ -23,7 +23,7 @@ module.exports = {
     },
   },
   networks: {
-    sepolia: {
+    mumbai: {
       url: ALCHEMY_HTTP_URL,
       accounts: [PRIVATE_KEY],
     },

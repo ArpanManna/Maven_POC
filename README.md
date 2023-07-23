@@ -1,4 +1,4 @@
-# ERC-6551-based Freelancing Platform
+# ERC-6551 based Freelancing Platform
 
 Ownership protected freelancing platform that connects freelancers with clients using Blockchain.
 

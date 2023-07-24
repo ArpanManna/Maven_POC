@@ -4,11 +4,12 @@ pragma solidity ^0.8.18;
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "../node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Registry.sol";
 import "./ERC6551Account.sol";
 import "./IVoting.sol";
 
-contract Maven is ERC721URIStorage, Registry{
+contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     using Counters for Counters.Counter;
     using SafeMath for uint256;
     Counters.Counter private _projectIds; // keep track of projects created
@@ -272,7 +273,7 @@ contract Maven is ERC721URIStorage, Registry{
     }
 
     // only client can call to process payment 
-    function processMilestoneCompletion(uint projectId, uint milestoneIndex) public onlyProjectOwner(projectId) notDisputed(projectId){
+    function processMilestoneCompletion(uint projectId, uint milestoneIndex) public onlyProjectOwner(projectId) notDisputed(projectId) nonReentrant{
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         Bid memory _bid = projectIdToBids[projectId][bidId];
         require(milestoneIndex < _bid.milestonePrices.length, "Milestone Index not valid");
@@ -290,7 +291,7 @@ contract Maven is ERC721URIStorage, Registry{
         emit PaymentReleased(projectId, milestoneIndex, amountToPay, freelancer);
     }
 
-    function transferMilestoneOwnership(uint projectId, uint milestoneIndex) public notDisputed(projectId){
+    function transferMilestoneOwnership(uint projectId, uint milestoneIndex) public notDisputed(projectId) nonReentrant{
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         require(msg.sender == projectIdToBids[projectId][bidId].freelancer, "Sender is not the worker");
         address client = projectIdToProjectDetails[projectId].client;
@@ -317,7 +318,7 @@ contract Maven is ERC721URIStorage, Registry{
         return tokenIds[tokenId];
     }
 
-    function initializeDispute(address _votingContract, uint projectId, string memory _disputeReasonUri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public {
+    function initializeDispute(address _votingContract, uint projectId, string memory _disputeReasonUri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public nonReentrant{
         _projectIdsInDisputed.increment();
         uint jobTokenId = projectTokenId[projectId];
         address payable tba = payable(ownerOf(jobTokenId));
@@ -327,20 +328,7 @@ contract Maven is ERC721URIStorage, Registry{
         projectIdToProjectDetails[projectId].status = ProjectStatus.Disputed;
     }
 
-    // function resolveDispute(address _votingContract, uint projectId, uint milestoneIndex) public {
-    //     uint jobTokenId = projectTokenId[projectId];
-    //     address payable tba = payable(tokenIds[jobTokenId]);
-    //     ERC6551Account ma = ERC6551Account(tba);
-    //     uint bidId = projectIdToProjectDetails[projectId].finalBidId;
-    //     uint milestoneTokenId = projectIdToBids[projectId][bidId].tokens[milestoneIndex];
-    //     ma.transferERC721Tokens(address(this), , milestoneTokenId);
-    //     //projectIdToBids[projectId][bidId].status[milestoneIndex] = MilestoneStatus.Completed;
-    //     projectIdToProjectDetails[projectId].status = ProjectStatus.Completed;
-    //     _projectIdsInDisputed.decrement();
-    // }
-
-    function transferToken(address from, address to, uint tokenId) public payable{
-        //address payable tba = payable(ownerOf(jobTokenId));
+    function transferToken(address from, address to, uint tokenId) public payable nonReentrant{
         ERC6551Account ma = ERC6551Account(payable(from));
         ma.transferERC721Tokens(from, to, tokenId);
     }
@@ -352,15 +340,5 @@ contract Maven is ERC721URIStorage, Registry{
 
     fallback() external payable{}
     receive() external payable{}
-
-    // get balance of this contract
-    function getBalance() public view returns(uint) {
-        return address(this).balance;
-    }
-
-    // transfer contract balance to arbitrary address
-    function transferToArbitaryAddress(address _addr, uint amount) public{
-        payable(_addr).transfer(amount);
-    }
 
 }

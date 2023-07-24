@@ -1,3 +1,15 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+
+import "./VRFCoordinatorV2Interface.sol";
+import "./VRFConsumerBaseV2.sol";
+import "./ConfirmedOwner.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+//import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+//import "./ERC6551Account.sol";
+//import "./IMaven.sol";
+
+
 contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
     uint[] disputedProjectIds;
     address deployer;

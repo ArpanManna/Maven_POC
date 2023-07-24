@@ -2,5 +2,9 @@
     "80001": {
         "maven": "0x3f0cDf3f31E8b59e314549857F954E6F239f27C3",
         "disputeResolution": "0x085921323Ea200Ecc56e4E3D4E8e274e4cd95091"
+    },
+    "5": {
+        "maven": "0x3f0cDf3f31E8b59e314549857F954E6F239f27C3",
+        "disputeResolution": "0x085921323Ea200Ecc56e4E3D4E8e274e4cd95091"
     }
 }

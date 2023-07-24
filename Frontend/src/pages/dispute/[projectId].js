@@ -8,7 +8,7 @@ import { getDisputeDetails, getProjectById, getVotingResult, voteForDisputeResol
 import { useWeb3 } from '@3rdweb/hooks'
 import Spinner from '@/components/UI/Spinner'
 import { TransactionToastMessage } from '@/components/UI/Toast'
-import addresses from "../../constants/Contracts.json"
+import addresses from "../../constants/deployedContracts.json"
 import moment from 'moment'
 import RedirectIcon from '@/assets/imgs/RedirectIcon'
 import { getAccountUrl } from '@/utils/explorer'

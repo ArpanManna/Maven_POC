@@ -1,5 +1,5 @@
 import { Contract, ethers } from "ethers";
-import addresses from "../constants/Contracts.json"
+import addresses from "../constants/deployedContracts.json"
 import mavenABI from "../assets/abis/maven.json"
 import disputeResolutionABI from "../assets/abis/disputeResolution.json"
 import axios from 'axios';

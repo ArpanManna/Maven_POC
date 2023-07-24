@@ -1,11 +1,3 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
-
-import "./VRFCoordinatorV2Interface.sol";
-import "./VRFConsumerBaseV2.sol";
-import "./ConfirmedOwner.sol";
-import "../node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-
 contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
     uint[] disputedProjectIds;
     address deployer;
@@ -45,6 +37,8 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
         address[] freelancers;
         address[] clients;
         uint randomness;   
+        uint tokenId;
+        address tba;
 	}
     struct RequestStatus {
         bool fulfilled; // whether the request has been successfully fulfilled
@@ -54,10 +48,10 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
 
 	mapping (uint => Vote) public disputedProjects; // mapping of disputed project Id to Vote Details
     mapping(uint256 => RequestStatus) public s_requests;
-	uint256 votingPeriodConstant = 30 minutes;
+	uint256 votingPeriodConstant = 5 minutes;
 
     // @dev - Initial setup: voting_ballot -> 0: not eligible, 3: eligible for voting
-    function initializeVoting(uint projectId, string memory _uri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public {
+    function initializeVoting(uint projectId, string memory _uri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData, uint _tokenId, address _tba) public {
         require(disputedProjects[projectId].duration == 0, "Already Initialized!");
         require(toBeWhitelisted.length !=0, "Cannot Initialize : Empty voters list!");
         for(uint i=0; i<toBeWhitelisted.length; i++){
@@ -65,9 +59,11 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
         }
         disputedProjects[projectId].voters = toBeWhitelisted;
         disputedProjects[projectId].disputeReason = _uri;
-        disputedProjects[projectId].disputeRaiser = msg.sender;
+        disputedProjects[projectId].disputeRaiser = tx.origin;
         disputedProjects[projectId].duration = block.timestamp + votingPeriodConstant;
         disputedProjects[projectId].randomness = _chainLinkVRFData;
+        disputedProjects[projectId].tokenId = _tokenId;
+        disputedProjects[projectId].tba = _tba;
         disputedProjectIds.push(projectId);
     }
 
@@ -101,6 +97,15 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
         if(disputedProjects[projectId].votesFreelancer == disputedProjects[projectId].votesClient) return 0;
 		return disputedProjects[projectId].votesFreelancer > disputedProjects[projectId].votesClient ? 1 : 2;    
 	}
+
+    function resolveDispute(address maven, uint projectId) public {
+        //safeTransferFrom(address(this), disputedProjects[projectId].tba, disputedProjects[projectId].tokenId);
+        //address payable tba = payable(disputedProjects[projectId].tba);
+        //ERC6551Account ma = ERC6551Account(tba);
+        //uint milestoneTokenId = projectIdToBids[projectId][bidId].tokens[milestoneIndex];
+        //ma.transferERC721Tokens(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47, tba, disputedProjects[projectId].tokenId);
+        //IMaven(maven).transferToken(address(this), disputedProjects[projectId].tba, disputedProjects[projectId].tokenId);
+    }
 
     // @dev - this functions returns list of voters address for(freelancers and clients)
     function getVotersOfProject(uint projectId) public view returns(address[] memory, address[] memory){

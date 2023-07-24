@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.18;
 
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -96,6 +96,11 @@ contract Maven is ERC721URIStorage, Registry{
 
     modifier validProject(uint projectId){
         require(projectId <= _projectIds.current(), "Not a valid Project Id");
+        _;
+    }
+
+    modifier notDisputed(uint projectId){
+        require(projectIdToProjectDetails[projectId].status != ProjectStatus.Disputed, "Project is in disputed State");
         _;
     }
 
@@ -266,7 +271,7 @@ contract Maven is ERC721URIStorage, Registry{
     }
 
     // only client can call to process payment 
-    function processMilestoneCompletion(uint projectId, uint milestoneIndex) public onlyProjectOwner(projectId){
+    function processMilestoneCompletion(uint projectId, uint milestoneIndex) public onlyProjectOwner(projectId) notDisputed(projectId){
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         Bid memory _bid = projectIdToBids[projectId][bidId];
         require(milestoneIndex < _bid.milestonePrices.length, "Milestone Index not valid");
@@ -284,7 +289,7 @@ contract Maven is ERC721URIStorage, Registry{
         emit PaymentReleased(projectId, milestoneIndex, amountToPay, freelancer);
     }
 
-    function transferMilestoneOwnership(uint projectId, uint milestoneIndex) public {
+    function transferMilestoneOwnership(uint projectId, uint milestoneIndex) public notDisputed(projectId){
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         require(msg.sender == projectIdToBids[projectId][bidId].freelancer, "Sender is not the worker");
         address client = projectIdToProjectDetails[projectId].client;
@@ -311,19 +316,13 @@ contract Maven is ERC721URIStorage, Registry{
         return tokenIds[tokenId];
     }
 
-    function initializeDispute(address freelancer, address _votingContract, uint projectId, uint milestoneIndex, string memory _disputeReasonUri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public {
+    function initializeDispute(address _votingContract, uint projectId, string memory _disputeReasonUri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public {
         _projectIdsInDisputed.increment();
         uint jobTokenId = projectTokenId[projectId];
-        //address payable tba = payable(tokenIds[jobTokenId]);
-        //ERC6551Account ma = ERC6551Account(tba);
-        //uint bidId = projectIdToProjectDetails[projectId].finalBidId;
-        //uint milestoneTokenId = projectIdToBids[projectId][bidId].tokens[milestoneIndex];
-        address payable tba = payable(profile[msg.sender].tba);
+        address payable tba = payable(ownerOf(jobTokenId));
         ERC6551Account ma = ERC6551Account(tba);
-        //ma.transferERC721Tokens(address(this), _votingContract, milestoneTokenId);
         ma.transferERC721Tokens(address(this), _votingContract, jobTokenId);
-        IVoting(_votingContract).initializeVoting(projectId, _disputeReasonUri, toBeWhitelisted, _chainLinkVRFData);
-        //projectIdToBids[projectId][bidId].status[milestoneIndex] = MilestoneStatus.Disputed;
+        IVoting(_votingContract).initializeVoting(projectId, _disputeReasonUri, toBeWhitelisted, _chainLinkVRFData, jobTokenId, tba);
         projectIdToProjectDetails[projectId].status = ProjectStatus.Disputed;
     }
 
@@ -338,6 +337,12 @@ contract Maven is ERC721URIStorage, Registry{
     //     projectIdToProjectDetails[projectId].status = ProjectStatus.Completed;
     //     _projectIdsInDisputed.decrement();
     // }
+
+    function transferToken(address from, address to, uint tokenId) public payable{
+        //address payable tba = payable(ownerOf(jobTokenId));
+        ERC6551Account ma = ERC6551Account(payable(from));
+        ma.transferERC721Tokens(from, to, tokenId);
+    }
 
     // internal string matching function
     function compare(string memory str1, string memory str2) internal pure returns (bool) {

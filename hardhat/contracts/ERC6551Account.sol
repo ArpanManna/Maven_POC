@@ -19,9 +19,9 @@ contract ERC6551Account is IERC165, IERC1271, IAccount, MinimalReceiver {
     mapping(address => address) public executor;
 
     event LockUpdated(uint256 timestamp);
-    event NFTTransferred(address from, address to, uint256 tokenId);
-    event ERC2OTokenTransferred(address from, address to, uint256 tokenId);
-    event ERC20Approval(address indexed owner, address indexed spender,uint256 value);
+    event NFTTransferred(address indexed from, address indexed to, uint256 indexed tokenId);
+    event ERC2OTokenTransferred(address indexed from, address indexed to, uint256 indexed tokenId);
+    event ERC20Approval(address indexed owner, address indexed spender,uint256 indexed value);
     event ERC721Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
 
 

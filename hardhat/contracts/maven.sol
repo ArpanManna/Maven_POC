@@ -113,7 +113,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     event MilestoneOwnershipTransferred(uint indexed projectId, uint milestoneIndex, address indexed from, address indexed to);
     event StakeTransferred(uint projectId, address indexed from, address indexed to, uint indexed amount);
 
-    function createProfile(string memory _type, string memory _uri) public {
+    function createProfile(string memory _type, string memory _uri) external {
         require(profile[msg.sender].addr == address(0), "Profile already created!");
         (uint newTokenId, address tba) = mintTokenAndTba(msg.sender, _uri);
         tokenIds[newTokenId] = tba;
@@ -144,7 +144,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         _setTokenURI(newTokenId, _uri);
         return (newTokenId);
     }
-    function updateProfile(address _addr, string memory _uri) public {
+    function updateProfile(address _addr, string memory _uri) external {
         require(profile[msg.sender].addr != address(0), "Profile do not exist");
         profile[_addr] = Profile(msg.sender, _uri, profile[msg.sender]._type, profile[msg.sender].tokenId, profile[msg.sender].tba);
     }
@@ -222,7 +222,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         return projectIdToBids[projectId].length;
     }
 
-    function bid(uint _projectId, uint bidPrice, uint time, string memory proposalUri, uint[] memory milestonePrices) public profileExists(msg.sender) validProject(_projectId){
+    function bid(uint _projectId, uint bidPrice, uint time, string memory proposalUri, uint[] memory milestonePrices) external profileExists(msg.sender) validProject(_projectId){
         require(projectIdToProjectDetails[_projectId].status != ProjectStatus.InProgress, "Bidding Completed");
         require(projectIdToProjectDetails[_projectId].status != ProjectStatus.Completed, "Project Completed");
         require(msg.sender != projectIdToProjectDetails[_projectId].client, "Client cannot bid for project");
@@ -233,7 +233,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     }
 
 
-    function updateBid(uint _projectId, uint bidId, uint _bidPrice, uint time, uint[] memory _milestonePrices) public {
+    function updateBid(uint _projectId, uint bidId, uint _bidPrice, uint time, uint[] memory _milestonePrices) external {
         require(msg.sender == projectIdToBids[_projectId][bidId].freelancer, "Only Bid owner can update");
         require(projectIdToProjectDetails[_projectId].status == ProjectStatus.Bidding, "Project not in bidding state");
         Bid storage _bid = projectIdToBids[_projectId][bidId];
@@ -242,7 +242,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         _bid.milestonePrices = _milestonePrices;
     }
 
-    function selectBid(uint projectId, address winnerBidder, uint bidId) external payable onlyProjectOwner(projectId) validProject(projectId){
+    function selectBid(uint projectId, address winnerBidder, uint bidId) external payable onlyProjectOwner(projectId) validProject(projectId) nonReentrant{
         require(checkAlreadyBid(projectId, winnerBidder), "This address is not a bidder");
         Project storage project = projectIdToProjectDetails[projectId];
         require(project.status != ProjectStatus.InProgress, "Project Already started");
@@ -273,7 +273,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     }
 
     // only client can call to process payment 
-    function processMilestoneCompletion(uint projectId, uint milestoneIndex) public onlyProjectOwner(projectId) notDisputed(projectId) nonReentrant{
+    function processMilestoneCompletion(uint projectId, uint milestoneIndex) external onlyProjectOwner(projectId) notDisputed(projectId) nonReentrant{
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         Bid memory _bid = projectIdToBids[projectId][bidId];
         require(milestoneIndex < _bid.milestonePrices.length, "Milestone Index not valid");
@@ -291,7 +291,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         emit PaymentReleased(projectId, milestoneIndex, amountToPay, freelancer);
     }
 
-    function transferMilestoneOwnership(uint projectId, uint milestoneIndex) public notDisputed(projectId) nonReentrant{
+    function transferMilestoneOwnership(uint projectId, uint milestoneIndex) external notDisputed(projectId) nonReentrant{
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         require(msg.sender == projectIdToBids[projectId][bidId].freelancer, "Sender is not the worker");
         address client = projectIdToProjectDetails[projectId].client;

@@ -21,7 +21,7 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
     uint32 callbackGasLimit = 100000;
     uint16 requestConfirmations = 3;
     uint32 numWords = 1;       //setting it to 1 as we need only 1 random value per request
-    bytes4 constant ERC721_RECEIVED = 0xf0b9e5ba;
+    //bytes4 constant ERC721_RECEIVED = 0xf0b9e5ba;
 
     /**
      * HARDCODED FOR SEPOLIA
@@ -34,8 +34,8 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
         //s_subscriptionId = subscriptionId;
     }
 
-    event RequestSent(uint256 requestId, uint32 numWords);
-    event RequestFulfilled(uint256 requestId, uint256[] randomWords);
+    event RequestSent(uint256 indexed requestId, uint32 indexed numWords);
+    event RequestFulfilled(uint256 indexed requestId, uint256[] indexed randomWords);
 
     // @dev - vote : 1 for freelancer, vote 2 for client
 	struct Vote {
@@ -67,7 +67,7 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
         require(disputedProjects[projectId].duration == 0, "Already Initialized!");
         require(toBeWhitelisted.length !=0, "Cannot Initialize : Empty voters list!");
         uint maxToBeWhitelisted = toBeWhitelisted.length;
-        for(uint i=0; i<maxToBeWhitelisted; i++){
+        for(uint i=0; i<maxToBeWhitelisted; ++i){
             disputedProjects[projectId].voting_ballot[toBeWhitelisted[i]] = 3;
         }
         disputedProjects[projectId].voters = toBeWhitelisted;

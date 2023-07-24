@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
@@ -169,7 +169,7 @@ contract Maven is ERC721URIStorage, Registry{
         uint totalCount = _projectIds.current();
         Project[] memory allProjects = new Project[](projectCountInBid);
         uint curIndex = 0;
-        for(uint i=1;i<=totalCount;i++){
+        for(uint i=1;i<=totalCount;++i){
             Project memory curItem = projectIdToProjectDetails[i];
             if(curItem.status == ProjectStatus.Bidding){
                 allProjects[curIndex] = curItem;
@@ -184,7 +184,7 @@ contract Maven is ERC721URIStorage, Registry{
         uint totalCount = _projectIds.current();
         Project[] memory allProjects = new Project[](projectCountInDisputed);
         uint curIndex = 0;
-        for(uint i=1;i<=totalCount;i++){
+        for(uint i=1;i<=totalCount;++i){
             Project memory curItem = projectIdToProjectDetails[i];
             if(curItem.status == ProjectStatus.Disputed){
                 allProjects[curIndex] = curItem;
@@ -207,7 +207,8 @@ contract Maven is ERC721URIStorage, Registry{
     }
     function checkAlreadyBid(uint projectId, address freelancer) internal view returns(bool) {
         Bid[] memory bids = projectIdToBids[projectId];
-        for(uint i=0; i< bids.length; i++){
+        uint totalBid = bids.length;
+        for(uint i=0; i< totalBid; ++i){
             if(bids[i].freelancer == freelancer){
                 return true;
             }
@@ -258,7 +259,7 @@ contract Maven is ERC721URIStorage, Registry{
         address tba = tokenIds[jobTokenId];
         // create Milestones NFT
         uint maxMilestoneCount = projectIdToBids[projectId][bidId].milestonePrices.length;
-        for(uint i=0; i< maxMilestoneCount; i++){
+        for(uint i=0; i< maxMilestoneCount; ++i){
             uint newTokenId = mintToken(tba, "");
             projectIdToBids[projectId][bidId].tokens.push(newTokenId);
             projectIdToBids[projectId][bidId].status.push(MilestoneStatus.InProgress);

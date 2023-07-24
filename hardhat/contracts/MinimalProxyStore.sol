@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "../node_modules/@openzeppelin/contracts/utils/Create2.sol";
 import "./Bytecode.sol";

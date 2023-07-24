@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.18;
 
 import "./VRFCoordinatorV2Interface.sol";
 import "./VRFConsumerBaseV2.sol";
@@ -66,7 +66,8 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
     function initializeVoting(uint projectId, string memory _uri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData, uint _tokenId, address _tba) public {
         require(disputedProjects[projectId].duration == 0, "Already Initialized!");
         require(toBeWhitelisted.length !=0, "Cannot Initialize : Empty voters list!");
-        for(uint i=0; i<toBeWhitelisted.length; i++){
+        uint maxToBeWhitelisted = toBeWhitelisted.length;
+        for(uint i=0; i<maxToBeWhitelisted; i++){
             disputedProjects[projectId].voting_ballot[toBeWhitelisted[i]] = 3;
         }
         disputedProjects[projectId].voters = toBeWhitelisted;
@@ -142,7 +143,8 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
     // @dev - this function returns how many disputes has been resolved 
     function getResolvedDisputedCount() public view returns(uint){
         uint count = 0;
-        for(uint i=0;i<disputedProjectIds.length;i++){
+        uint disputedProjectsCounts = disputedProjectIds.length;
+        for(uint i=0;i<disputedProjectsCounts;++i){
             if(disputedProjects[disputedProjectIds[i]].votesFreelancer != disputedProjects[disputedProjectIds[i]].votesClient){
                 count += 1;
             }

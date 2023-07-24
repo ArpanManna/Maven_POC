@@ -1,20 +1,23 @@
-import { initializeDispute } from '@/utils/service';
+import { getUserDetails, initializeDispute } from '@/utils/service';
 import { useWeb3 } from '@3rdweb/hooks';
 import { Dialog, Transition } from '@headlessui/react'
 import { Input } from 'antd'
 import { Fragment, useCallback, useState } from 'react'
 import Spinner from './Spinner';
 import { TransactionToastMessage } from './Toast';
+import { useContextState } from '@/context';
 
-export default function Modal({ modalStatus, setModalStatus, projectId, freelancer }) {
+export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const [reason, setReason] = useState('');
+  const { address, provider, chainId } = useWeb3();
+  const [{}, dispatch] = useContextState();
   const [loading, setLoading] = useState(false);
-  const { provider, chainId } = useWeb3();
 
   const handleDispute = async () => {
     if (reason) {
       setLoading(true);
-      await initializeDispute(chainId, provider, projectId, freelancer, reason, txNotify);
+      await initializeDispute(chainId, provider, projectId, reason, txNotify);
+      await getUserDetails(chainId,provider, address, dispatch);
       setLoading(false);
     }
   }
@@ -25,6 +28,7 @@ export default function Modal({ modalStatus, setModalStatus, projectId, freelanc
 
   return (
     <>
+    {loading && <Spinner />}
       <Transition appear show={modalStatus} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={() => setModalStatus(false)}>
           <Transition.Child

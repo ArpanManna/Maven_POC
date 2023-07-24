@@ -181,8 +181,8 @@ export const getProjectById = async (chainId, provider, projectId) => {
                 freelancer: data.freelancer,
                 lowestBid: data.lbid.toNumber(),
                 highestBid: data.ubid.toNumber(),
-                createdOn: data.creationTime.toNumber(),
-                deadline: data.deadline.toNumber(),
+                createdOn: data.creationTime.toString(),
+                deadline: data.deadline.toString(),
                 finalBid: data.finalBidId.toNumber(),
                 status: data.status,
                 tokenId: data.tokenId.toNumber(),
@@ -303,17 +303,15 @@ export const getTotalBids = async (chainId, provider, projectId) => {
 }
 
 
-export const initializeDispute = async (chainId, provider, projectId, freelancer, disputeReason, txNotify) => {
+export const initializeDispute = async (chainId, provider, projectId, disputeReason, txNotify) => {
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {
         await disputeResolutionContract.requestRandomWords();
         const signature = await disputeResolutionContract.lastRequestId();
-        console.log(signature);
         const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
-        console.log(randomNumber);
         const disputeReasonURI = await uploadFileToIPFS(disputeReason);
-        const tx = await mavenContract.initializeDispute(freelancer, addresses[chainId].disputeResolution, projectId, 1, disputeReasonURI, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        const tx = await mavenContract.initializeDispute(addresses[chainId].disputeResolution, projectId, disputeReasonURI, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
         
         txNotify("success", "Sent", tx.hash);
         const txStatus = await getTransactionStatus(tx.hash);
@@ -437,7 +435,7 @@ export const getDisputeDetails = async(chainId, provider, projectId) => {
 }
 
 export const getAllDisputedProjects = async(chainId, provider) => {
-    const mavenContract = initializeContract(addresses[chainId].disputeResolutionContract, mavenABI, provider)
+    const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider)
     try {
         const data = await mavenContract.getAllProjectsDisputed();
         let posts = [];

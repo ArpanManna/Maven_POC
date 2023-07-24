@@ -100,7 +100,7 @@ const PlaceBidForm = ({ id, projectOwner }) => {
   }, []);
 
   const handleDeadlineChange = (date, dateString) => {
-    setDeadline(date);
+    setDeadline(dateString);
   };
 
   return (

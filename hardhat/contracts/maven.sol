@@ -9,6 +9,10 @@ import "./Registry.sol";
 import "./ERC6551Account.sol";
 import "./IVoting.sol";
 
+error UnAuthorized();
+error NotValid();
+error NotAvailable();
+error AlreadyExists();
 contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     using Counters for Counters.Counter;
     using SafeMath for uint256;
@@ -86,17 +90,17 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     mapping(uint => address) tokenIds;      // mapping of token id to tba
 
     modifier onlyProjectOwner(uint projectId) {
-        require(msg.sender == projectIdToProjectDetails[projectId].client, "Only project owner can call");
+        if (msg.sender != projectIdToProjectDetails[projectId].client) revert UnAuthorized();
         _;
     }
 
     modifier profileExists(address _addr) {
-        require(profile[_addr].tokenId != 0, "First create profile");
+        if(profile[_addr].tokenId == 0) revert NotValid();
         _;
     }
 
     modifier validProject(uint projectId){
-        require(projectId <= _projectIds.current(), "Not a valid Project Id");
+        if(projectId > _projectIds.current()) revert NotValid();
         _;
     }
 
@@ -114,7 +118,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     event StakeTransferred(uint projectId, address indexed from, address indexed to, uint indexed amount);
 
     function createProfile(string memory _type, string memory _uri) external {
-        require(profile[msg.sender].addr == address(0), "Profile already created!");
+        if(profile[msg.sender].addr != address(0)) revert AlreadyExists();
         (uint newTokenId, address tba) = mintTokenAndTba(msg.sender, _uri);
         tokenIds[newTokenId] = tba;
         if(compare(_type, "client")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Client, newTokenId, tba);
@@ -123,7 +127,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     }
 
     function getProfile(address _addr) public view returns(Profile memory) {
-        require(profile[_addr].addr != address(0), "No such Profile address exists!");
+        if(profile[_addr].addr == address(0)) revert NotAvailable();
         return profile[_addr];
     }
 
@@ -145,12 +149,12 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         return (newTokenId);
     }
     function updateProfile(address _addr, string memory _uri) external {
-        require(profile[msg.sender].addr != address(0), "Profile do not exist");
+        if(profile[msg.sender].addr == address(0)) revert NotAvailable();
         profile[_addr] = Profile(msg.sender, _uri, profile[msg.sender]._type, profile[msg.sender].tokenId, profile[msg.sender].tba);
     }
 
     function createProject(string memory _uri, uint lbid, uint ubid, string memory _JDuri, uint deadline) external profileExists(msg.sender) returns(uint){
-        require(msg.sender != deployer, "Deployer Not eligible to create project");
+        if(msg.sender == deployer) revert UnAuthorized();
         _projectIds.increment();
         uint newProjectId = _projectIds.current();
         // create Project NFT and TBA
@@ -225,8 +229,8 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     function bid(uint _projectId, uint bidPrice, uint time, string memory proposalUri, uint[] memory milestonePrices) external profileExists(msg.sender) validProject(_projectId){
         require(projectIdToProjectDetails[_projectId].status != ProjectStatus.InProgress, "Bidding Completed");
         require(projectIdToProjectDetails[_projectId].status != ProjectStatus.Completed, "Project Completed");
-        require(msg.sender != projectIdToProjectDetails[_projectId].client, "Client cannot bid for project");
-        require(!checkAlreadyBid(_projectId, msg.sender), "Freelancer already bid for this project!");
+        if(msg.sender == projectIdToProjectDetails[_projectId].client) revert UnAuthorized();
+        if(checkAlreadyBid(_projectId, msg.sender)) revert UnAuthorized();
         Bid memory newBid = Bid(_projectId, msg.sender, bidPrice, time, proposalUri, milestonePrices, new uint[](0), new MilestoneStatus[](0));
         projectIdToBids[_projectId].push(newBid);
         emit BidCreated(_projectId, projectIdToBids[_projectId].length-1, msg.sender);
@@ -234,7 +238,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
 
 
     function updateBid(uint _projectId, uint bidId, uint _bidPrice, uint time, uint[] memory _milestonePrices) external {
-        require(msg.sender == projectIdToBids[_projectId][bidId].freelancer, "Only Bid owner can update");
+        if(msg.sender != projectIdToBids[_projectId][bidId].freelancer) revert UnAuthorized();
         require(projectIdToProjectDetails[_projectId].status == ProjectStatus.Bidding, "Project not in bidding state");
         Bid storage _bid = projectIdToBids[_projectId][bidId];
         _bid.bidPrice = _bidPrice;
@@ -243,7 +247,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     }
 
     function selectBid(uint projectId, address winnerBidder, uint bidId) external payable onlyProjectOwner(projectId) validProject(projectId) nonReentrant{
-        require(checkAlreadyBid(projectId, winnerBidder), "This address is not a bidder");
+        if(!checkAlreadyBid(projectId, winnerBidder)) revert UnAuthorized();
         Project storage project = projectIdToProjectDetails[projectId];
         require(project.status != ProjectStatus.InProgress, "Project Already started");
         require(project.status != ProjectStatus.Completed, "Project Completed");
@@ -256,9 +260,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         project.status = ProjectStatus.InProgress;
         _projectIdsInBidding.decrement();
         uint jobTokenId = projectTokenId[projectId];
-        //address tba = _account(block.chainid, address(this), jobTokenId);
         address tba = tokenIds[jobTokenId];
-        // create Milestones NFT
         uint maxMilestoneCount = projectIdToBids[projectId][bidId].milestonePrices.length;
         for(uint i=0; i< maxMilestoneCount; ++i){
             uint newTokenId = mintToken(tba, "");
@@ -276,7 +278,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     function processMilestoneCompletion(uint projectId, uint milestoneIndex) external onlyProjectOwner(projectId) notDisputed(projectId) nonReentrant{
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
         Bid memory _bid = projectIdToBids[projectId][bidId];
-        require(milestoneIndex < _bid.milestonePrices.length, "Milestone Index not valid");
+        if(milestoneIndex >= _bid.milestonePrices.length) revert NotValid();
         require(ownerOf(projectIdToBids[projectId][bidId].tokens[milestoneIndex]) == profile[msg.sender].tba, "Milestone ownership not transfered");
         uint amountToPay = _bid.milestonePrices[milestoneIndex];
         address freelancer = _bid.freelancer;
@@ -293,11 +295,9 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
 
     function transferMilestoneOwnership(uint projectId, uint milestoneIndex) external notDisputed(projectId) nonReentrant{
         uint bidId = projectIdToProjectDetails[projectId].finalBidId;
-        require(msg.sender == projectIdToBids[projectId][bidId].freelancer, "Sender is not the worker");
+        if(msg.sender != projectIdToBids[projectId][bidId].freelancer) revert UnAuthorized();
         address client = projectIdToProjectDetails[projectId].client;
         uint jobTokenId = projectTokenId[projectId];
-        //address payable tba = _account(block.chainid, address(this), tokenId);
-        // get profile tba
         address payable tba = payable(tokenIds[jobTokenId]);
         ERC6551Account ma = ERC6551Account(tba);
         uint milestoneTokenId = projectIdToBids[projectId][bidId].tokens[milestoneIndex];
@@ -310,7 +310,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     // @dev returns the projects Ids corresponding to particular address
     // @dev client : projects, freelancers : projects working on
     function getProjectProfile(address _addr) public view returns(uint[] memory){
-        require(projectProfiles[_addr].length != 0, "Not a valid Client or Freelancer Profile");
+        if(projectProfiles[_addr].length == 0) revert NotValid();
         return projectProfiles[_addr];
     }
 

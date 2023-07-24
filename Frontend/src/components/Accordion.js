@@ -8,12 +8,22 @@ import { useContextState } from '@/context';
 import Modal from './UI/Modal';
 import { getAccountUrl } from '@/utils/explorer';
 import RedirectIcon from '@/assets/imgs/RedirectIcon';
+import Spinner from './UI/Spinner';
 
 const postStatusIdToLabel = {
     0: "Bidding",
     1: "In Progress",
-    2: "Completed"
+    2: "Completed",
+    3: "Disputed"
 };
+
+const postStatusIdToHeading = {
+    0: "Project is not selected yet.",
+    2: "Project is completed.",
+    3: "Dispute arised in the contract."
+};
+
+
 const Accordion = () => {
     const { address, chainId, provider } = useWeb3();
     const [loading, setLoading] = useState(false);
@@ -37,12 +47,11 @@ const Accordion = () => {
                 <p className='font-mono font-lg'>No projects to show!</p>
             </div>
         )
-    
     return (
         <>
             {
                 dashboardProjects && dashboardProjects.map(({ bid, post }) => (
-                    <Collapse className='my-4'
+                    <Collapse className='my-4 flex'
                         key={post.id}
                         collapsible="header"
                         defaultActiveKey={['0']}
@@ -118,8 +127,8 @@ const AccordionBody = ({ post, bid }) => {
                     <RedirectIcon />
                     </div>
                 }
-                <h2>Published On: {moment.unix(post.createdOn).format("MM/DD/YYYY")}</h2>
-                <h2>Deadline: {moment.unix(post.deadline).format("MM/DD/YYYY")}</h2>
+                <h2>Published On: {moment.unix(post.createdOn).format("L")}</h2>
+                <h2>Deadline: {moment.unix(post.deadline).format("L")}</h2>
                 {post.status === 1 &&
                     <button className='px-4 py-2 mt-4 rounded-md text-white font-mono text-sm bg-palatte4' onClick={() => handleDispute(post.id)}>Raise Dispute</button>
                 }
@@ -127,11 +136,11 @@ const AccordionBody = ({ post, bid }) => {
             <div className='col-span-3'>
                 {post.status === 1 ?
                     <MilestoneTable milestones={bid.proposal.milestones} postStatusIdToLabel={postStatusIdToLabel} owner={post.owner} freelancer={bid.freelancer} projectId={post.id} />
-                    : post.status === 2 ? <p className='text-center mt-16 font-mono text-lg'>Project Completed.</p> :
-                        <p className='text-center mt-16 font-mono text-lg'>No Bid selected.</p>
+                    : <p className='text-center mt-16 font-mono text-lg'>{postStatusIdToHeading[post.status]}</p> 
+                     
                 }
             </div>
-            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject} freelancer={bid.freelancer}/>}
+            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject}/>}
 
         </div>
     )

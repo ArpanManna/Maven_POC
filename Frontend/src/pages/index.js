@@ -12,9 +12,10 @@ export default function Home() {
     <>
       <HeroSection />
       <Feature />
+      <Content />
+
       <ProtocolFeatures />
       <ComparisonTable />
-      <Content />
       <Faq />
       <Footer />
     </>

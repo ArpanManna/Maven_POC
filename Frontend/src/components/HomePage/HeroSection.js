@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 const HeroSection = () => {
   return (
-    <div className="flex min-h-screen bg-gray-200">
+    <div className="px-4 py-12 mx-auto max-w-7xl sm:px-6 md:px-12 lg:px-24 lg:py-24 flex h-screen">
       <div className="flex flex-col justify-center flex-1 px-8 md:px-12 lg:flex-none lg:px-20">
         <div className="w-full mx-auto lg:max-w-6xl">
           <div className="max-w-xl mx-auto text-center lg:p-10 lg:text-left">
@@ -30,7 +30,7 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-      <div className="relative flex-1 mt-36 mr-20 hidden lg:block">
+      <div className="relative flex-1 mt-32 mr-20 hidden lg:block">
         <div>
         <Image src={freelancerImg} alt='Connect' width={450} height={450}/>
         </div>

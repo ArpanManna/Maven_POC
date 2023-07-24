@@ -22,7 +22,6 @@ const MilestoneDispute = () => {
     const [random, setRandom] = useState();
     const [result, setResult] = useState(0);
     const [timeRemaining, setTimeRemaining] = useState(0);
-
     const [projectDetails, setProjectDetails] = useState({
         owner: "",
         freelancer: ""
@@ -40,7 +39,6 @@ const MilestoneDispute = () => {
         const res = await getProjectById(chainId, provider, projectId);
         const dispute = await getDisputeDetails(chainId, provider, projectId);
         setTimeRemaining(dispute.duration - moment().unix());
-
         setProjectDetails(res);
         setDisputeDetail(dispute);
     }
@@ -82,6 +80,7 @@ const MilestoneDispute = () => {
     const { disputeReason, duration, disputeRaisedBy, voterList } = disputeDetail;
 
     console.log(moment().unix() , duration)
+    
     return (
         <div>
             {loading && <Spinner />}
@@ -143,7 +142,7 @@ const MilestoneDispute = () => {
                             <div>
                                 <h2 className='text-lg my-2 font-semibold font-mono'>Vote:</h2>
                                 <button className='px-4 mr-4 font-semibold py-1 text-white bg-palatte1 rounded-md' value={1} onClick={(e) => handleVote(e)}>Freelancer</button>
-                                <button className='px-4  py-1 font-semibold text-white bg-palatte3 rounded-md' value={2} onClick={(e) => handleVote(e)}>Client</button>
+                                <button className='px-4  py-1 font-semibold text-white bg-palatte4 rounded-md' value={2} onClick={(e) => handleVote(e)}>Client</button>
                             </div>
                         </div>
                         <div className='flex px-8 flex-wrap gap-8 pb-2'>

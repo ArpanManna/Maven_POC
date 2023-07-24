@@ -54,7 +54,6 @@ const ProjectDetail = () => {
         </div>
       <Tabs defaultActiveKey="1" items={items} />
       </div>
-      <MyChat _signer={provider?.getSigner()} clientAddress={owner}/>
     </div>
   )
 }

@@ -6,18 +6,21 @@ import { Fragment, useCallback, useState } from 'react'
 import Spinner from './Spinner';
 import { TransactionToastMessage } from './Toast';
 import { useContextState } from '@/context';
+import { useRouter } from 'next/router';
 
 export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const [reason, setReason] = useState('');
   const { address, provider, chainId } = useWeb3();
   const [{}, dispatch] = useContextState();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleDispute = async () => {
     if (reason) {
       setLoading(true);
       await initializeDispute(chainId, provider, projectId, reason, txNotify);
       await getUserDetails(chainId,provider, address, dispatch);
+      router.push(`/dispute/${projectId}`)
       setLoading(false);
     }
   }

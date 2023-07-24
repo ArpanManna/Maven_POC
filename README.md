@@ -14,7 +14,7 @@ The project is designed to help freelancers find work and get paid, while also p
 
 ## Architecture
 <p align="center">
-<img src="https://github.com/ArpanManna/Maven_POC/assets/115616879/a7dae3e2-2a76-4ce3-aac0-56d0b252eda0" width="500" height="400">
+<img width="641" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/47c185b6-6d2e-413a-bdf4-a2d57e55a11f">
 </p>
 
 ## Who pays the platform fees?
@@ -45,14 +45,16 @@ To create a profile, an ERC-721 token is minted for each profile. Then, a token 
 
 Our platform provides support for EIP-4337 **account abstraction**.
 <p align="center">
-<img width="641" alt="Screenshot 2023-07-23 at 10 38 01 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/b9a7776f-af30-4195-90a4-362a02749da1">
+
+<img width="641" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/12a03658-66d5-4738-92d3-da2162ecb7ed">
 </p>
 
 ## How is job ownership protected using ERC-6551?
 
 1. Whenever a client posts a job then ERC-721 token is minted for the job. Then, a token bound account (TBA) wallet address is generated using ERC-6551 and associated with the ERC-721 **job NFT.** These job NFTs are further associated inside profile NFTs to protect ownership of jobs for each client initially.
 <p align="center">
-<img width="482" alt="Screenshot 2023-07-23 at 10 38 55 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/5fd667e2-decc-4e0d-8e7f-a6aaee1ec955">
+<img width="432" alt="Screenshot 2023-07-24 at 9 28 39 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/067f6f3c-acf0-4741-bc7a-de331e6b93e7">
+
 </p>
 2. Whenever a client selects a freelancer bid for the job then the proposed number of milestones in the bid are minted as NFTs and the **milestone NFTs** are added in the TBA wallet of the corresponding job NFT.
 <p align="center">

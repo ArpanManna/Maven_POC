@@ -46,7 +46,7 @@ const ProtocolFeatures = () => {
     <div class="container m-auto px-6 text-gray-500 md:px-12 xl:px-0">
       <div class="mx-auto grid gap-6 md:w-3/4 lg:w-full lg:grid-cols-3">
         {features.map(({title, description, imgSrc}) => (
-        <div class="border border-gray-100  rounded-3xl bg-gray-50 px-8 pt-12 shadow-2xl shadow-gray-600/10 sm:px-12 lg:px-8">
+        <div key={title} class="border border-gray-100  rounded-3xl bg-gray-50 px-8 pt-12 shadow-2xl shadow-gray-600/10 sm:px-12 lg:px-8">
         <div class="mb-12 space-y-4">
           <h3 class="text-2xl font-semibold text-gray-800">{title}</h3>
           <p class="text-gray-600">

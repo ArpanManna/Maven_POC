@@ -67,9 +67,9 @@ const ProjectForm = () => {
                 if (res) await getProjectsByUser(chainId, provider, address);
                 router.push("/dashboard");
                 // setTags([]);
-                // setFile();
-                // setDeadline(new Date())
-                // setForm({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" })
+                setFile();
+                setDeadline(new Date())
+                setForm({ "projectName": "", "projectDescription": "", "priceFrom": "", "priceTo": "" })
                 setLoading(false);
             } catch (err) {
                 console.log(err)
@@ -84,7 +84,7 @@ const ProjectForm = () => {
     }, []);
 
     const handleDeadlineChange = (date, dateString) => {
-        setDeadline(date);
+        setDeadline(dateString);
     };
     return (
         <form className='my-2'>

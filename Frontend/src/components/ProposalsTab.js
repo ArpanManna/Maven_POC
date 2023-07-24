@@ -74,7 +74,7 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
 
                       ))
                     }
-                    <h2 className='font-bold text-right'>Total:  {bidPrice * 1.05} wei</h2>
+                    <h2 className='font-bold text-right'>Total:  {bidPrice} wei</h2>
 
                     </div>
                     <div>

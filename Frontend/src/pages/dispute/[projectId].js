@@ -10,6 +10,9 @@ import Spinner from '@/components/UI/Spinner'
 import { TransactionToastMessage } from '@/components/UI/Toast'
 import addresses from "../../constants/Contracts.json"
 import moment from 'moment'
+import RedirectIcon from '@/assets/imgs/RedirectIcon'
+import { getAccountUrl } from '@/utils/explorer'
+import Countdown from 'react-countdown'
 
 const MilestoneDispute = () => {
     const { provider, chainId } = useWeb3();
@@ -18,12 +21,13 @@ const MilestoneDispute = () => {
 
     const [random, setRandom] = useState();
     const [result, setResult] = useState(0);
+    const [timeRemaining, setTimeRemaining] = useState(0);
     const [projectDetails, setProjectDetails] = useState({
         owner: "",
         freelancer: ""
     });
     const [disputeDetail, setDisputeDetail] = useState(
-        {disputeReason: '', duration:'', disputeRaisedBy:'', voterList:''}
+        { disputeReason: '', duration: '', disputeRaisedBy: '', voterList: '' }
     );
     const [loading, setLoading] = useState(false);
 
@@ -34,13 +38,13 @@ const MilestoneDispute = () => {
     const getDisputeData = async () => {
         const res = await getProjectById(chainId, provider, projectId);
         const dispute = await getDisputeDetails(chainId, provider, projectId);
-        
+        setTimeRemaining(dispute.duration - moment().unix());
         setProjectDetails(res);
-        setDisputeDetail(dispute)
+        setDisputeDetail(dispute);
     }
 
     const votingResultLabel = {
-        0: "None",
+        0: "No result yet!",
         1: "Freelancer",
         2: "Client"
     }
@@ -72,15 +76,11 @@ const MilestoneDispute = () => {
         TransactionToastMessage({ type, title, txHash });
     }, []);
 
-    const {owner, freelancer} = projectDetails;
-    const {disputeReason, duration, disputeRaisedBy, voterList} = disputeDetail;
+    const { owner, freelancer } = projectDetails;
+    const { disputeReason, duration, disputeRaisedBy, voterList } = disputeDetail;
 
-    // console.log(disputeDetail)
-    // const now = moment().unix();
+    console.log(moment().unix() , duration)
     
-    // const remaining = now - duration;
-    // console.log("now",now, "duration", duration, remaining)
-    // console.log(moment.duration(remaining).minutes())
     return (
         <div>
             {loading && <Spinner />}
@@ -98,25 +98,41 @@ const MilestoneDispute = () => {
 
                 <div className='col-span-5 border'>
                     <div className=''>
-                        <h2 className='font-bold py-4 text-center font-mono'>DISPUTED PROJECT DETAILS</h2>
+                        <h2 className='font-bold py-4 text-2xl text-center font-mono'>Disputed Project Details</h2>
                         <hr />
                         <div className='flex justify-around p-8 font-mono'>
                             <div>
                                 <h2 className='my-1'>Project Id: {projectId}</h2>
+                                <div className='flex flex-wrap gap-2 font-semibold'>
+                                    <p>Current Owner: </p>
+                                    <a href={getAccountUrl(addresses[80001].disputeResolution)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>0x...{addresses[80001].disputeResolution.slice(36)} (Dispute Resolution Contract)</a>
+                                    <RedirectIcon />
+                                </div>
+                                <div className='flex flex-wrap gap-2 font-semibold'>
+                                    <p>Dispute Raised By: </p>
+                                    <a href={getAccountUrl(disputeRaisedBy)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>0x...{disputeRaisedBy.slice(36)}</a>
+                                    <RedirectIcon />
+                                </div>
 
-                                <h2 className='my-1'>Current Owner: 0x...{addresses[80001].disputeResolution.slice(36)} (Dispute Resolution Contract)</h2>
-                                <h2 className='my-1'>Dispute Raised By : 0x...{disputeRaisedBy.slice(36)}</h2>
-                                
                                 <h2 className='my-1'>Dispute Reason: {disputeReason}</h2>
                             </div>
                             <div>
-                                <h2 className='my-1'>Client: 0x...{owner.slice(36)}</h2>
-                                <h2 className='my-1'>Freelancer: 0x...{freelancer.slice(36)}</h2>
+                                <div className='flex flex-wrap gap-2 font-semibold'>
+                                    <p>Client: </p>
+                                    <a href={getAccountUrl(owner)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>0x...{owner.slice(36)}</a>
+                                    <RedirectIcon />
+                                </div>
+                                <div className='flex flex-wrap gap-2 font-semibold'>
+                                    <p>Freelancer: </p>
+                                    <a href={getAccountUrl(freelancer)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>0x...{freelancer.slice(36)}</a>
+                                    <RedirectIcon />
+                                </div>
                             </div>
                         </div>
-                        <div className='text-right'>
-                            {/* <p>{remaining && remaining}</p> */}
-                        </div>
+                        {timeRemaining && <div className='text-right px-4 -mt-4 py-2'>
+                            <p className='font-semibold text-lg'>Time Remaining:</p>
+                            <Countdown date={Date.now() + timeRemaining} renderer={Timer} />
+                        </div>}
                         <hr />
                         <div className='grid grid-cols-2 gap-8 my-8'>
                             <div className='px-8 text-center'>
@@ -125,8 +141,8 @@ const MilestoneDispute = () => {
                             </div>
                             <div>
                                 <h2 className='text-lg my-2 font-semibold font-mono'>Vote:</h2>
-                                <button className='px-4 mr-4 py-1 bg-palatte2 rounded-md' value={1} onClick={(e) => handleVote(e)}>Freelancer</button>
-                                <button className='px-4  py-1 bg-palatte4 rounded-md' value={2} onClick={(e) => handleVote(e)}>Client</button>
+                                <button className='px-4 mr-4 font-semibold py-1 text-white bg-palatte1 rounded-md' value={1} onClick={(e) => handleVote(e)}>Freelancer</button>
+                                <button className='px-4  py-1 font-semibold text-white bg-palatte4 rounded-md' value={2} onClick={(e) => handleVote(e)}>Client</button>
                             </div>
                         </div>
                         <div className='flex px-8 flex-wrap gap-8 pb-2'>
@@ -140,5 +156,17 @@ const MilestoneDispute = () => {
         </div>
     )
 }
+
+const Timer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return (<p>Voting Finished!</p>);
+    } else {
+      return (
+        <span>
+          {hours}:{minutes}:{seconds}
+        </span>
+      );
+    }
+  };
 
 export default MilestoneDispute

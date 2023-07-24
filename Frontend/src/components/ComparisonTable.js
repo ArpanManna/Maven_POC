@@ -27,7 +27,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">Upto 3% client fee</span>
@@ -36,7 +36,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">Upto 3% freelancer fee</span>
@@ -54,7 +54,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">General profile only</span>
@@ -72,7 +72,7 @@ const ComparisonTable = () => {
                                     {/* <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">No real time communication</span>
@@ -95,7 +95,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">0% client fee</span>
@@ -112,7 +112,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">Centralized data storage</span>
@@ -130,7 +130,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">General profile only</span>
@@ -154,7 +154,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">0.5% - 8% client fee</span>
@@ -163,7 +163,7 @@ const ComparisonTable = () => {
                                     {/* <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">Unlimited credits</span>
@@ -172,7 +172,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">A super wallet</span>
@@ -190,7 +190,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">Real time communication</span>
@@ -199,7 +199,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-blue-600 rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-neutral-600">General profile only</span>
@@ -223,7 +223,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-white rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-neutral-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-white">Only 1% client fee</span>
@@ -232,7 +232,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-white rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-neutral-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-white">ERC6551 based Job ownership protection</span>
@@ -241,7 +241,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-white rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-neutral-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-white">Real time Push notification</span>
@@ -250,7 +250,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-white rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-neutral-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-white">NFT Profile and unlimited updates</span>
@@ -258,7 +258,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-white rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-neutral-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-white">Anonymous Dispute Resolution</span>
@@ -267,7 +267,7 @@ const ComparisonTable = () => {
                                     <li class="flex">
                                         <div class="inline-flex items-center w-6 h-6 bg-white rounded-xl">
                                             <svg class="flex-shrink-0 w-4 h-4 mx-auto text-neutral-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                         </div>
                                         <span class="ml-3 text-white">Escrowed Contract</span>

@@ -30,7 +30,7 @@ export default function MyChat({ _signer, clientAddress }) {
       const parsedData = [];
       for (const chat of chats) {
         const to = chat.msg.fromCAIP10.split(':')[1] === clientAddress ? chat.msg.toCAIP10.split(':')[1] : chat.msg.fromCAIP10.split(':')[1];
-        chatColor[to] = "flex flex-row py-4 px-2 justify-center cursor-pointer hover:bg-gray-100 items-center border-b-2";
+        chatColor[to] = "flex flex-row py-4 px-2 justify-center rounded-lg my-2 mx-2 cursor-pointer hover:bg-gray-100 items-center border shadow-md";
         profilePicture[to] = chat.profilePicture;
         parsedData.push({
           with: to,
@@ -52,8 +52,6 @@ export default function MyChat({ _signer, clientAddress }) {
     pushChat.decryptPGPKey(clientAddress, _signer).then((data) => {
       setPgpPrivateKey(data);
     });
-    // let chatSocket = pushChat.initializeChatSocket(clientAddress);
-    // setChatSocket(chatSocket);
   };
 
   const handleMessageChange = (event) => {
@@ -85,9 +83,9 @@ export default function MyChat({ _signer, clientAddress }) {
   function handleChatSelection(user) {
     if (!pgpPrivateKey) return;
     if (currChatId) {
-      chatColor[currChatId] = "flex flex-row py-4 px-2 justify-center cursor-pointer hover:bg-gray-100 items-center border-b-2";
+      chatColor[currChatId] = "flex flex-row py-4 px-2 justify-center rounded-lg my-2 mx-2 cursor-pointer hover:bg-gray-100 items-center border shadow-md";
     }
-    chatColor[user] = "flex flex-row py-4 px-2 justify-center cursor-pointer hover:bg-gray-100 items-center border-b-2 border-l-4 border-blue-400";
+    chatColor[user] = "flex flex-row py-4 px-2 justify-center rounded-lg my-2 mx-2 cursor-pointer hover:bg-gray-100 items-center border shadow-md items-center border-b-2 border-l-4 border-blue-400";
     setCurrChatId(user);
     setChatColor(chatColor);
 
@@ -108,21 +106,21 @@ export default function MyChat({ _signer, clientAddress }) {
                   return (
                     <div class="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
                       <div>
-                        <div class="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
+                        <div class="flex flex-wrap gap-4 bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
                           <p class="text-sm">{data.messageContent}</p>
                         </div>
                         <span class="text-xs text-gray-500 leading-none">{moment(new Date(data.timestamp)).format('h:mm A - D MMMM, YY')}</span>
                       </div>
-                      <img src={profilePicture[data.fromCAIP10.split(':')[1]]} class="flex-shrink-0 h-10 w-10 rounded-full"></img>
+                      {/* <img src={profilePicture[data.fromCAIP10.split(':')[1]]} class="flex-shrink-0 h-10 w-10 rounded-full"></img> */}
                     </div>
                   );
                 } else {
                   return (
                     <div class="flex w-full mt-2 space-x-3 max-w-xs">
-                      <img src={profilePicture[data.fromCAIP10.split(':')[1]]} class="flex-shrink-0 h-10 w-10 rounded-full"></img>
+                      {/* <img src={profilePicture[data.fromCAIP10.split(':')[1]]} class="flex-shrink-0 h-10 w-10 rounded-full"></img> */}
 
                       <div>
-                        <div class="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+                        <div class="bg-palatte4 text-white p-3 rounded-r-lg rounded-bl-lg">
                           <p class="text-sm">{data.messageContent}</p>
                         </div>
                         <span class="text-xs text-gray-500 leading-none">{moment(new Date(data.timestamp)).format('h:mm A - D MMMM, YY')}</span>
@@ -144,17 +142,16 @@ export default function MyChat({ _signer, clientAddress }) {
   }
 
   return (
-    <div class="container mx-auto shadow-lg rounded-lg">
+    <div class="container shadow-lg rounded-lg px-20 py-4">
       <div class="px-5 py-5 flex  items-center bg-white border-b-2">
         <img src={profilePicture[clientAddress]} class="object-cover h-12 w-12 rounded-full" alt="" />
-        <div class="text-3xl ml-2 font-bold leading-7 text-gray-900 sm:truncate sm:text-2xl sm:tracking-tight">
-          {clientAddress || 'Loading...'}
+        <div class="text-xl ml-2">
+          <h2 className="font-semibold leading-7 text-gray-900 sm:truncate sm:text-2xl sm:tracking-tight">{clientAddress ? `${clientAddress.slice(0,5)}...${clientAddress.slice(36)}` : 'Loading...'}</h2>
         </div>
       </div>
-      <div class="flex flex-row justify-between bg-white">
+      <div class="flex flex-row justify-between min-h-5/6	 bg-white">
         <div class="flex flex-col w-2/5 border-r-2 overflow-y-auto">
-          <div class="border-b-2 py-4 px-2">
-          </div>
+          
           {
             (chatList && chatList.map((data) => (
               <div class={chatColor[data.with]} id={data.with} onClick={() => handleChatSelection(data.with)}>
@@ -166,7 +163,7 @@ export default function MyChat({ _signer, clientAddress }) {
                   />
                 </div>
                 <div class="w-full">
-                  <div class="text-lg font-semibold">{trimAddress(data.with)}</div>
+                  <div class="text-md font-semibold">{trimAddress(data.with)}</div>
                   <span class="text-gray-500">{data.messageContent}</span>
                 </div>
               </div>
@@ -175,33 +172,29 @@ export default function MyChat({ _signer, clientAddress }) {
           }
 
         </div>
-        <div class="w-full px-5 flex flex-col justify-between">
+        <div class="w-full  px-5 flex flex-col justify-between overflow-y-auto h-96">
           {(pgpPrivateKey && (
             currentChat || (
-              <div class="flex flex-col mt-5">
-                <div class="flex justify-center mb-4">
-                  <div class="py-3 px-4 bg-blue-400 rounded-3xl text-white">
+              <div class="grid justify-items-center py-48">
+                  <div class="py-3 px-4 bg-palatte4 rounded-2xl font-semibold text-white">
                     Select a chat!
-                  </div>
                 </div>
               </div>
             )
           ) || (
-              <div class="flex flex-col mt-5">
-                <div class="flex justify-center mb-4">
-                  <div class="py-3 px-4 bg-blue-400 rounded-3xl text-white" onClick={handleConnect}>
+              <div class="grid justify-items-center py-48">
+                  <button class="py-3 px-4  bg-palatte4 rounded-2xl font-semibold text-white" onClick={handleConnect}>
                     Connect!
-                  </div>
-                </div>
+                  </button>
               </div>
             )
           )}
           <div class="flex-grow ml-4 py-5">
-            <div class="relative w-full">
+            <div class="w-2/5 fixed bottom-10 ">
               <Input
                 type="text"
                 name="message"
-                class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                class="flex py-6 border placeholder:text-gray-400 border-gray-800 rounded-xl w-full focus:outline-none focus:border-indigo-300 pl-4 h-10"
                 placeholder="Type your message..."
                 onChange={handleMessageChange}
                 onKeyPress={handleKeyPress}
@@ -226,9 +219,7 @@ export default function MyChat({ _signer, clientAddress }) {
             </div>
           </div>
         </div>
-        <div class="w-2/5 border-l-2 px-5">
-          {/** Side pane. */}
-        </div>
+
       </div>
     </div>
   );

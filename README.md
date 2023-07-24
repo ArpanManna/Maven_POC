@@ -45,34 +45,34 @@ To create a profile, an ERC-721 token is minted for each profile. Then, a token 
 
 Our platform provides support for EIP-4337 **account abstraction**.
 <p align="center">
+<img width="432" alt="Screenshot 2023-07-24 at 9 28 39 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/067f6f3c-acf0-4741-bc7a-de331e6b93e7">
 
-<img width="641" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/12a03658-66d5-4738-92d3-da2162ecb7ed">
 </p>
 
 ## How is job ownership protected using ERC-6551?
 
 1. Whenever a client posts a job then ERC-721 token is minted for the job. Then, a token bound account (TBA) wallet address is generated using ERC-6551 and associated with the ERC-721 **job NFT.** These job NFTs are further associated inside profile NFTs to protect ownership of jobs for each client initially.
 <p align="center">
-<img width="432" alt="Screenshot 2023-07-24 at 9 28 39 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/067f6f3c-acf0-4741-bc7a-de331e6b93e7">
+<img width="476" alt="Screenshot 2023-07-24 at 11 00 36 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/0f6c2254-a128-49f3-acd0-60df4ef388a9">
+</p>
 
-</p>
 2. Whenever a client selects a freelancer bid for the job then the proposed number of milestones in the bid are minted as NFTs and the **milestone NFTs** are added in the TBA wallet of the corresponding job NFT.
-<p align="center">
-<img width="319" alt="Screenshot 2023-07-23 at 10 40 48 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/05bc0277-d25a-4c59-bc03-e52b31f8d5b8">
-</p>
-3. The platform then automatically transfers the job NFT and TBA wallet (along with the milestones NFT) to the freelancer's profile Token Bound Address.
  <p align="center">
-  <img width="562" alt="Screenshot 2023-07-23 at 10 42 13 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/bfedbaba-5ecf-4502-a6cf-9e025498ce9b">
+   <img width="321" alt="Screenshot 2023-07-24 at 11 03 02 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/450b6817-3bb1-4909-9595-865e7fad65d2">
  </p>
+3. The platform then automatically transfers the job NFT and TBA wallet (along with the milestones NFT) to the freelancer's profile Token Bound Address.
+<p align="center">
+<img width="562" alt="Screenshot 2023-07-24 at 11 04 25 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/b5ad8da0-1d79-465f-9f3a-7c696ee6a07a">
+</p>
 4. When a freelancer completes a milestone then the milestone NFT is transferred back to the client profile Token Bound Address (TBA). 
 <p align="center">
-<img width="562" alt="Screenshot 2023-07-23 at 10 42 44 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/755c3bf2-818e-4cee-87e5-7d85a8c9ac85">
+  <img width="564" alt="Screenshot 2023-07-24 at 11 05 03 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/be2bbb69-f774-4b86-9f2c-515eff579e2f">
 </p>
-5. When all the milestones are completed, the job NFT will be burn by the platform.
+5. When all the milestones are completed, the job NFT will be burnt by the platform.
 
-6. Finally, the profile NFT will contain the milestone NFT for this job in its TBA wallet.
+6. Finally, the payment is released to the freelancer and the stake is returned to the client. The profile NFT will, thus, contain the milestone NFT for this job in its TBA wallet.
 <p align="center">
-<img width="578" alt="Screenshot 2023-07-23 at 10 43 39 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/a8b9be92-d00e-4759-928a-d39d6abc5cb6">
+  <img width="576" alt="Screenshot 2023-07-24 at 11 08 04 PM" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/1c6ff80a-0930-4ca9-af5b-486e8ef9cc62">
 </p>   
 6. In case a dispute arises, the ownership of the job NFT and the uncompleted milestone NFTs are transferred to the platform and will be withheld until the dispute is resolved. It will then transfer the ownership of these to the winning party.
 

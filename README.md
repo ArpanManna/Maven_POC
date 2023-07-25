@@ -91,11 +91,13 @@ Our platform provides support for EIP-4337 **account abstraction**.
 
 ## Deployment Details
 
-Our project is deployed on Polygon Mumbai testnet and can be viewed via [polygonscan explorer](https://mumbai.polygonscan.com/).
+Our project is deployed on Polygon Mumbai testnet.
 
 Maven contract: [0x8399eDEbCF9fDF32a7fD33791dCFBbF7319941e5](https://mumbai.polygonscan.com/address/0x8399edebcf9fdf32a7fd33791dcfbbf7319941e5)
 
 Dispute resolution contract: [0xBC0C6f0AFC882aa07bA0dB3c5049ADF0F24D1741](https://mumbai.polygonscan.com/address/0xBC0C6f0AFC882aa07bA0dB3c5049ADF0F24D1741)
 
 Chainlink VRF Subscription ID: [5476](https://vrf.chain.link/mumbai/5476)
+
+[Polybase explorer](https://explorer.testnet.polybase.xyz/studio/pk%2F0xa19aa505ca2151e5f7f6d8f1c5d74afe10a0fa7b5f6968fab70cb8b98a84fdb0187a7b01bb8ff5724f8798a78aeafdc2b435a071846d139031c301a3d036dc6f%2Fmaven-prod/collections/bidTest0)
 

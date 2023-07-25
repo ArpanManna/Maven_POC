@@ -59,7 +59,7 @@ const ProjectDetail = () => {
           <div className='py-2 px-4 shadow-sm rounded-md bg-gray-50 border'>
             <h2 className='text-sm font-semibold text-palatte3'>Total Bids: {bidCount}</h2>
 
-            <h2 className='text-sm font-semibold text-palatte3'>Bid Price: {priceFrom} wei to {priceTo} wei</h2>
+            <h2 className='text-sm font-semibold text-palatte3'>Budget: {priceFrom} wei to {priceTo} wei</h2>
           </div>
         </div>
         <Tabs defaultActiveKey="1" items={items} />

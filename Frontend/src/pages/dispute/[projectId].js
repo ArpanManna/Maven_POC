@@ -37,7 +37,7 @@ const MilestoneDispute = () => {
     const getDisputeData = async () => {
         const res = await getProjectById(chainId, provider, projectId);
         const dispute = await getDisputeDetails(chainId, provider, projectId);
-        setTimeRemaining(dispute.duration - moment().unix());
+        setTimeRemaining((dispute.duration - moment().unix()) * 1000);
         setProjectDetails(res);
         setDisputeDetail(dispute);
     }
@@ -78,7 +78,14 @@ const MilestoneDispute = () => {
     const { owner, freelancer } = projectDetails;
     const { disputeReason, duration, disputeRaisedBy, voterList } = disputeDetail;
 
-    console.log(moment().unix() , duration)
+    const a = moment().unix(); 
+    const b = duration;
+    
+    const absoluteDifference = (b-a)/60;
+
+    console.log(absoluteDifference)
+    
+    
     
     return (
         <div>
@@ -135,8 +142,8 @@ const MilestoneDispute = () => {
                         <hr />
                         <div className='grid grid-cols-2 gap-8 my-8'>
                             <div className='px-8 text-center'>
-                                <h2 className='text-lg my-2 font-semibold font-mono'> Choose a random Number: </h2>
-                                <Input className='w-40 border-gray-800' value={random} onChange={handleInputChange} maxLength={4} placeholder='Random Number' />
+                                <h2 className='text-lg my-2 font-semibold font-mono'> Choose a random Number (less than 100): </h2>
+                                <Input className='w-40 border-gray-800' value={random} onChange={handleInputChange} maxLength={3} placeholder='Random Number' />
                             </div>
                             <div>
                                 <h2 className='text-lg my-2 font-semibold font-mono'>Vote:</h2>
@@ -144,11 +151,14 @@ const MilestoneDispute = () => {
                                 <button className='px-4  py-1 font-semibold text-white bg-palatte4 rounded-md' value={2} onClick={(e) => handleVote(e)}>Client</button>
                             </div>
                         </div>
+                        {duration < moment().unix() 
+&&
                         <div className='flex px-8 flex-wrap gap-8 pb-2'>
                             <button className='text-white bg-gradient-to-r mt-4 from-palatte1 to-palatte4 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-30 shadow-lg shadow-cyan-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4' onClick={(e) => handleVotingResult(e)}>Get Voting Result</button>
                             <h2 className='font-bold mt-6'>
                                 {votingResultLabel[result]}</h2>
                         </div>
+}
                     </div>
                 </div>
             </div>

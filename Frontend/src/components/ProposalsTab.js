@@ -46,7 +46,7 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
                   </div>
 
                   <h2 className='text-md'>Bid Price: {bidPrice} wei</h2>
-                  <h2 className='text-md'>Deadline: {moment.unix(estimatedTimeline).format("MM/DD/YYYY")}</h2>
+                  <h2 className='text-md'>Estimated Delivery : {moment.unix(estimatedTimeline).format("MM/DD/YYYY")}</h2>
                   <h5 className="text-md">Milestones: {proposal.milestones.length}</h5>
                 </div>
               </div>

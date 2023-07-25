@@ -140,7 +140,7 @@ const AccordionBody = ({ post, bid }) => {
                      
                 }
             </div>
-            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject}/>}
+            {modalStatus && <Modal modalStatus={modalStatus} setModalStatus={setModalStatus} projectId={disputeProject} client={post.owner} freelancer={bid.freelancer}/>}
 
         </div>
     )

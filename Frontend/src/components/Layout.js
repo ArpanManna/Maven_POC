@@ -6,11 +6,13 @@ import { useContextState } from "@/context";
 import { EVENTS, createSocketConnection } from "@pushprotocol/socket";
 import { ToastMessage } from "./UI/Toast";
 import Link from "next/link";
+import { useIsMounted } from "@/lib/hooks/us-is-mounted";
 
 export default function Layout({ children }) {
   const { chainId, provider, address } = useWeb3();
   const [{ }, dispatch] = useContextState();
   const [disconnected, setDisconnected] = useState(true);
+  const isMounted = useIsMounted();
 
   useEffect(() => {
     if (address) getCurrentUserDetails();
@@ -49,7 +51,7 @@ export default function Layout({ children }) {
   return (
     <>
       <Nav />
-      <main>{children}</main>
+      {isMounted && <main>{children}</main>}
     </>
   );
 }

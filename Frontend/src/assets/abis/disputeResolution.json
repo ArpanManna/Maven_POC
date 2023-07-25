@@ -152,6 +152,16 @@
 				"internalType": "address",
 				"name": "tba",
 				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "associatedClient",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "associatedFreelancer",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -301,6 +311,16 @@
 			{
 				"internalType": "address",
 				"name": "_tba",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_associatedClient",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_associatedFreelancer",
 				"type": "address"
 			}
 		],

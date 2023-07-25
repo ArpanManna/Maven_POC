@@ -8,7 +8,7 @@ import { TransactionToastMessage } from './Toast';
 import { useContextState } from '@/context';
 import { useRouter } from 'next/router';
 
-export default function Modal({ modalStatus, setModalStatus, projectId }) {
+export default function Modal({ modalStatus, setModalStatus, projectId, client, freelancer }) {
   const [reason, setReason] = useState('');
   const { address, provider, chainId } = useWeb3();
   const [{}, dispatch] = useContextState();
@@ -18,9 +18,10 @@ export default function Modal({ modalStatus, setModalStatus, projectId }) {
   const handleDispute = async () => {
     if (reason) {
       setLoading(true);
-      await initializeDispute(chainId, provider, projectId, reason, txNotify);
-      await getUserDetails(chainId,provider, address, dispatch);
-      router.push(`/dispute/${projectId}`)
+      await initializeDispute(chainId, provider, projectId, reason, client, freelancer, txNotify);
+      const res = await getUserDetails(chainId,provider, address, dispatch);
+      if (res) router.push(`/dispute/${projectId}`)
+
       setLoading(false);
     }
   }

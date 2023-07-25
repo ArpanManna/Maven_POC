@@ -312,7 +312,7 @@ export const initializeDispute = async (chainId, provider, projectId, disputeRea
         const signature = await disputeResolutionContract.lastRequestId();
         const randomNumber = await disputeResolutionContract.getRequestStatus(signature);
         const disputeReasonURI = await uploadFileToIPFS(disputeReason);
-        const tx = await mavenContract.initializeDispute(addresses[chainId].disputeResolution, projectId, disputeReasonURI, ["0x747b11E5AaCeF79cd78C78a8436946b00dE30b97", "0x2CAaCea2068312bbA9D677e953579F02a7fdC4A9", "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"], randomNumber.randomWords.toNumber())
+        const tx = await mavenContract.initializeDispute(addresses[chainId].disputeResolution, projectId, disputeReasonURI, [], randomNumber.randomWords.toNumber())
         
         txNotify("success", "Sent", tx.hash);
         const txStatus = await getTransactionStatus(tx.hash);

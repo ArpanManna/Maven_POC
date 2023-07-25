@@ -42,17 +42,17 @@ const ProtocolFeatures = () => {
 ]
   return (
 
-    <div class="py-16 px-12 bg-gray-300">
-    <div class="container m-auto px-6 text-gray-500 md:px-12 xl:px-0">
-      <div class="mx-auto grid gap-6 md:w-3/4 lg:w-full lg:grid-cols-3">
+    <div className="py-16 px-12 bg-gray-300">
+    <div className="container m-auto px-6 text-gray-500 md:px-12 xl:px-0">
+      <div className="mx-auto grid gap-6 md:w-3/4 lg:w-full lg:grid-cols-3">
         {features.map(({title, description, imgSrc}) => (
-        <div key={title} class="border border-gray-100  rounded-3xl bg-gray-50 px-8 pt-12 shadow-2xl shadow-gray-600/10 sm:px-12 lg:px-8">
-        <div class="mb-12 space-y-4">
-          <h3 class="text-2xl font-semibold text-gray-800">{title}</h3>
-          <p class="text-gray-600">
+        <div key={title} className="border border-gray-100  rounded-3xl bg-gray-50 px-8 pt-12 shadow-2xl shadow-gray-600/10 sm:px-12 lg:px-8">
+        <div className="mb-12 space-y-4">
+          <h3 className="text-2xl font-semibold text-gray-800">{title}</h3>
+          <p className="text-gray-600">
             {description}
           </p>
-          {/* <a href="#" class="block font-medium text-primary">Know more</a> */}
+          {/* <a href="#" className="block font-medium text-primary">Know more</a> */}
         </div>
         <Image
           src={imgSrc}

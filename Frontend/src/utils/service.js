@@ -190,10 +190,11 @@ export const getProjectById = async (chainId, provider, projectId) => {
             }
         )
         const assetsHolding = await mavenContract.balanceOf(data.tba);
+        const bidCount = await getTotalBids(chainId, provider, projectId);
         const metadataRes = await getIPFSResponse(data[5])
         const JDRes = await getIPFSResponse(data[6])
 
-        post = ({ ...post, metadata: metadataRes, file: JDRes, assetsHolding: assetsHolding.toNumber() })
+        post = ({ ...post, metadata: metadataRes, file: JDRes, assetsHolding: assetsHolding.toNumber(), bidCount: bidCount })
         return post
     } catch (err) {
         console.log(err)

@@ -1,4 +1,3 @@
-import Nav from '@/components/Nav'
 import React, { useCallback, useEffect, useState } from 'react'
 import avatar4 from '../../assets/imgs/avatar2.svg'
 import Image from 'next/image'

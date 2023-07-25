@@ -23,6 +23,15 @@ const decryptPGPKey = async (account, signer) => {
   return pgpPrivateKey;
 };
 
+const createUser = async (signer, env = 'staging') => {
+  const user = await PushAPI.user.create({
+    signer, // ethers.js signer
+    env,
+  });
+
+  return user;
+};
+
 const getUser = async (account, env = 'staging') => {
   if (!account) {
     console.log('No Account!');
@@ -100,6 +109,7 @@ const sendChat = async (from, to, pgpPrivateKey, message, env = 'staging') => {
 
 module.exports = {
   initializeChatSocket,
+  createUser,
   decryptPGPKey,
   fetchChatList,
   fetchHistory,

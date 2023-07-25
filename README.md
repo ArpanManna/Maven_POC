@@ -12,6 +12,8 @@ The platform also protects the ownership of the work that freelancers do, so tha
 
 The project is designed to help freelancers find work and get paid, while also protecting their rights. It is a valuable resource for freelancers, and it is likely to be successful in helping them find work and get paid.
 
+Our project is deployed on Polygon Mumbai testnet.
+
 ## Architecture
 <p align="center">
 <img width="641" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/47c185b6-6d2e-413a-bdf4-a2d57e55a11f">

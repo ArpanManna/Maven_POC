@@ -1,5 +1,6 @@
 import ProjectDetailTab from '@/components/ProjectDetailTab'
 import ProposalsTab from '@/components/ProposalsTab'
+import MyChat from '@/components/PushChat'
 import { useIsMounted } from '@/lib/hooks/us-is-mounted'
 import { getJobProposalsByID, getProjectById } from '@/utils/service'
 import { useWeb3 } from '@3rdweb/hooks'

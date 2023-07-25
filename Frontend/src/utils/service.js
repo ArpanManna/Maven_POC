@@ -45,19 +45,23 @@ export const createJobPost = async (chainId, provider, metaDataURI, priceFrom, p
     try {
         const tx = await mavenContract.createProject(metaDataURI, priceFrom, priceTO, fileURI, deadline)
         txNotify("success", "Sent", tx.hash);
-        const receipt = await tx.wait();
         const txStatus = await getTransactionStatus(tx.hash);
-        if (txStatus === 1) txNotify("success", "Successful", tx.hash);
-        else txNotify("error", "Failed", tx.hash);
-        const { client, projectId, tokenId, tba } = receipt.events[3].args;
+        if (txStatus === 1) {
+            const receipt = await tx.wait();
+            txNotify("success", "Successful", tx.hash);
+            for (const event of receipt.events) {
+                if (event.event === 'ProjectCreated') {
+                    const [client, projectId, tokenId, tba] = event.args;
 
-        await sendNotification("Job Post Created!", `A new Job with NFT Id: ${tokenId} and Token Bound Address: ${tba} has been created.`, address)
-        await fetchNotifications(address, dispatch);
-
-
-
-        return `${project_id.toNumber()}`;
-
+                    await sendNotification("Job Post Created!", `A new Job with NFT Id: ${tokenId.toNumber()} and Token Bound Address: ${tba} has been created.`, address)
+                    await fetchNotifications(address, dispatch);
+        
+                    return {client, projectId: `${projectId.toNumber()}`, tokenId: `${tokenId.toNumber()}`, tba};
+                }
+            }
+        } else {
+            txNotify("error", "Failed", tx.hash);
+        }
     } catch (err) {
         console.log(err)
     }
@@ -71,25 +75,28 @@ export const getAllJobPosts = async (chainId, provider) => {
         for (const x of response) {
             retData.push({
                 bidCount: x.bids.length,
-                createdOn: x.postDate,
-                deadline: x.deadline,
+                createdOn: parseInt(x.postDate, 10),
+                deadline: parseInt(x.deadline, 10),
                 fileURI: x.mediaUris,
-                finalBid: x.selectedBid ? x.selectedBid : null,
-                freelancer: '',
+                finalBid: x.selectedBid ? x.selectedBid : 0,
+                freelancer: x.selectBid ? x.selectBid : "0x0000000000000000000000000000000000000000",
                 highestBid: x.highestBid,
                 lowestBid: x.lowestBid,
-                id: x.id,
+                id: parseInt(x.id, 10),
                 metadata: {
                     priceFrom: x.budgetLowerLimit,
                     priceTo: x.budgetUpperLimit,
                     projectDescription: x.description,
+                    skillsRequired: x.skillIds,
                     projectName: x.title,
                 },
-                skillsRequired: x.skillIds,
                 owner: x.address,
+                tba: x.tba,
+                tokenId: parseInt(x.tokenId, 10),
                 status: 0,
             });
         }
+        return retData;
     } catch (err) {
         console.log(err);
     }
@@ -125,8 +132,15 @@ export const placeBid = async (chainId, provider, projectId, bidPrice, expectedT
             await sendNotification(`New Bid Placed`, `You have got a new bid in your project from ${freelancer}`, projectOwner);
             await sendNotification(`New Bid Placed`, `You have placed a new bid in project ${projectId}`, freelancer);
             await fetchNotifications(freelancer, dispatch);
-
+            const receipt = await tx.wait();
+            for (const event of receipt.events) {
+                if (event.event === 'BidCreated') {
+                    const [projectId, bidId, bidder] = event.args;
+                    return { projectId: `${projectId.toNumber()}`, bidId: `${bidId.toNumber()}`, bidder };
+                }
+            }
         } else txNotify("error", "Failed", tx.hash);
+        return false;
     } catch (err) {
         console.log(err)
     }
@@ -162,8 +176,9 @@ export const selectBid = async (chainId, provider, projectId, bidOwner, bidId, b
             await sendNotification(`Bid Selected`, `Your bid has been selected by ${client}`, bidOwner);
             await sendNotification(`Bid Selected`, `You have selected a bid from ${bidOwner}`, client);
             await fetchNotifications(client, dispatch);
-
+            return true;
         } else txNotify("error", "Failed", tx.hash);
+        return false;
     } catch (err) {
         console.log(err)
     }
@@ -305,7 +320,6 @@ export const getTotalBids = async (chainId, provider, projectId) => {
 
 
 export const initializeDispute = async (chainId, provider, projectId, disputeReason, client, freelancer, txNotify) => {
-    console.log(projectId, disputeReason, client, freelancer)
     const disputeResolutionContract = initializeContract(addresses[chainId].disputeResolution, disputeResolutionABI, provider.getSigner())
     const mavenContract = initializeContract(addresses[chainId].maven, mavenABI, provider.getSigner())
     try {

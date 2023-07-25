@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { useContextState } from '@/context'
 import { useRouter } from 'next/router'
 import { getAccountUrl } from '@/utils/explorer'
+import * as db from '@/utils/polybase';
 
 const ProposalsTab = ({ id, proposals, projectOwner }) => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,11 @@ const ProposalsTab = ({ id, proposals, projectOwner }) => {
 
   const handleBidSelection = async (proposalId, bidOwner, bidPrice) => {
     setLoading(true);
-    await selectBid(chainId, provider, id, bidOwner, proposalId, bidPrice, txNotify, dispatch);
+    // console.log(id, `${id}_${proposalId}`);
+    const status = await selectBid(chainId, provider, id, bidOwner, proposalId, bidPrice, txNotify, dispatch);
+    if (status) {
+      await db.selectBid(id, `${id}_${proposalId}`);
+    }
     setLoading(false);
     router.push("/dashboard");
   }

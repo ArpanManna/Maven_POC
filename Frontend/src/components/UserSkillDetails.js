@@ -1,61 +1,16 @@
 import React, { useState } from "react";
 import { Select } from "antd";
+import skills from '@/constants/skills.json';
 
 const UserSkillDetails = ({onSkillChange}) => {
-  const [items, setItems] = useState([
-  {
-    "value": "Solidity",
-    "label": "Solidity"
-  },
-  {
-    "value": "Next.js",
-    "label": "Next.js"
-  },
-  {
-    "value": "Ethereum",
-    "label": "Ethereum"
-  },
-  {
-    "value": "Node.js",
-    "label": "Node.js"
-  },
-  {
-    "value": "AWS",
-    "label": "AWS"
-  },
-  {
-    "value": "Python",
-    "label": "Python"
-  },
-  {
-    "value": "Javascript",
-    "label": "JavaScript"
-  },
-  {
-    "value": "UI/UX",
-    "label": "UI/UX"
-  },
-  {
-    "value": "Rust",
-    "label": "Rust"
-  },
-  {
-    "value": "C++ Programming",
-    "label": "C++ Programming"
-  },
-  {
-    "value": "SEO",
-    "label": "SEO"
-  },
-  {
-    "value": "Communication",
-    "label": "Communication"
-  },
-  {
-    "value": "React.js",
-    "label": "React.js"
-  },
-]);
+  const parsedSkills = [];
+  for (const skill of skills) {
+    parsedSkills.push({
+      value: `${skill.name}_${skill.id}`,
+      label: skill.name,
+    });
+  }
+  const [items, setItems] = useState(parsedSkills);
   
   return (
     <div className="py-2">

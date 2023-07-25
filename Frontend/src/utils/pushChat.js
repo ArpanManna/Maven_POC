@@ -53,6 +53,25 @@ const fetchChatList = async (account, pgpPrivateKey, env = 'staging') => {
   return response;
 };
 
+const fetchChatRequestList = async (account, pgpPrivateKey, env = 'staging') => {
+  if (!account) return;
+  const response = await PushAPI.chat.requests({
+    account,
+    toDecrypt: true,
+    pgpPrivateKey,
+    env,
+  });
+  return response;
+};
+
+const fetchChats = async (account, pgpPrivateKey, env = 'staging') => {
+  const [ chats, requests ] = await Promise.all([
+    fetchChatList(account, pgpPrivateKey),
+    fetchChatRequestList(account, pgpPrivateKey),
+  ]);
+  return [...chats, ...requests];
+}
+
 const fetchHistory = async (from, to, pgpPrivateKey, env = 'staging') => {
   let params = {
     account: `eip155:${to}`,
@@ -111,7 +130,7 @@ module.exports = {
   initializeChatSocket,
   createUser,
   decryptPGPKey,
-  fetchChatList,
+  fetchChats,
   fetchHistory,
   sendChat,
   getUser,

@@ -51,7 +51,11 @@ const ProjectForm = () => {
         e.preventDefault();
         if (projectName && projectDescription && priceFrom && priceTo && skills) {
             setLoading(true);
-            form.skillsRequired = skills;
+            const skillIds = [];
+            for (const skill of skills) {
+                skillIds.push(skill.split('_').splice(-1)[0]);
+            }
+            form.skillsRequired = skillIds;
             const metaDataURI = await uploadFileToIPFS(JSON.stringify(form))
             let fileURI = '';
             if (file) {
@@ -59,12 +63,14 @@ const ProjectForm = () => {
             }
             try {
                 const res = await createJobPost(chainId, provider, metaDataURI, priceFrom, priceTo, fileURI, moment(deadline).unix(), txNotify, address, dispatch)
-                
-                await db.createProject(res, projectName, projectDescription, [], skills, priceFrom, priceTo);
-                for (let i = 0; i < skills.length; i += 1) {
-                    await db.publicProject(skills[i], projectId);
+                // console.log(res);
+                if (res) {
+                    await db.createProject(res.projectId, res.client, res.tba, res.tokenId, projectName, projectDescription, [fileURI], skillIds, priceFrom, priceTo, `${moment(deadline).unix()}`);
+                    for (let i = 0; i < skillIds.length; i += 1) {
+                        await db.publicProject(skillIds[i], res.projectId);
+                    }
                 }
-                if (res) await getProjectsByUser(chainId, provider, address);
+                // if (res) await getProjectsByUser(chainId, provider, address);
                 router.push("/dashboard");
                 // setTags([]);
                 setFile();

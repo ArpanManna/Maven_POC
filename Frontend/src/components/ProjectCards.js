@@ -8,7 +8,7 @@ import avatar1 from "../assets/imgs/avatar1.svg"
 import Image from 'next/image';
 import { getAccountUrl } from '@/utils/explorer';
 import RedirectIcon from '@/assets/imgs/RedirectIcon';
-
+import skillsMapping from '@/constants/skillsReverse.json';
 
 const ProjectCards = () => {
   const [posts, setPosts] = useState([]);
@@ -56,7 +56,7 @@ const ProjectCards = () => {
                   <p className="my-4 leading-relaxed">{projectDescription && (projectDescription.length > 160 ? projectDescription.slice(0, 160) : projectDescription)}...</p>
                   <div className='flex flex-wrap gap-3'>
                     {skillsRequired && skillsRequired.map((skill) => (
-                      <button key={skill} className='text-palatte4 border text-xs rounded-xl border-gray-700 px-3 py-1'>{skill}</button>
+                      <button key={skill} className='text-palatte4 border text-xs rounded-xl border-gray-700 px-3 py-1'>{skillsMapping[skill] || skill}</button>
                     ))}
                   </div>
                 </div>

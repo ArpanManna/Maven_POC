@@ -79,11 +79,13 @@ const PlaceBidForm = ({ id, projectOwner }) => {
       let milestoneArray = milestones.map(({ price, ...rest }) => price);
       const expectedTimeline = moment(deadline).unix()
       const proposalURI = await uploadFileToIPFS(JSON.stringify({ proposal, milestones }))
-      await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify, dispatch);
+      const res = await placeBid(chainId, provider, id, bidPrice, expectedTimeline, proposalURI, milestoneArray, projectOwner, txNotify, dispatch);
       setLoading(false);
       
-      const bidId = await db.createBid(bidPrice, `${expectedTimeline}`, proposal, [], JSON.stringify(milestones));
-      await db.addBidToProject(id, bidId);
+      if (res && res.bidId) {
+        await db.createBid(`${res.projectId}_${res.bidId}`, res.bidder, bidPrice, `${expectedTimeline}`, proposal, [], JSON.stringify(milestones));
+        await db.addBidToProject(id, `${res.projectId}_${res.bidId}`);
+      }
       setMileStones([
         { title: '', price: '' },
       ]);

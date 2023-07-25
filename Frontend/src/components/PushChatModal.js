@@ -32,7 +32,7 @@ export default function MyChat({ _signer, clientAddress }) {
 
   useEffect(() => {
     if (!pgpPrivateKey) return;
-    pushChat.fetchChatList(clientAddress, pgpPrivateKey).then((chats) => {
+    pushChat.fetchChats(clientAddress, pgpPrivateKey).then((chats) => {
       const parsedData = [];
       for (const chat of chats) {
         const to = chat.msg.fromCAIP10.split(':')[1] === clientAddress ? chat.msg.toCAIP10.split(':')[1] : chat.msg.fromCAIP10.split(':')[1];

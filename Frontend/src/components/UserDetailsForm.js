@@ -45,7 +45,11 @@ const UserDetailsForm = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setForm({ ...form, skills: skills })
+    const skillIds = [];
+    for (const skill of skills) {
+      skillIds.push(skill.split('_').splice(-1)[0]);
+    }
+    setForm({ ...form, skills: skillIds })
     const metaDataURI = await uploadFileToIPFS(JSON.stringify(form));
     let fileURI = "";
     if (file) {
@@ -61,7 +65,7 @@ const UserDetailsForm = () => {
       await sendNotification("Profile Created!", `Your profile with NFTId: ${tokenId} and unique Token Bound Address ${tba} has been created.`, address)
       await fetchNotifications(address, dispatch);
 
-      await db.createProfile(owner, tokenId, tba, form.fullName, form.headline, form.summary, fileURI, skills);
+      await db.createProfile(owner, tokenId, tba, form.fullName, form.headline, form.summary, fileURI, skillIds);
       await getUserDetails(chainId, provider, address, dispatch);
        
       router.push('/browse');

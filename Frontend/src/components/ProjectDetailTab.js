@@ -4,6 +4,7 @@ import { useWeb3 } from '@3rdweb/hooks'
 import { useContextState } from '@/context';
 import { useRouter } from 'next/router';
 import { getAccountUrl } from '@/utils/explorer';
+import skillsMapping from '@/constants/skillsReverse.json';
 import RedirectIcon from '@/assets/imgs/RedirectIcon';
 
 const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired, priceFrom, priceTo, bidCount, tokenId, tba }) => {
@@ -31,7 +32,7 @@ const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired
                 <h2 className='font-semibold'>Token Id: {tokenId}</h2>
                 <div className='flex flex-wrap gap-2 font-semibold'>
                   <p>Token Bound Address: </p>
-                  <a href={getAccountUrl(tba)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>{`0x...${tba.slice(36)}`}</a>
+                  <a href={getAccountUrl(tba)} target='__blank' className='cursor-pointer hover:underline text-blue-600'>{`0x...${tba?.slice(36)}`}</a>
                   <RedirectIcon />
                 </div>
               </div>
@@ -42,7 +43,7 @@ const ProjectDetailTab = ({ id, projectDescription, projectOwner, skillsRequired
                 <h2 className='text-lg font-semibold'> Skills:</h2>
                 <div className='flex flex-wrap gap-4'>
                     {skillsRequired && skillsRequired.map((skill, i) => (
-                        <p key={`${skill}${i}`} className='font-semibold my-4 border-palatte4 border rounded-lg px-3 py-1'>{skill}</p>
+                        <p key={`${skill}${i}`} className='font-semibold my-4 border-palatte4 border rounded-lg px-3 py-1'>{skillsMapping[skill] || skill}</p>
                     ))}
                 </div>
                 

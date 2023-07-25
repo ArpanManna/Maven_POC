@@ -91,7 +91,7 @@ Our platform provides support for EIP-4337 **account abstraction**.
 
 ## Deployment Details
 
-Our project is deployed on Polygon Mumbai testnet.
+Our project is deployed on Polygon Mumbai testnet and can be viewed via [polygonscan explorer](https://mumbai.polygonscan.com/).
 
 Maven contract: [0x8399eDEbCF9fDF32a7fD33791dCFBbF7319941e5](https://mumbai.polygonscan.com/address/0x8399edebcf9fdf32a7fd33791dcfbbf7319941e5)
 

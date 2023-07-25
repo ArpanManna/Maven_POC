@@ -22,6 +22,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
     Counters.Counter private _tokenIds; // keep track of token Id
     uint stakePercentage = 4;
     address deployer;
+    address[] users;
 
     constructor(address _implementationContract) ERC721("Maven Protocol", "MVP") Registry(_implementationContract){
         deployer = msg.sender;
@@ -123,6 +124,7 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         tokenIds[newTokenId] = tba;
         if(compare(_type, "client")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Client, newTokenId, tba);
         else if(compare(_type, "freelancer")) profile[msg.sender] = Profile(msg.sender, _uri, ProfileType.Freelancer, newTokenId, tba);
+        users.push(msg.sender);
         emit ProfileCreated(msg.sender, newTokenId, tba);
     }
 
@@ -318,13 +320,14 @@ contract Maven is ERC721URIStorage, Registry, ReentrancyGuard{
         return tokenIds[tokenId];
     }
 
-    function initializeDispute(address _votingContract, uint projectId, string memory _disputeReasonUri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData) public nonReentrant{
+    function initializeDispute(address _votingContract, uint projectId, string memory _disputeReasonUri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData, address client, address freelancer) public nonReentrant{
         _projectIdsInDisputed.increment();
         uint jobTokenId = projectTokenId[projectId];
         address payable tba = payable(ownerOf(jobTokenId));
         ERC6551Account ma = ERC6551Account(tba);
         ma.transferERC721Tokens(address(this), _votingContract, jobTokenId);
-        IVoting(_votingContract).initializeVoting(projectId, _disputeReasonUri, toBeWhitelisted, _chainLinkVRFData, jobTokenId, tba);
+        //IVoting(_votingContract).initializeVoting(projectId, _disputeReasonUri, toBeWhitelisted, _chainLinkVRFData, jobTokenId, tba);
+        IVoting(_votingContract).initializeVoting(projectId, _disputeReasonUri, users, _chainLinkVRFData, jobTokenId, tba, client, freelancer);
         projectIdToProjectDetails[projectId].status = ProjectStatus.Disputed;
     }
 

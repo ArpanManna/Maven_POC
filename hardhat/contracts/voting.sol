@@ -51,6 +51,8 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
         uint randomness;   
         uint tokenId;
         address tba;
+        address associatedClient;
+        address associatedFreelancer;
 	}
     struct RequestStatus {
         bool fulfilled; // whether the request has been successfully fulfilled
@@ -63,11 +65,10 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
 	uint256 votingPeriodConstant = 5 minutes;
 
     // @dev - Initial setup: voting_ballot -> 0: not eligible, 3: eligible for voting
-    function initializeVoting(uint projectId, string memory _uri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData, uint _tokenId, address _tba) public {
+    function initializeVoting(uint projectId, string memory _uri, address[] calldata toBeWhitelisted, uint _chainLinkVRFData, uint _tokenId, address _tba, address _associatedClient, address _associatedFreelancer) public {
         require(disputedProjects[projectId].duration == 0, "Already Initialized!");
         require(toBeWhitelisted.length !=0, "Cannot Initialize : Empty voters list!");
-        uint maxToBeWhitelisted = toBeWhitelisted.length;
-        for(uint i=0; i<maxToBeWhitelisted; ++i){
+        for(uint i=0; i<toBeWhitelisted.length; ++i){
             disputedProjects[projectId].voting_ballot[toBeWhitelisted[i]] = 3;
         }
         disputedProjects[projectId].voters = toBeWhitelisted;
@@ -77,6 +78,8 @@ contract Voting is VRFConsumerBaseV2, ConfirmedOwner, IERC721Receiver{
         disputedProjects[projectId].randomness = _chainLinkVRFData;
         disputedProjects[projectId].tokenId = _tokenId;
         disputedProjects[projectId].tba = _tba;
+        disputedProjects[projectId].associatedClient = _associatedClient;
+        disputedProjects[projectId].associatedFreelancer = _associatedFreelancer;
         disputedProjectIds.push(projectId);
     }
 

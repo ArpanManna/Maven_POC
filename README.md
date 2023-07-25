@@ -74,6 +74,14 @@ Our platform provides support for EIP-4337 **account abstraction**.
 </p>   
 6. In case a dispute arises, the ownership of the job NFT and the uncompleted milestone NFTs are transferred to the platform and will be withheld until the dispute is resolved. It will then transfer the ownership of these to the winning party.
 
+## Anonymous Voting
+1. When a dispute arises, voting contract selects top “k-eligible” voters (w.r.t skills) from the registered freelancer’s list.
+2. The contract, then, invokes Chainlink VRF to generate on-chain random number "n".
+3. In order to check eligibility to vote, each voter sends a random number “k” (without knowing the on-chain random number).
+4. If n\<k then “Voter is eligible to vote”. They can vote for either “Client” or “Freelancer” based on the disputed details.
+5. Else return “You are not eligible to vote”
+6. This is an anonymous selection as only the voter knows his secret random number which he will reveal during the voting period.
+
 ## Future Vision
 
 - **Collaborative Freelancing**: A future where freelancers can easily connect with each other and collaborate on projects.

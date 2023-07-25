@@ -23,17 +23,15 @@ Freelancers currently **do not pay** any platform fees.
 
 We only charge clients a small platform fee of around 1% of the job cost.
 
-To ensure that both parties are committed to the project, the client must first escrow the bidding amount plus platform fees into the smart contract. This means that the client will deposit the money into a smart contract, and the freelancer will not be able to access it until the project is completed. Once the project is completed to the client's satisfaction, the escrowed funds will be released to the freelancer. The platform fees will remain with the contract. This system helps to protect both parties from fraud, and ensures that both parties are motivated to complete the project.
-
 ## Technologies Used
 
-- **ERC-6551** defines a system which gives every ERC-721 token a smart contract account. These token bound accounts (TBA) allow ERC-721 tokens to own assets and interact with applications, without requiring changes to existing ERC-721 smart contracts or infrastructure.
-  - We utilize this feature to create Profile NFT which ensures complete ownership of the job lifecycle (job and milestone NFTs transfership), from start to finish.
+- [**ERC-6551**](https://eips.ethereum.org/EIPS/eip-6551) defines a system which gives every ERC-721 token a smart contract account (a.k.a **account abstraction**). These token bound accounts (TBA) allow ERC-721 tokens to own assets and interact with applications.
+  - We utilize this feature to create "_Profile NFT"_ which ensures complete ownership of the job lifecycle (job and milestone NFTs transfership), from start to finish.
   - For example, if a freelancer completes a job, they can transfer the milestone NFT ownership to the client to represent completion of their work. The client can then verify and release payment to the freelancer.
-- **Chainlink VRF** is used as an "_on-chain random number generator"_. It is used to randomly and anonymously choose voters for voting in case a dispute arises between client and freelancers.
-- **Push Protocol** is used to provide real-time communication updates to clients and freelancers via notifications and chat support. This is especially helpful when a job is posted or a dispute is raised. It also helps freelancers to discuss the project with the clients via real-time chat option. By receiving push notifications, clients and freelancers can take immediate action without delay.
-- **IPFS** is used for decentralized storage of metadata (job details, client/freelancer profiles etc.).
-- **Polybase** is used as a decentralized database powered by zero knowledge proofs, with attributes of a blockchain and the speed & privacy of a database.
+- [**Chainlink VRF**](https://docs.chain.link/vrf/v2/introduction) is used as an "_on-chain random number generator"_. It is used to randomly and anonymously choose voters for voting, in case a dispute arises between client and freelancers.
+- [**Push Protocol**](https://push.org/) is used to provide real-time communication updates to clients and freelancers via notifications and chat support. This is especially helpful when a job is posted or a dispute is raised. It also helps freelancers to discuss the project with the clients via real-time chat option. By receiving push notifications, clients and freelancers can take immediate action without delay.
+- [**IPFS**](https://ipfs.tech/) is used for decentralized storage of metadata (job details, client/freelancer profiles etc.).
+- [**Polybase**](https://polybase.xyz/) is used as a decentralized database powered by zero knowledge proofs, with attributes of a blockchain and the speed & privacy of a database. 
 
 ## How are "profile NFTs" created?
 

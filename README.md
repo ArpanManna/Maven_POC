@@ -12,8 +12,6 @@ The platform also protects the ownership of the work that freelancers do, so tha
 
 The project is designed to help freelancers find work and get paid, while also protecting their rights. It is a valuable resource for freelancers, and it is likely to be successful in helping them find work and get paid.
 
-Our project is deployed on Polygon Mumbai testnet.
-
 ## Architecture
 <p align="center">
 <img width="641" src="https://github.com/ArpanManna/Maven_POC/assets/115616879/47c185b6-6d2e-413a-bdf4-a2d57e55a11f">
@@ -90,4 +88,14 @@ Our platform provides support for EIP-4337 **account abstraction**.
 - **Reputation-based social graph using Lens**: A social graph that uses Lens to track the reputation of each user, making it easier to identify and avoid fake profiles.
 - **Fake profile protection using AI**: AI-powered tools that can detect and remove fake profiles from the platform.
 - **AI-powered job recommendation**: AI-powered tools that can recommend jobs to users based on their skills and reputation.
+
+## Deployment Details
+
+Our project is deployed on Polygon Mumbai testnet.
+
+Maven contract: [0x8399eDEbCF9fDF32a7fD33791dCFBbF7319941e5](https://mumbai.polygonscan.com/address/0x8399edebcf9fdf32a7fd33791dcfbbf7319941e5)
+
+Dispute resolution contract: [0xBC0C6f0AFC882aa07bA0dB3c5049ADF0F24D1741](https://mumbai.polygonscan.com/address/0xBC0C6f0AFC882aa07bA0dB3c5049ADF0F24D1741)
+
+Chainlink VRF Subscription ID: [5476](https://vrf.chain.link/mumbai/5476)
 

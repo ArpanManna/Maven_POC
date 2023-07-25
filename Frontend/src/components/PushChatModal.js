@@ -12,15 +12,21 @@ export default function MyChat({ _signer, clientAddress }) {
   const [currentChat, setCurrentChat] = useState(null);
   const [message, setMessage] = useState('');
   const [messageHistory, setMessageHistory] = useState({});
-  const [disconnected, setDisconnected] = useState(true);
-  // const [chatSocket, setChatSocket] = useState(null);
   
-
   useEffect(() => {
     if (!clientAddress) return;
     pushChat.getUser(clientAddress).then((data) => {
-      profilePicture[clientAddress] = data.profile.picture;
-      setProfilePicture(profilePicture);
+      if (!data) {
+        pushChat.createUser(_signer).then((res) => {
+          pushChat.getUser(clientAddress).then((_data) => {
+            profilePicture[clientAddress] = _data.profile.picture;
+            setProfilePicture(profilePicture);
+          });
+        });
+      } else {
+        profilePicture[clientAddress] = data.profile.picture;
+        setProfilePicture(profilePicture);
+      }
     });
   }, [clientAddress]);
 

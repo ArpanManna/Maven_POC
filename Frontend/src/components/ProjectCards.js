@@ -5,9 +5,6 @@ import moment from 'moment';
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import avatar1 from "../assets/imgs/avatar1.svg"
-import avatar2 from "../assets/imgs/avatar2.svg"
-import avatar3 from "../assets/imgs/avatar3.svg"
-import avatar4 from "../assets/imgs/avatar4.svg"
 import Image from 'next/image';
 import { getAccountUrl } from '@/utils/explorer';
 import RedirectIcon from '@/assets/imgs/RedirectIcon';
@@ -31,11 +28,6 @@ const ProjectCards = () => {
     setLoading(false);
   }
 
-  // const fetchTotalBids = async(projectId) => {
-  //   const res = await getTotalBids(chainId, provider, projectId);
-  //   console.log(res)
-  //   return res.toNumber();
-  // }
   if (loading) return (<p className='text-center py-12'>Loading...</p>)
   if (posts && posts.length === 0) return (<div className='text-center my-8'>
     <p className='font-mono font-lg'>No projects to show!</p>
@@ -84,7 +76,7 @@ const ProjectCards = () => {
               <div className='flex justify-between mt-4'>
                 <p className='text-lg mt-1'>{bidCount} Bids</p>
                 <p className='font-mono mt-2'>Budget: {priceFrom} wei - {priceTo} wei</p>
-                <Link href={{ pathname: `/project/${id}`, query: { post: JSON.stringify({ id, projectName, projectDescription, owner, priceFrom, priceTo, skillsRequired, bidCount, tokenId, tba }) } }} as={`/project/${id}`} className='bg-gradient-to-r from-palatte4 to-palatte1 hover:bg-gradient-to-br text-white hover:text-white cursor-pointer px-4 rounded-2xl py-2'>More Info</Link>
+                <Link href={`/project/${id}`} className='bg-gradient-to-r from-palatte4 to-palatte1 hover:bg-gradient-to-br text-white hover:text-white cursor-pointer px-4 rounded-2xl py-2'>More Info</Link>
               </div>
             </div>
           ))
